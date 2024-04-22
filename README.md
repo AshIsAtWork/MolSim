@@ -78,7 +78,7 @@ mkdir build && cd build
    ```
    Note: Output present inside **build/docs/html/index.html**
 4. Running the Program
-   - Inside your **build** run the following command:
+   - Inside your **build/** folder run the following command:
    ```bash
    ./MolSim <FILENAME>
    ```
