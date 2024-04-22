@@ -53,10 +53,37 @@ sudo apt install libxerces-c-dev
 The process of building the project is described here:
 
 1. Create and change your working directory to the build folder inside the project.
+
 ```bash
 mkdir build && cd build
 ```
-2. Configure the project using Cmake.
-```bash
-cmake ..
-```
+
+2. Configure the Program using Cmake.
+    - standard:
+         ```bash
+         cmake ..
+         ```
+    - With Doxygen Documentation:
+         ```bash
+         cmake .. -D BUILD_DOCS=ON
+         ```
+3. Building the Program
+    - Compile Project:
+   ```bash
+   make 
+   ```
+    - Compile Docs using Doxygen
+   ```bash
+   make doc_doxygen
+   ```
+   Note: Output present inside **build/docs/html/index.html**
+4. Running the Program
+   - Inside your **build** run the following command:
+   ```bash
+   ./MolSim <FILENAME>
+   ```
+   Note: FILENAME includes the path and should look something like the following:
+   ```bash
+   ./MolSim ../input/eingabe-sonne.txt
+   ```
+     
