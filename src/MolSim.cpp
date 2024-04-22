@@ -1,4 +1,4 @@
-#include "FileReader.h"
+#include "reader/FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
 
