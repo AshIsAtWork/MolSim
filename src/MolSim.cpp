@@ -1,5 +1,5 @@
-#include "reader/FileReader.h"
-#include "outputWriter/XYZWriter.h"
+#include "fileHandling/reader/FileReader.h"
+#include "fileHandling/outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
