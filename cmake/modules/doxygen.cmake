@@ -3,3 +3,5 @@
 # TODO: create CMake build option for the target.
 
 # TODO: Add a custom target for building the documentation.
+
+IF(DOX_DOC == TRUE)

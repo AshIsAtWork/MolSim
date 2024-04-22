@@ -1,4 +1,3 @@
-
 #include "FileReader.h"
 #include "outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
@@ -33,6 +32,7 @@ constexpr double end_time = 1000;
 constexpr double delta_t = 0.014;
 
 // TODO: what data structure to pick?
+//TODO: Change to std::vector
 std::list<Particle> particles;
 
 int main(int argc, char *argsv[]) {
