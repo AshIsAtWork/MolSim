@@ -69,9 +69,16 @@ public:
 
   int getType() const;
 
+  void setOld_f(const std::array<double, 3> &f);
+
+  void setF(const std::array<double, 3> &f);
+
+  void setX(const std::array<double, 3> &x);
+
+  void setV(const std::array<double, 3> &v);
+
   bool operator==(Particle &other);
 
-  std::string toString() const;
-};
+  std::string toString() const;};
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

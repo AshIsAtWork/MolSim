@@ -33,7 +33,7 @@ constexpr double delta_t = 0.014;
 
 // TODO: what data structure to pick?
 //TODO: Change to std::vector
-std::list<Particle> particles;
+std::vector<Particle> particles;
 
 int main(int argc, char *argsv[]) {
 
@@ -73,25 +73,34 @@ int main(int argc, char *argsv[]) {
 }
 
 void calculateF() {
-  std::list<Particle>::iterator iterator;
+  std::vector<Particle>::iterator iterator;
   iterator = particles.begin();
 
-  for (auto &p1 : particles) {
-    for (auto &p2 : particles) {
-      // @TODO: insert calculation of forces here!
+  for (auto &p_i : particles) {
+    p_i.setOld_f(p_i.getF());
+    std::array<double, 3> f_i{{0,0,0}};
+    for (auto &p_j : particles) {
+      if(&p_i != &p_j) {
+        //scalar here (m_i*m_j) / (|x_i - x_j|_2³)
+        double scalar = (p_i.getM() * p_j.getM()) / pow( (ArrayUtils::L2Norm(p_i.getX() - p_j.getX())),3.0);
+
+        std::array<double,3> f_ij{scalar * (p_i.getX() - p_j.getX())};
+        f_i = f_i + f_ij;
+      }
     }
+    p_i.setF(f_i);
   }
 }
 
 void calculateX() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of position updates here!
+    p.setX(p.getX() + delta_t * p.getV() + ((delta_t * delta_t) / (2.0 * p.getM())) * p.getOldF());
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
-    // @TODO: insert calculation of veclocity updates here!
+    p.setV(p.getV() + (delta_t / (2 * p.getM())) * (p.getOldF()) + p.getF());
   }
 }
 
