@@ -3,8 +3,6 @@
 //
 
 #include "Simulator.h"
-#include "fileHandling/reader/FileReader.h"
-#include "fileHandling/outputWriter/XYZWriter.h"
 #include "utils/ArrayUtils.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "particleRepresentation/ParticleContainer.h"
@@ -39,27 +37,9 @@ void Simulator::calculateV() {
     }
 }
 
-void Simulator::plotParticlesVTK(int iteration) {
-    std::string out_name("MD_vtk");
-
-    outputWriter::VTKWriter writer;
-    writer.initializeOutput(static_cast<int>(particles.size()));
-    for(Particle &p : particles) {
-        writer.plotParticle(p);
-    }
-    writer.writeFile(out_name, iteration);
-}
-
-void Simulator::plotParticlesXYZ(int iteration) {
-    std::string out_name("MD_vtk");
-
-    outputWriter::XYZWriter writer;
-    writer.plotParticles(particles, out_name, iteration);
-}
 
 Simulator::Simulator(std::string& inputFilePath) {
-    FileReader fileReader;
-    fileReader.readFile(particles, inputFilePath);
+    fileHandler.readFile(particles, inputFilePath);
     deltaT = 0.014;
     endT = 1000;
 }
@@ -86,7 +66,7 @@ void Simulator::run() {
 
         iteration++;
         if (iteration % 50 == 0) {
-            plotParticlesVTK(iteration);
+            fileHandler.writeToFile(particles, iteration,FileHandler::outputFormat::vtk);
         }
         std::cout << "Iteration " << iteration << " finished." << std::endl;
 

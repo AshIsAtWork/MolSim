@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "ForceCalculation/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
@@ -11,6 +12,8 @@
 class Simulator {
 
 private:
+
+    FileHandler fileHandler;
     ParticleContainer particles;
     Gravity gravity;
     double deltaT;
@@ -34,17 +37,6 @@ private:
 
     void calculateV();
 
-    /**
-    * plot particles to vtk-file
-    */
-
-    void plotParticlesVTK(int iteration);
-
-    /**
-    * plot particles to xyz-file
-    */
-
-    void plotParticlesXYZ(int iteration);
 
 public:
     Simulator() = delete;
