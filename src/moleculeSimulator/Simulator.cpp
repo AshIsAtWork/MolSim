@@ -11,17 +11,15 @@
 
 #include <iostream>
 
+#include "ForceCalculation/Gravity.h"
+
 void Simulator::calculateF() {
     for (auto &p_i : particles) {
         p_i.setOldF(p_i.getF());
         p_i.setF({0,0,0});
         for (auto &p_j : particles) {
             if(&p_i != &p_j) {
-                double distance = ArrayUtils::L2Norm(p_i.getX() - p_j.getX());
-                double scalar = (p_i.getM() * p_j.getM()) / (distance * distance * distance);
-
-                std::array<double,3> f_ij = scalar * (p_j.getX() - p_i.getX());
-                p_i.setF(p_i.getF() + f_ij);
+                p_i.setF(p_i.getF() + gravity.compute(p_i, p_j));
             }
         }
     }

@@ -5,13 +5,14 @@
 #pragma once
 
 #include "fileHandling/outputWriter/VTKWriter.h"
+#include "ForceCalculation/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
 
 class Simulator {
 
 private:
     ParticleContainer particles;
-
+    Gravity gravity;
     double deltaT;
     double endT;
 

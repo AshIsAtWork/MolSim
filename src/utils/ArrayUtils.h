@@ -6,11 +6,9 @@
 
 #pragma once
 
-#include <algorithm>
 #include <array>
 #include <cmath>
 #include <list>
-#include <map>
 #include <numeric>
 #include <set>
 #include <sstream>
