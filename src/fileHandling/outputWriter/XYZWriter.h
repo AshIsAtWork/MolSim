@@ -7,10 +7,9 @@
 
 #pragma once
 
-#include "models/Particle.h"
-
 #include <fstream>
-#include <vector>
+
+#include "particleRepresentation/ParticleContainer.h"
 
 namespace outputWriter {
 
@@ -21,7 +20,7 @@ public:
 
   virtual ~XYZWriter();
 
-  void plotParticles(std::vector<Particle> particles, const std::string &filename,
+  void plotParticles(ParticleContainer particles, const std::string &filename,
                      int iteration);
 };
 

@@ -11,13 +11,12 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <vector>
 
 FileReader::FileReader() = default;
 
 FileReader::~FileReader() = default;
 
-void FileReader::readFile(std::vector<Particle> &particles, std::string &filename) {
+void FileReader::readFile(ParticleContainer &particles, std::string& filename) {
   std::array<double, 3> x;
   std::array<double, 3> v;
   double m;
@@ -58,7 +57,8 @@ void FileReader::readFile(std::vector<Particle> &particles, std::string &filenam
         exit(-1);
       }
       datastream >> m;
-      particles.emplace_back(x, v, m);
+      Particle p{x,v,m};
+      particles.add(p);
 
       getline(input_file, tmp_string);
       std::cout << "Read line: " << tmp_string << std::endl;
