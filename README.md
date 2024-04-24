@@ -48,6 +48,12 @@ sudo apt install graphviz
 sudo apt install libxerces-c-dev
 ```
 
+- Boost Program Options 1.74.0.3 
+
+```bash
+sudo apt-get install libboost-program-options-dev
+```
+
 ## Build
 
 The process of building the project is described here:
