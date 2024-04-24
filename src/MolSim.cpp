@@ -3,7 +3,8 @@
 #include "utils/ArrayUtils.h"
 
 #include <iostream>
-#include <list>
+
+#include "fileHandling/outputWriter/VTKWriter.h"
 
 /**** forward declaration of the calculation functions ****/
 
@@ -27,12 +28,12 @@ void calculateV();
  */
 void plotParticles(int iteration);
 
+void plotParticlesVTK(int iteration);
+
 constexpr double start_time = 0;
 constexpr double end_time = 1000;
 constexpr double delta_t = 0.014;
 
-// TODO: what data structure to pick?
-//TODO: Change to std::vector
 std::vector<Particle> particles;
 
 int main(int argc, char *argsv[]) {
@@ -60,8 +61,8 @@ int main(int argc, char *argsv[]) {
     calculateV();
 
     iteration++;
-    if (iteration % 10 == 0) {
-      plotParticles(iteration);
+    if (iteration % 50 == 0) {
+      plotParticlesVTK(iteration);
     }
     std::cout << "Iteration " << iteration << " finished." << std::endl;
 
@@ -72,35 +73,36 @@ int main(int argc, char *argsv[]) {
   return 0;
 }
 
+
+
 void calculateF() {
-  std::vector<Particle>::iterator iterator;
-  iterator = particles.begin();
 
   for (auto &p_i : particles) {
-    p_i.setOld_f(p_i.getF());
-    std::array<double, 3> f_i{{0,0,0}};
+    p_i.setOldF(p_i.getF());
+    p_i.setF({0,0,0});
     for (auto &p_j : particles) {
       if(&p_i != &p_j) {
-        //scalar here (m_i*m_j) / (|x_i - x_j|_2³)
-        double scalar = (p_i.getM() * p_j.getM()) / pow( (ArrayUtils::L2Norm(p_i.getX() - p_j.getX())),3.0);
+        double distance = ArrayUtils::L2Norm(p_i.getX() - p_j.getX());
+        double scalar = (p_i.getM() * p_j.getM()) / (distance * distance * distance);
 
-        std::array<double,3> f_ij{scalar * (p_i.getX() - p_j.getX())};
-        f_i = f_i + f_ij;
+        std::array<double,3> f_ij = scalar * (p_j.getX() - p_i.getX());
+        p_i.setF(p_i.getF() + f_ij);
       }
     }
-    p_i.setF(f_i);
   }
 }
 
 void calculateX() {
   for (auto &p : particles) {
-    p.setX(p.getX() + delta_t * p.getV() + ((delta_t * delta_t) / (2.0 * p.getM())) * p.getOldF());
+    std::array<double, 3> xNew = p.getX() + delta_t * p.getV() + ((delta_t * delta_t) / (2.0 * p.getM())) * p.getOldF();
+    p.setX(xNew);
   }
 }
 
 void calculateV() {
   for (auto &p : particles) {
-    p.setV(p.getV() + (delta_t / (2 * p.getM())) * (p.getOldF()) + p.getF());
+    std::array<double, 3> vNew = p.getV() + (delta_t / (2 * p.getM())) * (p.getOldF() + p.getF());
+    p.setV(vNew);
   }
 }
 
@@ -110,4 +112,16 @@ void plotParticles(int iteration) {
 
   outputWriter::XYZWriter writer;
   writer.plotParticles(particles, out_name, iteration);
+
+}
+
+void plotParticlesVTK(int iteration) {
+  std::string out_name("MD_vtk");
+
+  outputWriter::VTKWriter writer;
+  writer.initializeOutput(static_cast<int>(particles.size()));
+  for(Particle &p : particles) {
+    writer.plotParticle(p);
+  }
+   writer.writeFile(out_name, iteration);
 }

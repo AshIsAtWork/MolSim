@@ -69,7 +69,7 @@ public:
 
   int getType() const;
 
-  void setOld_f(const std::array<double, 3> &f);
+  void setOldF(const std::array<double, 3> &oldF);
 
   void setF(const std::array<double, 3> &f);
 

@@ -53,8 +53,8 @@ double Particle::getM() const { return m; }
 
 int Particle::getType() const { return type; }
 
-void Particle::setOld_f(const std::array<double, 3> &f) {
-  old_f = f;
+void Particle::setOldF(const std::array<double, 3> &oldF) {
+  old_f = oldF;
 }
 
 void Particle::setF(const std::array<double, 3> &f) {
