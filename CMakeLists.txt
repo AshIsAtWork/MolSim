@@ -38,6 +38,7 @@ target_include_directories(MolSim
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
+        boost_program_options
         xerces-c
 )
 
