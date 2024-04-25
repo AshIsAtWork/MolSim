@@ -40,11 +40,7 @@ int main(int argc, char *argsv[]) {
     return -1;
   }
 
-  std::cout <<"Inputfilepath: "<< inputFilePath << "\n";
-
   po::notify(vm);
-
-  std::cout << "Hello from MolSim for PSE!" << std::endl;
 
   if (argc <= 1 || vm.count("help")) {
     std::cout << desc << "\n";
@@ -56,6 +52,8 @@ int main(int argc, char *argsv[]) {
     std::cout << desc << "\n";
     return -1;
   }
+
+  std::cout << "Hello from MolSim for PSE!" << std::endl;
 
   Simulator simulator(inputFilePath);
   simulator.configure(endT,deltaT);
