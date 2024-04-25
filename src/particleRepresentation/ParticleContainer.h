@@ -37,7 +37,7 @@ public:
         Iterator& operator++() {m_ptr++; return *this;}
 
         //Postfix increment
-        Iterator& operator++(int){ Iterator tmp = *this; ++(*this); return tmp;}
+        Iterator operator++(int){ Iterator tmp = *this; ++(*this); return tmp;}
 
         //Comparison
         friend bool operator==(const Iterator& a, const Iterator& b){ return a.m_ptr == b.m_ptr;}
