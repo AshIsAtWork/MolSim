@@ -9,6 +9,13 @@
 #include "ForceCalculation/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
 
+/**
+ * @brief This class implements the simulation of the particle system.
+ *
+ * Using Newton's axioms and the Störmer-Verlet equations force, velocity and position of all particles are computed
+ * in fixed discrete time steps. Results are written to files.
+ */
+
 class Simulator {
 
 private:
@@ -20,30 +27,60 @@ private:
     double endT;
 
     /**
-    * calculate the force for all particles
+    * @brief Helper method to calculate the force of all particles.
+    *
+    * After each time step the forces acting between the partices have changed due to their new positions, so
+    * they have to be recalculated.
     */
 
     void calculateF();
 
     /**
-    * calculate the position for all particles
+    * @brief Helper method to calculate the position of all particles.
+    *
+    * After each time step positions of all partices with velocities unequal to zero have to be updated.
     */
 
     void calculateX();
 
     /**
-    * calculate the position for all particles
+    * @brief Helper method to calculate the velocity of all particles.
+    *
+    * After each time step the velocity of each particle may have changed due to forces that act between the particles.
     */
-
     void calculateV();
 
 
 public:
     Simulator() = delete;
+
+    /**
+     * @brief Construct a new simulation environment.
+     *
+     * @param inputFilePath Path to the input file which comprises the particeles going to be simulated.
+     *
+     * To create a new simulation environment you have to provide an input file containing the particles you want
+     * to simulate. After setting the environment all parameters may be adjusted using the method configure.
+     */
     explicit Simulator(std::string& inputFilePath);
 
+
+    /**
+     * @brief Configure parameters.
+     *
+     * @param endT Time to which the simulation is going to run.
+     * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more compuational ressources.
+     *
+     * Configuration of the parameters before running the simulation. Default values are endT = 1000 and deltaT = 0.014.
+     */
     void configure(double endT, double deltaT);
 
+    /**
+     * @brief Run the simulation.
+     *
+     * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
+     * the default parameters will be used.
+     */
     void run();
 
     ParticleContainer getParticles();
