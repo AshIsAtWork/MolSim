@@ -65,7 +65,7 @@ void Simulator::run() {
         calculateV();
 
         iteration++;
-        if (iteration % 50 == 0) {
+        if (iteration % 10 == 0) {
             fileHandler.writeToFile(particles, iteration,FileHandler::outputFormat::vtk);
         }
         std::cout << "Iteration " << iteration << " finished." << std::endl;

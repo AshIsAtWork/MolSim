@@ -1,6 +1,3 @@
-#include "fileHandling/outputWriter/XYZWriter.h"
-#include "fileHandling/outputWriter/VTKWriter.h"
-
 #include <iostream>
 #include <boost/program_options.hpp>
 
