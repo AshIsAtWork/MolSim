@@ -57,7 +57,7 @@ Members:
 * To provide an efficient way of handling multiple methods of IO, we introduced the class FileHandler which does nothing else than encapsulating all methods, which are currently there for in- and output. All means of IO coming up in the future can be added to this class.
 * We try to make use of references where we can, especially when handling bigger objects to avoid some unnecessary copying.
 * Additionally, we introduced a new class called Simulator to keep the main file as clean as possible and to give our code a more understandable structure. 
-* Doxygen is a nice tool to automatically generate a documentation of your code. To create a doxyfile while building the project just follow the instructions in the README file. The documentation can then be found inside build/docs/html/index.html. 
+* Doxygen is a nice tool to automatically generate a documentation of your code. To create a documentation while building the project just follow the instructions in the README file. The documentation can then be found inside build/docs/html/index.html. 
 
 
 # Misc #
