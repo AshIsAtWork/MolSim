@@ -4,8 +4,6 @@
 
 #include "Simulator.h"
 #include "utils/ArrayUtils.h"
-#include "fileHandling/outputWriter/VTKWriter.h"
-#include "particleRepresentation/ParticleContainer.h"
 
 #include <iostream>
 
@@ -25,28 +23,18 @@ void Simulator::calculateF() {
 
 void Simulator::calculateX() {
     for (auto &p : particles) {
-        std::array<double, 3> xNew = p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF();
-        p.setX(xNew);
+        p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
     }
 }
 
 void Simulator::calculateV() {
     for (auto &p : particles) {
-        std::array<double, 3> vNew = p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF());
-        p.setV(vNew);
+        p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
     }
 }
 
-
-Simulator::Simulator(std::string& inputFilePath) {
-    fileHandler.readFile(particles, inputFilePath);
-    deltaT = 0.014;
-    endT = 1000;
-}
-
-void Simulator::configure(double endT, double deltaT) {
-    this->endT = endT;
-    this->deltaT = deltaT;
+Simulator::Simulator(std::string &inputFilePath, double endT, double deltaT) : deltaT{deltaT}, endT{endT} {
+    FileHandler::readFile(particles, inputFilePath);
 }
 
 void Simulator::run() {
@@ -74,8 +62,4 @@ void Simulator::run() {
     }
 
     std::cout << "output written. Terminating..." << std::endl;
-}
-
-ParticleContainer Simulator::getParticles() {
-    return particles;
 }

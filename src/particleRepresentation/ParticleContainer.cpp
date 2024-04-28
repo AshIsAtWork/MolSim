@@ -9,7 +9,7 @@ ParticleContainer::ParticleContainer(size_t capacity) {
     particles.reserve(capacity);
 }
 
-void ParticleContainer::add(Particle& p) {
+void ParticleContainer::add(const Particle& p) {
     particles.push_back(p);
 }
 
@@ -25,12 +25,16 @@ size_t ParticleContainer::capacity() {
     return particles.capacity();
 }
 
-ParticleContainer::Iterator ParticleContainer::begin() {
-    return Iterator{&particles[0]};
+std::vector<Particle>::iterator ParticleContainer::begin() {
+    return particles.begin();
 }
 
-ParticleContainer::Iterator ParticleContainer::end() {
-    return Iterator{&particles[particles.size()]};
+std::vector<Particle>::iterator ParticleContainer::end() {
+    return particles.end();
+}
+
+void ParticleContainer::reserve(size_t n) {
+    particles.reserve(n);
 }
 
 

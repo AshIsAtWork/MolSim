@@ -4,8 +4,8 @@
 
 #include "FileHandler.h"
 
-void FileHandler::readFile(ParticleContainer &particles, std::string& filePath) {
-    fileReader.readFile(particles, filePath);
+void FileHandler::readFile(ParticleContainer &particles, std::string &filePath) {
+    FileReader::readFile(particles, filePath);
 }
 
 void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format) {

@@ -6,7 +6,7 @@
 #include "particleRepresentation/Particle.h"
 
 /**
- * @brief Interface representing the force that the source excerts on the target.
+ * @brief Interface representing the force that the source exerts on the target.
  *
  * This interface provides a generalization of the force that might occur between two particles.
  * There are different types of forces which may all implement this interface.
@@ -14,7 +14,7 @@
 class Force {
 public:
     /**
-     * @brief Actual computation of the force occuring.
+     * @brief Actual computation of the force occurring.
      *
      * @param target Particle on which the force acts.
      * @param source Particle which exerts the force on the target.

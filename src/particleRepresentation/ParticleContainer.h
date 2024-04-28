@@ -12,7 +12,7 @@
 /**
  * @brief Class to store the particles for simulation.
  *
- * The storation of the particles is based on std::vector. This guarantees fast iteration over the particles, because
+ * The storage of the particles is based on std::vector. This guarantees fast iteration over the particles, because
  * they are stored consecutive in memory.
  */
 
@@ -21,42 +21,6 @@ private:
     std::vector<Particle> particles;
 
 public:
-    /**
-     * @brief Iterator for ParticleContainer
-     *
-     * This class provides an iterator implementation for the class Particle Container.
-     */
-    struct Iterator {
-        //Iterator tags
-
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type = std::ptrdiff_t;
-        using value_type = Particle;
-        using pointer = Particle*;
-        using reference = Particle&;
-
-        //Iterator constructors
-        Iterator(pointer ptr) : m_ptr(ptr){}
-
-        //Pointer and Reference
-
-        reference operator*() const {return *m_ptr;}
-        pointer operator->() {return m_ptr;}
-
-        //Prefix increment
-        Iterator& operator++() {m_ptr++; return *this;}
-
-        //Postfix increment
-        Iterator operator++(int){ Iterator tmp = *this; ++(*this); return tmp;}
-
-        //Comparison
-        friend bool operator==(const Iterator& a, const Iterator& b){ return a.m_ptr == b.m_ptr;}
-        friend bool operator!=(const Iterator& a, const Iterator& b){ return a.m_ptr != b.m_ptr;}
-
-    private:
-
-        pointer m_ptr;
-    };
 
     ParticleContainer() = default;
 
@@ -76,7 +40,7 @@ public:
      *
      * Add one particle to this container. It will be appended.
      */
-    void add(Particle &p);
+    void add(const Particle &p);
 
     /**
      * @brief Obtain particle at position i.
@@ -84,9 +48,9 @@ public:
      * @param i Position of the particle of concern.
      * @return Particle at position i.
      *
-     * Before access, it will be checked, if the position is valid. Otherwise an exeption will be thrown.
+     * Before access, it will be checked, if the position is valid. Otherwise an exception will be thrown.
      */
-    Particle& at(size_t i);
+    Particle &at(size_t i);
 
     /**
      * @brief Retrieve the size of the data structure.
@@ -114,7 +78,7 @@ public:
      *
      * Obtain an iterator to the first particle in this container.
      */
-    Iterator begin();
+    std::vector<Particle>::iterator begin();
 
     /**
      * @brief Obtain an iterator to the last element of this container.
@@ -123,6 +87,12 @@ public:
      *
      * Obtain an iterator to the last element of this container.
      */
-    Iterator end();
+    std::vector<Particle>::iterator end();
+
+    /**
+     * @brief Used to reserve the capacity of the vector used to storing particles
+     * @param n desired size
+     */
+    void reserve(size_t n);
 };
 

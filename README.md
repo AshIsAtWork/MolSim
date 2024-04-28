@@ -18,7 +18,7 @@ This repository is for the practical course **PSE: Molecular Dynamics** for grou
 
 ## About The Project
 
-LOREM IPSUM
+This is the practical project repository for the course offered by the Scientific Computing Chair at TUM.
 
 **Built Using:**
 
@@ -91,6 +91,6 @@ mkdir build && cd build
    ```
    Note: FILENAME includes the path and should look something like the following:
    ```bash
-   ./MolSim ../input/eingabe-sonne.txt
+   ./MolSim -f ../input/eingabe-sonne.txt
    ```
      

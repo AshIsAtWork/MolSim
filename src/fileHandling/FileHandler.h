@@ -40,7 +40,7 @@ public:
      * @param particles Particle container in which the newly read-in particles will be stored.
      * @param filePath File path to the input txt-file of the particles to be read.
      */
-    void readFile(ParticleContainer &particles, std::string& filePath);
+    static void readFile(ParticleContainer &particles, std::string &filePath);
 
     /**
      * @brief Write particles to a file.
@@ -52,7 +52,7 @@ public:
      * Write particles to a file. You can choose between different output formats. The file will created in the directory,
      * in which this program is executed.
      */
-    void writeToFile(ParticleContainer& particles, int iteration, outputFormat format);
+    void writeToFile(ParticleContainer &particles, int iteration, outputFormat format);
 };
 
 

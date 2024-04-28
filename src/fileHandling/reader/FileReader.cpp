@@ -17,8 +17,8 @@ FileReader::FileReader() = default;
 FileReader::~FileReader() = default;
 
 void FileReader::readFile(ParticleContainer &particles, std::string& filename) {
-  std::array<double, 3> x;
-  std::array<double, 3> v;
+  std::array<double, 3> x{};
+  std::array<double, 3> v{};
   double m;
   int num_particles = 0;
 
@@ -37,6 +37,7 @@ void FileReader::readFile(ParticleContainer &particles, std::string& filename) {
 
     std::istringstream numstream(tmp_string);
     numstream >> num_particles;
+    particles.reserve(num_particles);
     std::cout << "Reading " << num_particles << "." << std::endl;
     getline(input_file, tmp_string);
     std::cout << "Read line: " << tmp_string << std::endl;
@@ -57,8 +58,7 @@ void FileReader::readFile(ParticleContainer &particles, std::string& filename) {
         exit(-1);
       }
       datastream >> m;
-      Particle p{x,v,m, i};
-      particles.add(p);
+      particles.add(Particle{x,v,m,i});
 
       getline(input_file, tmp_string);
       std::cout << "Read line: " << tmp_string << std::endl;

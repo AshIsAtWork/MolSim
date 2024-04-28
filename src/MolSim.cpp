@@ -5,8 +5,8 @@
 
 int main(int argc, char *argsv[]) {
 
-  double endT = 1000;
-  double deltaT = 0.014;
+  double endT;
+  double deltaT;
   std::string inputFilePath;
 
   namespace po = boost::program_options;
@@ -52,8 +52,7 @@ int main(int argc, char *argsv[]) {
 
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
-  Simulator simulator(inputFilePath);
-  simulator.configure(endT,deltaT);
+  Simulator simulator(inputFilePath, endT, deltaT);
   simulator.run();
 
   return 0;

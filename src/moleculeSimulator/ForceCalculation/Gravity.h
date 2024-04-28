@@ -13,7 +13,7 @@
 class Gravity : public Force{
 public:
     /**
-    * @brief Actual computation of the gravitational force occuring.
+    * @brief Actual computation of the gravitational force occurring.
     *
     * @param target Particle on which the gravitational force acts.
     * @param source Particle which exerts the gravitational force on the target.

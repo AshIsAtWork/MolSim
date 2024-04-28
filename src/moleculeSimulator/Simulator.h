@@ -29,7 +29,7 @@ private:
     /**
     * @brief Helper method to calculate the force of all particles.
     *
-    * After each time step the forces acting between the partices have changed due to their new positions, so
+    * After each time step the forces acting between the particles have changed due to their new positions, so
     * they have to be recalculated.
     */
 
@@ -38,7 +38,7 @@ private:
     /**
     * @brief Helper method to calculate the position of all particles.
     *
-    * After each time step positions of all partices with velocities unequal to zero have to be updated.
+    * After each time step positions of all particles with velocities unequal to zero have to be updated.
     */
 
     void calculateX();
@@ -57,23 +57,15 @@ public:
     /**
      * @brief Construct a new simulation environment.
      *
-     * @param inputFilePath Path to the input file which comprises the particeles going to be simulated.
+     * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
+     * @param endT Time to which the simulation is going to run.
+     * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
      *
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate. After setting the environment all parameters may be adjusted using the method configure.
      */
-    explicit Simulator(std::string& inputFilePath);
+    explicit Simulator(std::string& inputFilePath, double endT, double deltaT);
 
-
-    /**
-     * @brief Configure parameters.
-     *
-     * @param endT Time to which the simulation is going to run.
-     * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more compuational ressources.
-     *
-     * Configuration of the parameters before running the simulation. Default values are endT = 1000 and deltaT = 0.014.
-     */
-    void configure(double endT, double deltaT);
 
     /**
      * @brief Run the simulation.
@@ -83,5 +75,4 @@ public:
      */
     void run();
 
-    ParticleContainer getParticles();
 };
