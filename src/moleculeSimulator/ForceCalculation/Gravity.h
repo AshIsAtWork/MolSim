@@ -21,5 +21,5 @@ public:
     *
     * Computation of the gravitational force which exerts the source on the target.
     */
-    const std::array<double, 3> compute(Particle &target, Particle &source) override;
+    std::array<double, 3> compute(Particle &target, Particle &source) override;
 };

@@ -52,7 +52,8 @@ int main(int argc, char *argsv[]) {
 
   std::cout << "Hello from MolSim for PSE!" << std::endl;
 
-  Simulator simulator(inputFilePath, endT, deltaT);
+  Gravity gravity;
+  Simulator simulator(inputFilePath,gravity ,endT, deltaT);
   simulator.run();
 
   return 0;

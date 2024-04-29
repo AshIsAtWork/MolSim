@@ -15,7 +15,7 @@ void Simulator::calculateF() {
         p_i.setF({0,0,0});
         for (auto &p_j : particles) {
             if(&p_i != &p_j) {
-                p_i.setF(p_i.getF() + gravity.compute(p_i, p_j));
+                p_i.setF(p_i.getF() + force.compute(p_i, p_j));
             }
         }
     }
@@ -33,7 +33,7 @@ void Simulator::calculateV() {
     }
 }
 
-Simulator::Simulator(std::string &inputFilePath, double endT, double deltaT) : deltaT{deltaT}, endT{endT} {
+Simulator::Simulator(std::string &inputFilePath, Force& force, double endT, double deltaT) : force{force}, deltaT{deltaT}, endT{endT} {
     FileHandler::readFile(particles, inputFilePath);
 }
 

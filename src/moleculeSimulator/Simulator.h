@@ -22,7 +22,7 @@ private:
 
     FileHandler fileHandler;
     ParticleContainer particles;
-    Gravity gravity;
+    Force& force;
     double deltaT;
     double endT;
 
@@ -58,13 +58,14 @@ public:
      * @brief Construct a new simulation environment.
      *
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
+     * @param force Type of force to be used in the simulation
      * @param endT Time to which the simulation is going to run.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
      *
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate. After setting the environment all parameters may be adjusted using the method configure.
      */
-    explicit Simulator(std::string& inputFilePath, double endT, double deltaT);
+    explicit Simulator(std::string& inputFilePath, Force& force, double endT, double deltaT);
 
 
     /**
