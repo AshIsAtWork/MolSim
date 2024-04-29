@@ -1,11 +1,11 @@
 # Group A #
 Members:
-* Daniel Schade
-* Ashutosh Solanki
-* Robin Cleve
+- [Daniel Schade](https://github.com/D4ni3lSch4d3)
+- [Ashutosh Solanki](https://github.com/AshIsAtWork)
+- [Robin Cleve](https://github.com/cleveee)
 
 # Code #
-* Link to Pull Request: <Todo!!!>
+* Link to Pull Request: [Pull Request for Assignment 1](https://github.com/AshIsAtWork/MolSim/pull/2)
 * Compiler: gcc 11.4.0
 
 # Report #

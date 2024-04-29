@@ -6,15 +6,15 @@ This repository is for the practical course **PSE: Molecular Dynamics** for grou
 
 **Group Members**
 
-- Ashutosh Solanki
-- Daniel Schade
-- Robin Cleve
+- [Ashutosh Solanki](https://github.com/AshIsAtWork)
+- [Daniel Schade](https://github.com/D4ni3lSch4d3)
+- [Robin Cleve](https://github.com/cleveee)
 
 **Course Supervisors**
 
-- Manish Mishra
-- Markus Mühlhäußer
-- Fabio Gratl
+- [Manish Mishra](https://github.com/manishmishra6016)
+- [Markus Mühlhäußer](https://github.com/thesamriel)
+- [Fabio Gratl](https://github.com/FG-TUM)
 
 ## About The Project
 
