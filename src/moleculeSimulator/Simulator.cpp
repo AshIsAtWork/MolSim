@@ -33,7 +33,8 @@ void Simulator::calculateV() {
     }
 }
 
-Simulator::Simulator(std::string &inputFilePath, Force& force, double endT, double deltaT) : force{force}, deltaT{deltaT}, endT{endT} {
+Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT) : force{force},
+    deltaT{deltaT}, endT{endT} {
     FileHandler::readFile(particles, inputFilePath);
 }
 

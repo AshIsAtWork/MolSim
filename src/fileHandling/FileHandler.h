@@ -28,7 +28,7 @@ private:
     FileReader fileReader;
 public:
     /**
-     * @brief Supported output format.
+     * @brief Supported output formats.
      *
      * This enum class enables the user to select the desired output format in the writeToFile method.
      */
