@@ -3,14 +3,18 @@
 //
 
 #pragma once
-#include "Force.h"
+
+#include "moleculeSimulator/forceCalculation/Force.h"
+
+#include "utils/ArrayUtils.h"
+
 
 /**
  * @brief Implementation of the gravitational force.
  *
  * The gravitational force is one example of a force which might act between two particles in space.
  */
-class Gravity : public Force{
+class Gravity : public Force {
 public:
     /**
     * @brief Actual computation of the gravitational force occurring.

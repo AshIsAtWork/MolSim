@@ -3,11 +3,6 @@
 //
 
 #include "Simulator.h"
-#include "utils/ArrayUtils.h"
-
-#include <iostream>
-
-#include "ForceCalculation/Gravity.h"
 
 void Simulator::calculateF() {
     for (auto &p_i : particles) {

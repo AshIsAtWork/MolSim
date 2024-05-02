@@ -7,9 +7,6 @@
 
 #include "Particle.h"
 
-#include <iostream>
-#include "utils/ArrayUtils.h"
-
 Particle::Particle(int type_arg) : f{0., 0., 0.}, old_f{0., 0., 0.}, type{type_arg} {
     std::cout << "Particle generated!" << std::endl;
 }
