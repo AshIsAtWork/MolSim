@@ -49,8 +49,8 @@ public:
      * @param iteration Current iteration step of the simulation.
      * @param format Type of the output file.
      *
-     * Write particles to a file. You can choose between different output formats. The file will created in the directory,
-     * in which this program is executed.
+     * Write particles to a file. You can choose between different output formats. The file will be created in the directory,
+     * in which this program was executed.
      */
     void writeToFile(ParticleContainer &particles, int iteration, outputFormat format);
 };
