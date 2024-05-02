@@ -6,8 +6,11 @@
 
 #include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include "ForceCalculation/Gravity.h"
+#include "forceCalculation/gravity/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
+#include "utils/ArrayUtils.h"
+
+#include <iostream>
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -22,7 +25,7 @@ private:
 
     FileHandler fileHandler;
     ParticleContainer particles;
-    Force& force;
+    Force &force;
     double deltaT;
     double endT;
 
@@ -65,7 +68,7 @@ public:
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate. After setting the environment all parameters may be adjusted using the method configure.
      */
-    explicit Simulator(std::string& inputFilePath, Force& force, double endT, double deltaT);
+    explicit Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT);
 
 
     /**

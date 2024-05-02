@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "particleRepresentation/Particle.h"
+#include "particleRepresentation/particle/Particle.h"
 #include "vtk-unstructured.h"
 
 namespace outputWriter {

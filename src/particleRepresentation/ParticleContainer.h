@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Particle.h"
+#include "particleRepresentation/particle/Particle.h"
 
 #include <vector>
 #include <iterator>

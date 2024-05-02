@@ -10,6 +10,9 @@
 #include <array>
 #include <string>
 
+#include <iostream>
+#include "utils/ArrayUtils.h"
+
 class Particle {
 
 private:
