@@ -3,6 +3,7 @@
 #include "spdlog/spdlog.h"
 
 #include "moleculeSimulator/Simulator.h"
+#include "moleculeSimulator/forceCalculation/LeonardJonesForce.h"
 
 int main(int argc, char *argsv[]) {
 
@@ -57,9 +58,9 @@ int main(int argc, char *argsv[]) {
 
     std::cout << "Hello from MolSim for PSE!" << std::endl;
 
-    Gravity gravity;
-    Simulator simulator(inputFilePath, gravity, endT, deltaT);
-    simulator.run();
+  LeonardJonesForce lJF;
+  Simulator simulator(inputFilePath,lJF ,endT, deltaT);
+  simulator.run();
 
     return 0;
 }

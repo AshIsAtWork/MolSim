@@ -74,7 +74,7 @@ void Simulator::run() {
         if (iteration % 10 == 0) {
             fileHandler.writeToFile(particles, iteration,FileHandler::outputFormat::vtk);
         }
-        std::cout << "Iteration " << iteration << " finished." << std::endl;
+        //std::cout << "Iteration " << iteration << " finished." << std::endl;
 
         current_time += deltaT;
     }

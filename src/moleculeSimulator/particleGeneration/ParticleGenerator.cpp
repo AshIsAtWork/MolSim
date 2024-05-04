@@ -18,7 +18,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
         for(unsigned n2 = 0; n2 < N2; n2++) {
             for(unsigned n3 = 0; n3 < N3; n3++) {
                 Particle newParticle {currentPosition,
-                    maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity,3) + velocity, mass, ParticleGenerator::id};
+                    maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity,3) + velocity, mass, id};
                 particles.add(newParticle);
                 currentPosition[2] += h;
             }
@@ -29,4 +29,5 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
         currentPosition[1] = position[1];
         currentPosition[2] = position[2];
     }
+    ++id;
 }
