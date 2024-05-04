@@ -4,7 +4,7 @@
 
 #include "Simulator.h"
 
-void Simulator::calculateF() {
+void Simulator::calculateF_naive() {
     for (auto &p_i : particles) {
         p_i.setOldF(p_i.getF());
         p_i.setF({0,0,0});
@@ -12,6 +12,24 @@ void Simulator::calculateF() {
             if(&p_i != &p_j) {
                 p_i.setF(p_i.getF() + force.compute(p_i, p_j));
             }
+        }
+    }
+}
+
+void Simulator::calculateF() {
+
+    for(auto &p : particles) {
+        p.setOldF(p.getF());
+        p.setF({0,0,0});
+    }
+
+    //Iterate over all distinct pairs of particles and apply Newtons third law of motion.
+
+    for(auto p_i = particles.begin(); p_i != particles.end(); ++p_i) {
+        for(auto p_j = p_i + 1; p_j != particles.end(); ++p_j) {
+            auto f_ij{force.compute(*p_i, *p_j)};
+            p_i->setF(p_i->getF() + f_ij);
+            p_j->setF(p_j->getF() - f_ij);
         }
     }
 }

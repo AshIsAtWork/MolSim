@@ -33,11 +33,21 @@ private:
     * @brief Helper method to calculate the force of all particles.
     *
     * After each time step the forces acting between the particles have changed due to their new positions, so
-    * they have to be recalculated.
+    * they have to be recalculated. This method uses Newtons third law of motion to simplify calculations and make
+    * them more efficient.
     */
 
     void calculateF();
 
+    /**
+    * @brief Depreciated helper method to calculate the force of all particles.
+    *
+    * After each time step the forces acting between the particles have changed due to their new positions, so
+    * they have to be recalculated. This method iterates naively over all pairs of particles and is only their for
+    * comparing time measurements.
+    */
+
+    void calculateF_naive();
     /**
     * @brief Helper method to calculate the position of all particles.
     *
