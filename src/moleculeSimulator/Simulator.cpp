@@ -4,6 +4,8 @@
 
 #include "Simulator.h"
 
+#include "particleGeneration/ParticleGenerator.h"
+
 void Simulator::calculateF_naive() {
     for (auto &p_i : particles) {
         p_i.setOldF(p_i.getF());
@@ -48,7 +50,9 @@ void Simulator::calculateV() {
 
 Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT) : force{force},
     deltaT{deltaT}, endT{endT} {
-    FileHandler::readFile(particles, inputFilePath);
+    //FileHandler::readFile(particles, inputFilePath);
+    ParticleGenerator::generateCuboid(particles, {0,0,0}, 40,8,1,1.1225,1,{0,0,0});
+    ParticleGenerator::generateCuboid(particles, {15,15,0}, 8,8,1,1.1125,1,{0,-10,0});
 }
 
 void Simulator::run() {
