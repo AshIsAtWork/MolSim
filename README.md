@@ -2,6 +2,20 @@
 
 This repository is for the practical course **PSE: Molecular Dynamics** for group A in the SS 2024 semester.
 
+# Repository Status
+
+Code Quality:
+
+[![CodeQL](https://github.com/AshIsAtWork/MolSim/actions/workflows/codeql.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/codeql.yml)
+
+CMake Multi-Platform: (Currently only tested on Ubuntu)
+
+[![CMAKE](https://github.com/AshIsAtWork/MolSim/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/cmake-multi-platform.yml)
+
+Tests:
+
+//TODO
+
 ## All Contributors
 
 **Group Members**
