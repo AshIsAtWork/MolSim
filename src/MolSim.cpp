@@ -1,17 +1,15 @@
 #include <iostream>
 #include <boost/program_options.hpp>
-#include "spdlog/spdlog.h"
-
 #include "moleculeSimulator/Simulator.h"
 #include "moleculeSimulator/forceCalculation/LeonardJonesForce.h"
 
 int main(int argc, char *argsv[]) {
+    double endT;
+    double deltaT;
+    std::string inputFilePath;
+    std::string logLevel;
 
-  double endT;
-  double deltaT;
-  std::string inputFilePath;
-
-    spdlog::info("Hello from MolSim for PSE!");
+    //spdlog::info("Hello from MolSim for PSE!");
 
     namespace po = boost::program_options;
 
@@ -23,22 +21,23 @@ int main(int argc, char *argsv[]) {
              "Time to which simulation will run (starting at 0).")
             ("deltaT,d", po::value<double>(&deltaT)->default_value(0.014), "Duration of one time step.")
             ("inputFilePath,f", po::value<std::string>(&inputFilePath), "Path to the input file. Caution: This "
-                                                                        "is a required argument. In case it is not specified, the program will terminate immediately.");
+             "is a required argument. In case it is not specified, the program will terminate immediately.")
+            ("logLevel,l", po::value<std::string>(&logLevel)->default_value("info"), "Log level:"
+             " Possible options are (off, critical, error, warn, info, debug, trace)");
 
     po::variables_map vm;
     try {
         po::store(po::parse_command_line(argc, argsv, desc), vm);
-    }
-    catch (boost::wrapexcept<po::unknown_option> &e) {
+    } catch (boost::wrapexcept<po::unknown_option> &e) {
         std::cout << "Something went wrong while parsing your arguments: " << e.what()
-                  << "\nPlease have a look on the usage!\n" << std::endl;
+                << "\nPlease have a look on the usage!\n" << std::endl;
 
         std::cout << desc << "\n";
         return -1;
     }
     catch (...) {
         std::cout << "Something went wrong while parsing your arguments. Please have a look on the usage!\n"
-                  << std::endl;
+                << std::endl;
         std::cout << desc << "\n";
         return -1;
     }
@@ -56,11 +55,16 @@ int main(int argc, char *argsv[]) {
         return -1;
     }
 
-    std::cout << "Hello from MolSim for PSE!" << std::endl;
+    // if(!setLogLevel(logLevel)) {
+    //     std::cout << "Please specify a valid trace option!\n";
+    //     std::cout << desc << "\n";
+    // }
 
-  LeonardJonesForce lJF;
-  Simulator simulator(inputFilePath,lJF ,endT, deltaT);
-  simulator.run();
+    // spdlog::info("Hello from MolSim for PSE!");
+
+    LeonardJonesForce lJF;
+    Simulator simulator(inputFilePath, lJF, endT, deltaT);
+    simulator.run();
 
     return 0;
 }

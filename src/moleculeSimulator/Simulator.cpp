@@ -50,9 +50,7 @@ void Simulator::calculateV() {
 
 Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT) : force{force},
     deltaT{deltaT}, endT{endT} {
-    //FileHandler::readFile(particles, inputFilePath);
-    ParticleGenerator::generateCuboid(particles, {0,0,0}, 40,8,1,1.1225,1,{0,0,0});
-    ParticleGenerator::generateCuboid(particles, {15,15,0}, 8,8,1,1.1225,1,{0,-10,0});
+    FileHandler::readFile(particles, inputFilePath);
 }
 
 void Simulator::run() {

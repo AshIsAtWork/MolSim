@@ -1,15 +1,18 @@
-/*
- * FileReader.h
- *
- *  Created on: 23.02.2010
- *      Author: eckhardw
- */
+//
+// Created by daniel on 05.05.24.
+//
 
 #pragma once
 
 #include "particleRepresentation/ParticleContainer.h"
 
+
 class FileReader {
+private:
+    static void readCuboid(ParticleContainer &particles, std::ifstream& input_file);
+
+    static void readParticle(ParticleContainer &particles, std::ifstream& input_file);
+
 
 public:
     FileReader();
@@ -18,3 +21,4 @@ public:
 
     static void readFile(ParticleContainer &particles, std::string &filename);
 };
+

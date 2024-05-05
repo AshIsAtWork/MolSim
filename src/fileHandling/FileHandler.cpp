@@ -4,6 +4,9 @@
 
 #include "FileHandler.h"
 
+#include "reader/CuboidFileReader.h"
+#include "reader/FileReader.h"
+
 void FileHandler::readFile(ParticleContainer &particles, std::string &filePath) {
     FileReader::readFile(particles, filePath);
 }
