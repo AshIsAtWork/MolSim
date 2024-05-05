@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # define project name, version
-project(PSEMolDyn_GroupA VERSION 0.0.1)
+project(PSEMolDyn_GroupA VERSION 0.0.2)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
@@ -20,12 +20,6 @@ file(GLOB_RECURSE MY_SRC
 )
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-
-include(doxygen)
-
-include(spdlog)
-
-include(google-test)
 
 # create make target
 add_executable(MolSim ${MY_SRC})
@@ -57,7 +51,14 @@ target_link_libraries(MolSim
         PUBLIC
         boost_program_options
         xerces-c
-        spdlog
+        spdlog::spdlog
         gtest_main
         gmock_main
 )
+include(doxygen)
+
+include(spdlog)
+
+include(google-test)
+
+include(CTest)

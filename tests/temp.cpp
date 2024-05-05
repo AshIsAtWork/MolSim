@@ -6,5 +6,5 @@
 
 // VERY IMPORTANT READ THIS: http://google.github.io/googletest/primer.html
 TEST(MolSimTest, TempTest) {
-//    spdlog::info("TempTest");
+    spdlog::info("TempTest");
 }

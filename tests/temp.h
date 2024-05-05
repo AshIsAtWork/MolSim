@@ -5,6 +5,6 @@
 #include <gtest/gtest.h>
 //#include "../src/particleRepresentation/ParticleContainer.h"
 //#include "../src/particleRepresentation/particle/Particle.h"
-#include "../src/MolSim.cpp"
-//#include "spdlog/spdlog.h"
+#include "moleculeSimulator/forceCalculation/gravity/Gravity.h"
+#include "spdlog/spdlog.h"
 #include <iostream>
