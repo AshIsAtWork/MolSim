@@ -8,8 +8,7 @@
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "forceCalculation/gravity/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
-#include "utils/ArrayUtils.h"
-
+#include "spdlog/spdlog.h"
 #include <iostream>
 
 /**
@@ -86,7 +85,9 @@ public:
      *
      * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
      * the default parameters will be used.
+     *
+     * @param timeMeasurement Activate or deactivate time measurement
      */
-    void run();
+    void run(bool timeMeasurement);
 
 };

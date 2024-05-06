@@ -6,7 +6,6 @@
 
 // VERY IMPORTANT READ THIS: http://google.github.io/googletest/primer.html
 TEST(MolSimTest, TempTest) {
-    spdlog::info("TempTest");
 //    TODO: Complete this test
     ASSERT_EQ(1, 1);
 }

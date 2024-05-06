@@ -6,7 +6,6 @@
 
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 #include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
@@ -25,12 +24,12 @@ void FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_f
 
     getline(input_file, tmpString);
     std::istringstream numstream(tmpString);
-    std::cout << "Read line: " << tmpString << std::endl;
+    spdlog::debug("Read line: {}",tmpString);
     numstream >> numCuboids;
-    std::cout << "Reading " << numCuboids << "." << std::endl;
+    spdlog::debug("Reading {} cuboids",numCuboids);
 
     getline(input_file, tmpString);
-    std::cout << "Read line: " << tmpString << std::endl;
+    spdlog::debug("Read line: {}",tmpString);
 
     for (int i = 0; i < numCuboids; i++) {
         std::istringstream datastream(tmpString);
@@ -48,16 +47,13 @@ void FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_f
         }
 
         if (datastream.eof()) {
-            std::cout
-                    << "Error reading file: eof reached unexpectedly reading from line "
-                    << i << std::endl;
-            exit(-1);
+            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
         }
         datastream >> brownianMotionAverageVelocity;
         ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity);
 
         getline(input_file, tmpString);
-        std::cout << "Read line: " << tmpString << std::endl;
+        spdlog::debug("Read line: {}",tmpString);
     }
 }
 
@@ -70,14 +66,14 @@ void FileReader::readParticle(ParticleContainer &particles, std::ifstream &input
 
     getline(input_file, tmpString);
     std::istringstream numstream(tmpString);
-    std::cout << "Read line: " << tmpString << std::endl;
+    spdlog::debug("Read line: {}",tmpString);
     numstream >> numParticles;
-    std::cout << "Reading " << numParticles << "." << std::endl;
+    spdlog::debug("Reading {} particles", numParticles);
 
     particles.reserve(numParticles);
 
     getline(input_file, tmpString);
-    std::cout << "Read line: " << tmpString << std::endl;
+    spdlog::debug("Read line: {}",tmpString);
 
     for (int i = 0; i < numParticles; i++) {
         std::istringstream datastream(tmpString);
@@ -89,9 +85,7 @@ void FileReader::readParticle(ParticleContainer &particles, std::ifstream &input
             datastream >> vj;
         }
         if (datastream.eof()) {
-            std::cout
-                    << "Error reading file: eof reached unexpectedly reading from line "
-                    << i << std::endl;
+            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
             exit(-1);
         }
         datastream >> m;
@@ -99,37 +93,39 @@ void FileReader::readParticle(ParticleContainer &particles, std::ifstream &input
         particles.add(newP);
 
         getline(input_file, tmpString);
-        std::cout << "Read line: " << tmpString << std::endl;
+        spdlog::debug("Read line: {}",tmpString);
     }
 }
 
-void FileReader::readFile(ParticleContainer &particles, std::string &filename) {
+void FileReader::readFile(ParticleContainer &particles, const std::string &filename) {
 
     std::ifstream input_file(filename);
     std::string tmpString;
 
     if (input_file.is_open()) {
+        spdlog::info("Opened file: {}",filename.find_first_of('/')
+            != std::string::npos ? filename.substr(filename.find_last_of('/') + 1) : filename);
         getline(input_file, tmpString);
-        std::cout << "Read line: " << tmpString << std::endl;
+        spdlog::debug("Read line: {}",tmpString);
 
         while (tmpString.empty() or tmpString[0] == '#') {
             getline(input_file, tmpString);
-            std::cout << "Read line: " << tmpString << std::endl;
+            spdlog::debug("Read line: {}",tmpString);
         }
 
         if (tmpString == "Particle") {
-            std::cout << "File Format is Particle!\n";
+            spdlog::info("File Format is Particle!");
             readParticle(particles, input_file);
         } else if (tmpString == "Cuboid") {
-            std::cout << "File Format is Cuboid!\n";
+            spdlog::info("File Format is Cuboid!");
             readCuboid(particles,input_file);
         } else {
-            std::cout << "Error: Unknown file format!" << filename << std::endl;
+            spdlog::error("Unknown file format!");
             exit(-1);
         }
 
     } else {
-        std::cout << "Error: could not open file " << filename << std::endl;
+        spdlog::error("Could not open file!");
         exit(-1);
     }
 }

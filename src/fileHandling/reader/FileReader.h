@@ -5,6 +5,7 @@
 #pragma once
 
 #include "particleRepresentation/ParticleContainer.h"
+#include "spdlog/spdlog.h"
 
 
 class FileReader {
@@ -15,10 +16,7 @@ private:
 
 
 public:
-    FileReader();
 
-    virtual ~FileReader();
-
-    static void readFile(ParticleContainer &particles, std::string &filename);
+    static void readFile(ParticleContainer &particles, const std::string &filename);
 };
 

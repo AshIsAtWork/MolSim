@@ -5,7 +5,7 @@
 #pragma once
 #include "outputWriter/VTKWriter.h"
 #include "outputWriter/XYZWriter.h"
-#include "reader/ParticleFileReader.h"
+#include "reader/FileReader.h"
 
 /**
  * @brief Wrapper class for file handling.
@@ -22,9 +22,6 @@ private:
     //write
     outputWriter::VTKWriter vtkWriter;
     outputWriter::XYZWriter xyzWriter;
-
-    //read
-    ParticleFileReader fileReader;
 
 public:
     /**

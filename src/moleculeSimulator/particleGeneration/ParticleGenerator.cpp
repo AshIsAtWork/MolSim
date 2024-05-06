@@ -4,6 +4,7 @@
 
 #include "ParticleGenerator.h"
 
+#include "spdlog/spdlog.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 const double ParticleGenerator::brownianMotionAverageVelocity = 0.1;
@@ -11,6 +12,17 @@ int ParticleGenerator::id = 1;
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::array<double, 3>& position, unsigned N1,
                                        unsigned N2, unsigned N3, double h, double mass,const std::array<double, 3>& velocity) {
+
+    spdlog::info("Generate cuboid with the following parameters:\n"
+                 "Position: {}\n"
+                 "N1: {}\n"
+                 "N2: {}\n"
+                 "N3: {}\n"
+                 "h: {}\n"
+                 "m: {}\n"
+                 "Velocity: {}\n",
+                 ArrayUtils::to_string(position), N1, N2, N3, h, mass, ArrayUtils::to_string(velocity)
+                 );
 
     std::array<double, 3> currentPosition = position;
 

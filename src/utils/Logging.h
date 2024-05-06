@@ -4,8 +4,7 @@
 
 #pragma once
 #include <string>
-
-#include "spdlog/spdlog-inl.h"
+#include "spdlog/spdlog.h"
 
 inline bool setLogLevel(const std::string& logLevel) {
     if(logLevel == "off") {

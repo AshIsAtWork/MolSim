@@ -4,8 +4,6 @@
 
 #include "Simulator.h"
 
-#include "particleGeneration/ParticleGenerator.h"
-
 void Simulator::calculateF_naive() {
     for (auto &p_i : particles) {
         p_i.setOldF(p_i.getF());
@@ -53,7 +51,7 @@ Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, doub
     FileHandler::readFile(particles, inputFilePath);
 }
 
-void Simulator::run() {
+void Simulator::run(bool timeMeasurement) {
 
     double current_time = 0;
 
@@ -69,13 +67,13 @@ void Simulator::run() {
         calculateV();
 
         iteration++;
-        if (iteration % 10 == 0) {
+        if (!timeMeasurement && iteration % 10 == 0) {
             fileHandler.writeToFile(particles, iteration,FileHandler::outputFormat::vtk);
         }
-        //std::cout << "Iteration " << iteration << " finished." << std::endl;
+
+        spdlog::trace("Iteration {} finished.", iteration);
 
         current_time += deltaT;
     }
-
-    std::cout << "output written. Terminating..." << std::endl;
+    spdlog::info("Output written. Terminating...");
 }
