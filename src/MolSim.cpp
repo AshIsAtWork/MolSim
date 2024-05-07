@@ -1,8 +1,8 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "moleculeSimulator/Simulator.h"
-#include "moleculeSimulator/forceCalculation/LeonardJonesForce.h"
-#include "utils/Logging.h"
+#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "utils/TimeMeasurement.h"
 
 int main(int argc, char *argsv[]) {
     double endT;
@@ -76,23 +76,15 @@ int main(int argc, char *argsv[]) {
     spdlog::info("Hello from MolSim for PSE!");
 
     LeonardJonesForce lJF;
+    Simulator simulator(inputFilePath, lJF, endT, deltaT);
 
     if (timeMeasurement) {
-        spdlog::set_level(spdlog::level::off);
-        Simulator simulator(inputFilePath, lJF, endT, deltaT);
-        auto tStart = std::chrono::steady_clock::now();
-        simulator.run(static_cast<bool>(timeMeasurement));
-        auto tEnd = std::chrono::steady_clock::now();
-        std::chrono::nanoseconds duration_ns{tEnd - tStart};
-        double duration_s = static_cast<double>(duration_ns.count()) / 1e9;
-        long duration_min = duration_ns.count() / 60000000000;
-        long duration_min_sec = static_cast<long>(std::ceil(duration_s)) - duration_min * 60;
-
-        std::cout << "Execution time: " << duration_min << " min " << duration_min_sec << " sec | "
-                << duration_s << " sec | " << duration_ns.count() << " ns.\n";
+        spdlog::info("Starting time measurement...");
+        measureTime(simulator);
+        spdlog::info("No output written.");
     } else {
-        Simulator simulator(inputFilePath, lJF, endT, deltaT);
-        simulator.run(static_cast<bool>(timeMeasurement));
+        spdlog::info("Running without time measurement...");
+        simulator.run(false);
     }
     return 0;
 }

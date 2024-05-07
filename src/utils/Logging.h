@@ -6,6 +6,12 @@
 #include <string>
 #include "spdlog/spdlog.h"
 
+/**
+ * @brief Sets the log level which is specified in the string.
+ *
+ * @param logLevel String containing the log level
+ * @return true, of the log level is valid, false otherwise.
+ */
 inline bool setLogLevel(const std::string& logLevel) {
     if(logLevel == "off") {
         spdlog::set_level(spdlog::level::off);
