@@ -36,6 +36,8 @@ public:
      *
      * @param particles Particle container in which the newly read-in particles will be stored.
      * @param filePath File path to the input txt-file of the particles to be read.
+     *
+     * Supported txt file formats at the moment: Particle, Cuboid
      */
     static void readFile(ParticleContainer &particles, std::string &filePath);
 
