@@ -22,7 +22,7 @@ public:
      *
      * This method may be implemented by any child of this class according to the type of force it represents.
      */
-    virtual std::array<double, 3> compute(Particle& target, Particle& source) = 0;
+    virtual std::array<double, 3> compute(Particle &target, Particle &source) = 0;
 
     virtual ~Force() = default;
 };

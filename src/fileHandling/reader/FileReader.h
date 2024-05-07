@@ -25,7 +25,7 @@ private:
      * function is undefined. The program however will not crash. The key word Cuboid in the first non comment
      * line of a file indicates the cuboid file format. Look at 2D-cuboid-collision.txt for reference.
      */
-    static void readCuboid(ParticleContainer &particles, std::ifstream& input_file);
+    static void readCuboid(ParticleContainer &particles, std::ifstream &input_file);
 
     /**
      * @brief Helper method to read files containing particles.
@@ -38,11 +38,9 @@ private:
      * function is undefined. The program however will not crash. The key word Particle in the first non comment
      * line of a file indicates the particle file format. Look at eingabe-sonne.txt for reference.
      */
-    static void readParticle(ParticleContainer &particles, std::ifstream& input_file);
-
+    static void readParticle(ParticleContainer &particles, std::ifstream &input_file);
 
 public:
-
     /**
      * @brief Read txt files containing cuboid or particle data.
      *
@@ -55,4 +53,3 @@ public:
      */
     static void readFile(ParticleContainer &particles, const std::string &filename);
 };
-

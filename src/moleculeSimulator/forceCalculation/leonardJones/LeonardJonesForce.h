@@ -5,13 +5,13 @@
 #pragma once
 #include "../Force.h"
 
-class LeonardJonesForce : public Force{
+class LeonardJonesForce : public Force {
 private:
-
     //Hard encoded constants for computation of the LeonardJonesForce. May be non const in future implementations
 
     static double const epsilon;
     static double const sigma;
+
 public:
     /**
     * @brief Actual computation of the Leonard-Jones force occurring.

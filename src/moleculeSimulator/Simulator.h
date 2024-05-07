@@ -19,9 +19,7 @@
  */
 
 class Simulator {
-
 private:
-
     FileHandler fileHandler;
     ParticleContainer particles;
     Force &force;
@@ -47,6 +45,7 @@ private:
     */
 
     void calculateF_naive();
+
     /**
     * @brief Helper method to calculate the position of all particles.
     *
@@ -61,7 +60,6 @@ private:
     * After each time step the velocity of each particle may have changed due to forces that act between the particles.
     */
     void calculateV();
-
 
 public:
     Simulator() = delete;
@@ -89,5 +87,4 @@ public:
      * @param timeMeasurement Activate or deactivate time measurement
      */
     void run(bool timeMeasurement);
-
 };

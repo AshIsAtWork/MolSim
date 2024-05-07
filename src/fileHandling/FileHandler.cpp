@@ -11,13 +11,13 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath) 
 
 void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format) {
     switch (format) {
-        case outputFormat::xyz : {
+        case outputFormat::xyz: {
             xyzWriter.plotParticles(particles, fileName, iteration);
-        }break;
-        case outputFormat::vtk : {
-
+        }
+        break;
+        case outputFormat::vtk: {
             vtkWriter.initializeOutput(static_cast<int>(particles.size()));
-            for(Particle &p : particles) {
+            for (Particle &p: particles) {
                 vtkWriter.plotParticle(p);
             }
             vtkWriter.writeFile(fileName, iteration);

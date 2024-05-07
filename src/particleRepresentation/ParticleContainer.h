@@ -21,7 +21,6 @@ private:
     std::vector<Particle> particles;
 
 public:
-
     ParticleContainer() = default;
 
     /**
@@ -95,4 +94,3 @@ public:
      */
     void reserve(size_t n);
 };
-

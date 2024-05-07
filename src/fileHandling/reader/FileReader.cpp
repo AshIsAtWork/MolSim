@@ -24,12 +24,12 @@ void FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_f
 
     getline(input_file, tmpString);
     std::istringstream numstream(tmpString);
-    spdlog::debug("Read line: {}",tmpString);
+    spdlog::debug("Read line: {}", tmpString);
     numstream >> numCuboids;
-    spdlog::debug("Reading {} cuboids",numCuboids);
+    spdlog::debug("Reading {} cuboids", numCuboids);
 
     getline(input_file, tmpString);
-    spdlog::debug("Read line: {}",tmpString);
+    spdlog::debug("Read line: {}", tmpString);
 
     for (int i = 0; i < numCuboids; i++) {
         std::istringstream datastream(tmpString);
@@ -53,7 +53,7 @@ void FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_f
         ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity);
 
         getline(input_file, tmpString);
-        spdlog::debug("Read line: {}",tmpString);
+        spdlog::debug("Read line: {}", tmpString);
     }
 }
 
@@ -66,14 +66,14 @@ void FileReader::readParticle(ParticleContainer &particles, std::ifstream &input
 
     getline(input_file, tmpString);
     std::istringstream numstream(tmpString);
-    spdlog::debug("Read line: {}",tmpString);
+    spdlog::debug("Read line: {}", tmpString);
     numstream >> numParticles;
     spdlog::debug("Reading {} particles", numParticles);
 
     particles.reserve(numParticles);
 
     getline(input_file, tmpString);
-    spdlog::debug("Read line: {}",tmpString);
+    spdlog::debug("Read line: {}", tmpString);
 
     for (int i = 0; i < numParticles; i++) {
         std::istringstream datastream(tmpString);
@@ -93,24 +93,25 @@ void FileReader::readParticle(ParticleContainer &particles, std::ifstream &input
         particles.add(newP);
 
         getline(input_file, tmpString);
-        spdlog::debug("Read line: {}",tmpString);
+        spdlog::debug("Read line: {}", tmpString);
     }
 }
 
 void FileReader::readFile(ParticleContainer &particles, const std::string &filename) {
-
     std::ifstream input_file(filename);
     std::string tmpString;
 
     if (input_file.is_open()) {
-        spdlog::info("Opened file: {}",filename.find_first_of('/')
-            != std::string::npos ? filename.substr(filename.find_last_of('/') + 1) : filename);
+        spdlog::info("Opened file: {}", filename.find_first_of('/')
+                                        != std::string::npos
+                                            ? filename.substr(filename.find_last_of('/') + 1)
+                                            : filename);
         getline(input_file, tmpString);
-        spdlog::debug("Read line: {}",tmpString);
+        spdlog::debug("Read line: {}", tmpString);
 
         while (tmpString.empty() or tmpString[0] == '#') {
             getline(input_file, tmpString);
-            spdlog::debug("Read line: {}",tmpString);
+            spdlog::debug("Read line: {}", tmpString);
         }
 
         if (tmpString == "Particle") {
@@ -118,12 +119,11 @@ void FileReader::readFile(ParticleContainer &particles, const std::string &filen
             readParticle(particles, input_file);
         } else if (tmpString == "Cuboid") {
             spdlog::info("File Format is Cuboid!");
-            readCuboid(particles,input_file);
+            readCuboid(particles, input_file);
         } else {
             spdlog::error("Unknown file format!");
             exit(-1);
         }
-
     } else {
         spdlog::error("Could not open file!");
         exit(-1);
