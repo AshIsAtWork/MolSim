@@ -32,17 +32,18 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Dependencies
-        run: |
+        run: >
           sudo apt install libxerces-c-dev
           sudo apt-get install libboost-program-options-dev
+
       - name: Cmake in Progress
-        run: |
+        run: >
           rm -rf build/
           mkdir build
           cd build
 #          SETTING FSANITIZE OPTIONS ACCORDING TO ASSIGNMENT
           cmake -DCMAKE_CXX_FLAGS="-Werror -Wall -fsanitize=address -fsanitize=undefined" ..
       - name: Ctest in Progress
-        run: |
+        run: >
           cd build
           ctest --output-on-failure
