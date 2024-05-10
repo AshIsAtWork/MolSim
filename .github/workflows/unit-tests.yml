@@ -33,8 +33,7 @@ jobs:
 
       - name: Install Dependencies
         run: >
-          sudo apt install libxerces-c-dev
-          sudo apt-get install libboost-program-options-dev
+          sudo apt install libxerces-c-dev && sudo apt-get install libboost-program-options-dev
 
       - name: Cmake in Progress
         run: >
