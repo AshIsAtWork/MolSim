@@ -24,10 +24,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 # create make target
 add_executable(MolSim ${MY_SRC})
 
-# add sanitizers
-add_compile_options(-fsanitize=address)
-add_link_options(-fsanitize=address)
-
 # set cxx standard. You may raise this if you want.
 target_compile_features(MolSim
         PRIVATE
