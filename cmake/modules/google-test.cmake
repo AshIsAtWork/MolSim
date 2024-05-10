@@ -3,10 +3,10 @@
 message(STATUS "Enabled GoogleTest")
 
 #Fix for a stupid message I was getting about CMP0135
-if(CMAKE_MINOR_VERSION GREATER_EQUAL 25)
+if (CMAKE_MINOR_VERSION GREATER_EQUAL 25)
     # Set download timestamp policy
     cmake_policy(SET CMP0135 NEW)
-endif()
+endif ()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,7 +28,8 @@ file(GLOB_RECURSE TESTS
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.h"
 )
 
-#Remove MolSim.cpp from the tests because Main shouldn't be unit tested and it gives an error about multiple definitions of main
+#Remove MolSim.cpp from the tests because Main shouldn't be unit tested, it should only ever be integration tested
+#and it gives an error about multiple definitions of main
 list(FILTER TESTS EXCLUDE REGEX "MolSim.cpp")
 
 add_executable(MolSimTests ${TESTS})

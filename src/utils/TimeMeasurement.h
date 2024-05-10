@@ -9,7 +9,7 @@
 /**
  * @brief Measure the execution time of the simulation
  *
- * @param simulator Simualator on which the simulation will run
+ * @param simulator Simulator on which the simulation will run
  *
  * During the time measurement all output (logs and file output) is disabled
  */

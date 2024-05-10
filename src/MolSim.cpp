@@ -27,6 +27,8 @@ int main(int argc, char *argsv[]) {
 
     po::variables_map vm;
 
+    // Choice of using cout in place of spdlog, because this is before our simulation starts and we choose to only
+    // use spdlog after that.
     try {
         po::parsed_options parsed = parse_command_line(argc, argsv, desc);
 

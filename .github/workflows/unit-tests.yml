@@ -1,0 +1,48 @@
+name: Unit-Tests Using Ctest
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        build_type: [ Release ]
+        c_compiler: [ gcc, clang, cl ]
+        include:
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+        exclude:
+          - os: windows-latest
+            c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt install libxerces-c-dev
+          sudo apt-get install libboost-program-options-dev
+      - name: Cmake in Progress
+        run: |
+          rm -rf build/
+          mkdir build
+          cd build
+#          SETTING FSANITIZE OPTIONS ACCORDING TO ASSIGNMENT
+          cmake -DCMAKE_CXX_FLAGS="-Werror -Wall -fsanitize=address -fsanitize=undefined" ..
+      - name: Ctest in Progress
+        run: |
+          cd build
+          ctest --output-on-failure

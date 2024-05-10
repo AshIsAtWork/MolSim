@@ -14,7 +14,8 @@ CMake Multi-Platform: (Currently only tested on Ubuntu)
 
 Tests:
 
-//TODO
+[![CTest](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml)
+
 
 ## All Contributors
 
@@ -45,13 +46,13 @@ This is the practical project repository for the course offered by the Scientifi
 
 ou will need the following to compile the program:
 
-- Doxygen 1.10.0
+- Doxygen 1.10.0 (Only needed for generating documentation)
 
 ```bash
 sudo apt install doxygen
 ```
 
-- Graphviz 2.42.2
+- Graphviz 2.42.2 (Only needed for generating documentation)
 
 ```bash
 sudo apt install graphviz
@@ -98,13 +99,18 @@ mkdir build && cd build
    make doc_doxygen
    ```
    Note: Output present inside **build/docs/html/index.html**
-4. Running the Program
-   - Inside your **build/** folder run the following command:
-   ```bash
-   ./MolSim <FILENAME>
-   ```
-   Note: FILENAME includes the path and should look something like the following:
-   ```bash
-   ./MolSim -f ../input/eingabe-sonne.txt
-   ```
-     
+   4. Running the Program
+      - Inside your **build/** folder run the following command:
+      ```bash
+      ./MolSim <FILENAME>
+      ```
+      Note: FILENAME includes the path and should look something like the following:
+      - Task 1:
+        ```bash
+         ./MolSim -f ../input/eingabe-sonne.txt
+        ```
+      - Task 2:
+      //TODO FIX THIS
+         ```bash
+          ./MolSim -f ../input/...
+         ```
