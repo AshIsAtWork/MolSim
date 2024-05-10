@@ -1,4 +1,4 @@
-name: CMake on multiple platforms
+name: Unit-Tests using Ctest
 on:
   push:
     branches: [ "**" ]
