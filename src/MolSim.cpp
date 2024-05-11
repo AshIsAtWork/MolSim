@@ -2,14 +2,14 @@
 #include <boost/program_options.hpp>
 #include "moleculeSimulator/Simulator.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
-#include "utils/TimeMeasurement.h"
+#include "utils/Benchmark.h"
 
 int main(int argc, char *argsv[]) {
     double endT;
     double deltaT;
     std::string inputFilePath;
     std::string logLevel;
-    bool timeMeasurement = false;
+    bool benchmark = false;
 
     namespace po = boost::program_options;
 
@@ -72,7 +72,7 @@ int main(int argc, char *argsv[]) {
     }
 
     if (vm.count("time")) {
-        timeMeasurement = true;
+        benchmark = true;
     }
 
     spdlog::info("Hello from MolSim for PSE!");
@@ -80,9 +80,9 @@ int main(int argc, char *argsv[]) {
     LeonardJonesForce lJF;
     Simulator simulator(inputFilePath, lJF, endT, deltaT);
 
-    if (timeMeasurement) {
+    if (benchmark) {
         spdlog::info("Starting time measurement...");
-        measureTime(simulator);
+        performBenchmark(simulator);
         spdlog::info("No output written.");
     } else {
         spdlog::info("Running without time measurement...");

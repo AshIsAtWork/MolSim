@@ -17,6 +17,7 @@ void Simulator::calculateF_naive() {
 }
 
 void Simulator::calculateF() {
+    //Reset all forces and save current forces in old force variables.
     for (auto &p: particles) {
         p.setOldF(p.getF());
         p.setF({0, 0, 0});
@@ -50,7 +51,7 @@ Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, doub
     FileHandler::readFile(particles, inputFilePath);
 }
 
-void Simulator::run(bool timeMeasurement) {
+void Simulator::run(bool benchmark) {
     double current_time = 0;
 
     int iteration = 0;
@@ -68,7 +69,7 @@ void Simulator::run(bool timeMeasurement) {
         calculateV();
 
         iteration++;
-        if (!timeMeasurement && iteration % 10 == 0) {
+        if (!benchmark && iteration % 10 == 0) {
             fileHandler.writeToFile(particles, iteration, FileHandler::outputFormat::vtk);
         }
 

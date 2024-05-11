@@ -13,7 +13,7 @@
  *
  * During the time measurement all output (logs and file output) is disabled
  */
-inline void measureTime(Simulator &simulator) {
+inline void performBenchmark(Simulator &simulator) {
     spdlog::set_level(spdlog::level::off);
     auto tStart = std::chrono::steady_clock::now();
     simulator.run(true);

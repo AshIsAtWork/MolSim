@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
-
 #include "moleculeSimulator/Simulator.h"
+#include "moleculeSimulator/forceCalculation/gravity/Gravity.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 
 
@@ -100,6 +100,17 @@ TEST_F(SimulatorTest, TwoCuboidsWithTwoParticles) {
     LeonardJonesForce lJF;
     std::string filepath = "../tests/testData/CuboidTest3.txt";
     Simulator simulator(filepath, lJF, 0.001, 0.0001);
+    for(auto p : simulator.getParticles()) {
+        std::cout << p.getV() << "\n";
+    }
+    //Reset initial velocities to the values we used as reference,
+    //because they are generated randomly (Brownian Motion) when creating the simulator, so otherwise
+    //the test would not make any sense.
+    simulator.getParticles().at(0).setV({-0.171411, 0.0178057, 0.00571789});
+    simulator.getParticles().at(1).setV({0.0756284, -0.0582274, -0.160245});
+    simulator.getParticles().at(2).setV({0.101672, -0.05844, -0.0104494});
+    simulator.getParticles().at(3).setV({-0.0279367, -0.00286395, -0.0690031});
+
     //Set timeMeasurement to true to deactivate all output
     simulator.run(true);
     ParticleContainer result = simulator.getParticles();

@@ -5,7 +5,10 @@
 #pragma once
 
 #include "particleRepresentation/ParticleContainer.h"
-#include "spdlog/spdlog.h"
+#include <cstdlib>
+#include <fstream>
+#include <sstream>
+#include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
 
 
 /**

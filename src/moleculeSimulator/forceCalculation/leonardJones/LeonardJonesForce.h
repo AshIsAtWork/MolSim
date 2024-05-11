@@ -9,8 +9,8 @@ class LeonardJonesForce : public Force {
 private:
     //Hard encoded constants for computation of the LeonardJonesForce. May be non const in future implementations
 
-    static double const epsilon;
-    static double const sigma;
+    static double constexpr  epsilon = 5;
+    static double constexpr  sigma = 1;
 
 public:
     /**

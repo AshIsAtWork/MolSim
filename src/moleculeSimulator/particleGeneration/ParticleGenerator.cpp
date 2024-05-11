@@ -4,10 +4,8 @@
 
 #include "ParticleGenerator.h"
 
-#include "spdlog/spdlog.h"
-#include "utils/MaxwellBoltzmannDistribution.h"
+//The particles of the first cuboid will get all get id 1, the particles of the next cuboid id 2 and so on.
 
-const double ParticleGenerator::brownianMotionAverageVelocity = 0.1;
 int ParticleGenerator::id = 1;
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::array<double, 3>& position, unsigned N1,
@@ -41,5 +39,6 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
         currentPosition[1] = position[1];
         currentPosition[2] = position[2];
     }
+    //Increment id, so that all particles of the next cuboid being generated will receive another id.
     ++id;
 }

@@ -5,15 +5,13 @@
 #pragma once
 
 #include "particleRepresentation/particle/Particle.h"
-
 #include <vector>
-#include <iterator>
 
 /**
  * @brief Class to store the particles for simulation.
  *
  * The storage of the particles is based on std::vector. This guarantees fast iteration over the particles, because
- * they are stored consecutive in memory.
+ * they are stored consecutively in memory.
  */
 
 class ParticleContainer {

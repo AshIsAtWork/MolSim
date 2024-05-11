@@ -4,12 +4,6 @@
 
 #include "FileReader.h"
 
-#include <cstdlib>
-#include <fstream>
-#include <sstream>
-
-#include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
-
 void FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_file) {
     std::array<double, 3> position{};
     unsigned N1;

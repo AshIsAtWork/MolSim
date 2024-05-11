@@ -4,6 +4,7 @@
 
 #pragma once
 #include "particleRepresentation/ParticleContainer.h"
+#include "utils/MaxwellBoltzmannDistribution.h"
 
 /**
  * @brief Class for generating various particle structures. Currently only cuboids are supported.
@@ -13,7 +14,7 @@ private:
     /**
      * At the moment this parameter is fixed. In future versions this may change.
      */
-    const static double brownianMotionAverageVelocity;
+    constexpr  static double brownianMotionAverageVelocity = 0.1;
 
     /**
      * All particles being part of the same structure will be assigned the same id. This id is incremented by

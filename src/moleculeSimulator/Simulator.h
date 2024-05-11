@@ -6,10 +6,9 @@
 
 #include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include "forceCalculation/gravity/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
-#include "spdlog/spdlog.h"
 #include <iostream>
+#include "forceCalculation/Force.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -84,9 +83,9 @@ public:
      * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
      * the default parameters will be used.
      *
-     * @param timeMeasurement Activate or deactivate time measurement
+     * @param benchmark Activate or deactivate time measurement
      */
-    void run(bool timeMeasurement);
+    void run(bool benchmark);
 
     /**
      * Get the Particle container of this simultor

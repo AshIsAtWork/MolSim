@@ -94,19 +94,30 @@ mkdir build && cd build
    ```bash
    make doc_doxygen
    ```
-   Note: Output present inside **build/docs/html/index.html**
-   4. Running the Program
-      - Inside your **build/** folder run the following command:
+Note: Output present inside **build/docs/html/index.html**
+4. Running the Program
+   - Inside your **build/** folder run the following command:
+   ```bash
+   ./MolSim <FILENAME>
+   ```
+   Note: FILENAME includes the path and should look something like the following:
+   - Task 1:
+     ```bash
+      ./MolSim -f ../input/eingabe-sonne.txt
+     ```
+   - Task 2:
       ```bash
-      ./MolSim <FILENAME>
+       ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
       ```
-      Note: FILENAME includes the path and should look something like the following:
-      - Task 1:
+5. Running all Tests
+   - First: Change into your **build/** folder:
+   
+     - Using ctest:
         ```bash
-         ./MolSim -f ../input/eingabe-sonne.txt
+           ctest
         ```
-      - Task 2:
-      //TODO FIX THIS
-         ```bash
-          ./MolSim -f ../input/...
-         ```
+     - Using executable:
+        ```bash
+          ./MolSimTests
+        ```
+   
