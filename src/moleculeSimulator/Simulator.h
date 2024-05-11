@@ -87,4 +87,11 @@ public:
      * @param timeMeasurement Activate or deactivate time measurement
      */
     void run(bool timeMeasurement);
+
+    /**
+     * Get the Particle container of this simultor
+     *
+     * @return Particle container of this simulator
+     */
+    ParticleContainer& getParticles();
 };

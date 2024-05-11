@@ -55,6 +55,9 @@ void Simulator::run(bool timeMeasurement) {
 
     int iteration = 0;
 
+    //Calculate the initial forces before starting the simulation
+    calculateF();
+
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < endT) {
         // calculate new x
@@ -73,5 +76,10 @@ void Simulator::run(bool timeMeasurement) {
 
         current_time += deltaT;
     }
+
     spdlog::info("Output written. Terminating...");
+}
+
+ParticleContainer& Simulator::getParticles() {
+    return particles;
 }
