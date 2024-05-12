@@ -29,7 +29,7 @@ TEST(GravityTest, CompareWithHandCalculatedResult) {
 }
 
 /**
- * Test, if the calculation adheres to Newton's third law of motion
+ * Test, if the calculation adheres to Newton's third law of motion.
  */
 
 TEST(GravityTest, NewtonsThirdLawOfMotion) {
@@ -45,7 +45,7 @@ TEST(GravityTest, NewtonsThirdLawOfMotion) {
 }
 
 /**
- * Test some edge cases
+ * Test some edge cases...
  */
 
 /**
@@ -64,7 +64,7 @@ TEST(GravityTest, MassEqualsZero) {
 }
 
 /**
- * The gravitational force that exerts a particle on itself is undefined
+ * The gravitational force that exerts a particle on itself is undefined.
  */
 
 TEST(GravityTest, ForceOnItself) {
@@ -78,7 +78,7 @@ TEST(GravityTest, ForceOnItself) {
 }
 
 /**
- * The gravitational force of two particles that are in the same place is undefined
+ * The gravitational force of two particles that are in the same place is undefined.
  */
 
 TEST(GravityTest, PositionsEqual) {

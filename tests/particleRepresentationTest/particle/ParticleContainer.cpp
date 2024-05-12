@@ -24,7 +24,7 @@ protected:
 };
 
 /**
- * Test, if the add function acutally adds the particle p to the container.
+ * Does the add function acutally add the particle p to the container?
  */
 
 TEST_F(ParticleContainerTest, AddTest) {
@@ -34,7 +34,7 @@ TEST_F(ParticleContainerTest, AddTest) {
 }
 
 /**
- * Test, if out of range access is recognised and the added particle can be accessed.
+ * Is out of range access recognised and can the added particle be accessed?
  */
 
 TEST_F(ParticleContainerTest, AtTest) {
@@ -44,7 +44,7 @@ TEST_F(ParticleContainerTest, AtTest) {
 }
 
 /**
- *Test, if the size function works correctly.
+ * Is the size of the container correct?
  */
 
 TEST_F(ParticleContainerTest, SizeTest) {
@@ -60,7 +60,7 @@ TEST_F(ParticleContainerTest, SizeTest) {
 }
 
 /**
- *Test, if the capacity function works as expected.
+ *Is the capacity set correctly?
  */
 
 TEST_F(ParticleContainerTest, CapacityTest) {
@@ -76,7 +76,7 @@ TEST_F(ParticleContainerTest, CapacityTest) {
 }
 
 /**
- *Test, if reserve function is correct.
+ *Does the reverse method reserve space as specified?
  */
 
 TEST_F(ParticleContainerTest, ReserveTest) {

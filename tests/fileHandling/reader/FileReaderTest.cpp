@@ -102,7 +102,7 @@ TEST_F(FileReaderTest, ParticleFormat_OneParticle) {
 }
 
 /**
- * Test Particle format file that contains multiple particles
+ * Test Particle format file that contains multiple particles.
  */
 
 TEST_F(FileReaderTest, ParticleFormat_MultipleParticles) {
@@ -139,7 +139,7 @@ TEST_F(FileReaderTest, ParticleFormat_FormatViolation) {
 }
 
 /**
- * Try to read a file whose file format is invalid, not specified or does not even exist
+ * Try to read a file whose file format is invalid, not specified or does not even exist.
  */
 
 TEST_F(FileReaderTest, InvalidFileFormat) {

@@ -31,7 +31,7 @@ TEST(LeonardJonesForceTest, CompareWithHandCalculatedResult) {
 }
 
 /**
- * Test, if the calculation adheres to Newton's third law of motion
+ * Test, if the calculation adheres to Newton's third law of motion.
  */
 
 TEST(LeonardJonesForceTest, NewtonsThirdLawOfMotion) {
@@ -69,7 +69,7 @@ TEST(LeonardJonesForceTest, MassEqualsZero) {
 }
 
 /**
- * The Leonard Jones force that exerts a particle on itself is undefined
+ * The Leonard Jones force that exerts a particle on itself is undefined.
  */
 
 TEST(LeonardJonesForceTest, ForceOnItself) {
@@ -83,7 +83,7 @@ TEST(LeonardJonesForceTest, ForceOnItself) {
 }
 
 /**
- * The Leonard Jones force of two particles that are in the same place is undefined
+ * The Leonard Jones force of two particles that are in the same place is undefined.
  */
 
 TEST(LeonardJonesForceTest, PositionsEqual) {

@@ -23,10 +23,10 @@ private:
      * @param particles Particle Container to store the particles in.
      * @param input_file Input file stream being currently at the position of that line, in which the number of cuboids is specified.
      *
-     * Only parses files correctly which adhere to the cuboid format. If the file pretends to contain
-     * valid cuboid data, but violates the input format for some reason, the behaviour of this
-     * function is undefined. The program however will not crash. The key word Cuboid in the first non comment
-     * line of a file indicates the cuboid file format. Look at 2D-cuboid-collision.txt for reference.
+     * Only parses files correctly which adhere to the particle format. If the file pretends to contain
+     * valid cuboid data, but violates the input format for some reason, this method may provide erroneous data.
+     * If an error is detected, this function returns -1. The key word Cuboid in the first non comment
+     * line of a file indicates the cuboid file format. Look at 2D-cuboid.collision.txt for reference.
      *
      *@return 0, if the operation was successful, -1 otherwise
      *
@@ -40,8 +40,8 @@ private:
      * @param input_file Input file stream being currently at the position of that line, in which the number of particles is specified.
      *
      * Only parses files correctly which adhere to the particle format. If the file pretends to contain
-     * valid particle data, but violates the input format for some reason, the behaviour of this
-     * function is undefined. The program however will not crash. The key word Particle in the first non comment
+     * valid particle data, but violates the input format for some reason, this method may provide erroneous data.
+     * If an error is detected, this function returns -1. The key word Particle in the first non comment
      * line of a file indicates the particle file format. Look at eingabe-sonne.txt for reference.
      *
      * @return 0, if the operation was successful, -1 otherwise
