@@ -7,7 +7,7 @@
 
 
 /**
- *In this test we calculated the force between to particles by hand using the formula on worksheet1.
+ *In this test we calculated the gravitational force between to particles by hand using the formula on worksheet1.
  *
  *To make our calculations traceable, we provide here the latex code of our formula:
  *
@@ -42,4 +42,52 @@ TEST(GravityTest, NewtonsThirdLawOfMotion) {
     EXPECT_NEAR(force_p1p2[0], -force_p2p1[0], 1e-9);
     EXPECT_NEAR(force_p1p2[1], -force_p2p1[1], 1e-9);
     EXPECT_NEAR(force_p1p2[2], -force_p2p1[2], 1e-9);
+}
+
+/**
+ * Test some edge cases
+ */
+
+/**
+ * If the mass of one particle is 0, the gravitational force has to be 0.
+ */
+
+TEST(GravityTest, MassEqualsZero) {
+    Particle p1({1, 3, 4}, {0, 0, 0}, 0, 1);
+    Particle p2({7, 3, 9}, {0, 0, 0}, 1, 1);
+    Gravity g;
+
+    auto force_p1p2 = g.compute(p1, p2);
+    EXPECT_NEAR(force_p1p2[0], 0, 1e-9);
+    EXPECT_NEAR(force_p1p2[1], 0, 1e-9);
+    EXPECT_NEAR(force_p1p2[2], 0, 1e-9);
+}
+
+/**
+ * The gravitational force that exerts a particle on itself is undefined
+ */
+
+TEST(GravityTest, ForceOnItself) {
+    Particle p1({1, 3, 4}, {0, 0, 0}, 1, 1);
+    Gravity g;
+
+    auto force_p1p1 = g.compute(p1, p1);
+    EXPECT_TRUE(std::isnan(force_p1p1[0]));
+    EXPECT_TRUE(std::isnan(force_p1p1[1]));
+    EXPECT_TRUE(std::isnan(force_p1p1[2]));
+}
+
+/**
+ * The gravitational force of two particles that are in the same place is undefined
+ */
+
+TEST(GravityTest, PositionsEqual) {
+    Particle p1({1, 1, 1}, {0, 0, 0}, 1, 1);
+    Particle p2({1, 1, 1}, {1, 2, 3}, 5, 1);
+    Gravity g;
+
+    auto force_p1p2 = g.compute(p1, p2);
+    EXPECT_TRUE(std::isnan(force_p1p2[0]));
+    EXPECT_TRUE(std::isnan(force_p1p2[1]));
+    EXPECT_TRUE(std::isnan(force_p1p2[2]));
 }

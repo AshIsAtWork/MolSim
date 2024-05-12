@@ -25,8 +25,8 @@ void Simulator::calculateF() {
 
     //Iterate over all distinct pairs of particles and apply Newtons third law of motion.
 
-    for (auto p_i = particles.begin(); p_i != particles.end(); ++p_i) {
-        for (auto p_j = p_i + 1; p_j != particles.end(); ++p_j) {
+    for (auto p_i = particles.begin(); p_i != particles.end(); std::advance(p_i,1)) {
+        for (auto p_j = std::next(p_i); p_j != particles.end(); std::advance(p_j,1)) {
             auto f_ij{force.compute(*p_i, *p_j)};
             p_i->setF(p_i->getF() + f_ij);
             p_j->setF(p_j->getF() - f_ij);

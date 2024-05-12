@@ -9,7 +9,7 @@ ParticleContainer::ParticleContainer(size_t capacity) {
     particles.reserve(capacity);
 }
 
-void ParticleContainer::add(Particle &p) {
+void ParticleContainer::add(Particle p) {
     particles.push_back(std::move(p));
 }
 

@@ -24,11 +24,7 @@ protected:
 };
 
 /**
- * Tests
- */
-
-/**
- * Test, if the add function acutally adds the particle p to the container
+ * Test, if the add function acutally adds the particle p to the container.
  */
 
 TEST_F(ParticleContainerTest, AddTest) {
@@ -38,7 +34,7 @@ TEST_F(ParticleContainerTest, AddTest) {
 }
 
 /**
- * Test, if out of range access is recognised and the added particle can be accessed
+ * Test, if out of range access is recognised and the added particle can be accessed.
  */
 
 TEST_F(ParticleContainerTest, AtTest) {

@@ -27,8 +27,11 @@ private:
      * valid cuboid data, but violates the input format for some reason, the behaviour of this
      * function is undefined. The program however will not crash. The key word Cuboid in the first non comment
      * line of a file indicates the cuboid file format. Look at 2D-cuboid-collision.txt for reference.
+     *
+     *@return 0, if the operation was successful, -1 otherwise
+     *
      */
-    static void readCuboid(ParticleContainer &particles, std::ifstream &input_file);
+    static int readCuboid(ParticleContainer &particles, std::ifstream &input_file);
 
     /**
      * @brief Helper method to read files containing particles.
@@ -40,8 +43,10 @@ private:
      * valid particle data, but violates the input format for some reason, the behaviour of this
      * function is undefined. The program however will not crash. The key word Particle in the first non comment
      * line of a file indicates the particle file format. Look at eingabe-sonne.txt for reference.
+     *
+     * @return 0, if the operation was successful, -1 otherwise
      */
-    static void readParticle(ParticleContainer &particles, std::ifstream &input_file);
+    static int readParticle(ParticleContainer &particles, std::ifstream &input_file);
 
 public:
     /**
@@ -53,6 +58,9 @@ public:
      * Valid file formats are Cuboid and Particle. The format of a txt file must be specified in the first line
      * that is not a comment. Look at the files in the input file for more information. Any other file format will
      * be rejected. If the specified file format is violated, the data may not be read correctly.
+     *
+     * @return 0, if the operation was successful, -1 if the file format is violated, -2 if the file could not be opened and -3 if the
+     * the file format is unknown
      */
-    static void readFile(ParticleContainer &particles, const std::string &filename);
+    static int readFile(ParticleContainer &particles, const std::string &filename);
 };

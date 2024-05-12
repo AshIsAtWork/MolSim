@@ -8,7 +8,7 @@
 
 
 /**
- *In this test we calculated the force between to particles by hand using the formula on worksheet2. The actual implemenation
+ *In this test we calculated the Leonard Jones force between to particles by hand using the formula on worksheet2. The actual implemenation
  *uses a simplified version of this formula to increase efficiency, so this test checks as well, if our simplifications are correct.
  *
  *To make our calculations traceable, we provide here the latex code of our formula:
@@ -44,4 +44,55 @@ TEST(LeonardJonesForceTest, NewtonsThirdLawOfMotion) {
     EXPECT_NEAR(force_p1p2[0], -force_p2p1[0], 1e-9);
     EXPECT_NEAR(force_p1p2[1], -force_p2p1[1], 1e-9);
     EXPECT_NEAR(force_p1p2[2], -force_p2p1[2], 1e-9);
+}
+
+/**
+ * Test some edge cases
+ */
+
+/**
+ * The Leonard Jones force is independent of the mass of the particles.
+ */
+
+TEST(LeonardJonesForceTest, MassEqualsZero) {
+    Particle p1({1, 3, 4}, {0, 0, 0}, 1, 1);
+    Particle p2({7, 3, 9}, {0, 0, 0}, 1, 1);
+    Particle p3({1, 3, 4}, {0, 0, 0}, 2, 1);
+    Particle p4({7, 3, 9}, {0, 0, 0}, 5, 1);
+    LeonardJonesForce g;
+
+    auto force_p1p2 = g.compute(p1, p2);
+    auto force_p3p4 = g.compute(p3, p4);
+    EXPECT_NEAR(force_p1p2[0], force_p3p4[0], 1e-9);
+    EXPECT_NEAR(force_p1p2[1], force_p3p4[1], 1e-9);
+    EXPECT_NEAR(force_p1p2[2], force_p3p4[2], 1e-9);
+}
+
+/**
+ * The Leonard Jones force that exerts a particle on itself is undefined
+ */
+
+TEST(LeonardJonesForceTest, ForceOnItself) {
+    Particle p1({1, 3, 4}, {0, 0, 0}, 1, 1);
+    LeonardJonesForce g;
+
+    auto force_p1p1 = g.compute(p1, p1);
+    EXPECT_TRUE(std::isnan(force_p1p1[0]));
+    EXPECT_TRUE(std::isnan(force_p1p1[1]));
+    EXPECT_TRUE(std::isnan(force_p1p1[2]));
+}
+
+/**
+ * The Leonard Jones force of two particles that are in the same place is undefined
+ */
+
+TEST(LeonardJonesForceTest, PositionsEqual) {
+    Particle p1({1, 1, 1}, {0, 0, 0}, 1, 1);
+    Particle p2({1, 1, 1}, {1, 2, 3}, 5, 1);
+    LeonardJonesForce g;
+
+    auto force_p1p2 = g.compute(p1, p2);
+    EXPECT_TRUE(std::isnan(force_p1p2[0]));
+    EXPECT_TRUE(std::isnan(force_p1p2[1]));
+    EXPECT_TRUE(std::isnan(force_p1p2[2]));
 }

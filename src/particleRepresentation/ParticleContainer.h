@@ -37,7 +37,7 @@ public:
      *
      * Add one particle to this container. It will be appended.
      */
-    void add(Particle &p);
+    void add(Particle p);
 
     /**
      * @brief Obtain particle at position i.

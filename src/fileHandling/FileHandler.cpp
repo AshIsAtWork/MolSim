@@ -5,7 +5,9 @@
 #include "FileHandler.h"
 
 void FileHandler::readFile(ParticleContainer &particles, std::string &filePath) {
-    FileReader::readFile(particles, filePath);
+    if (FileReader::readFile(particles, filePath) != 0) {
+        exit(1);
+    }
 }
 
 void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format) {

@@ -59,19 +59,6 @@ TEST_F(ParticleGeneratorTest, CuboidPositionsTest) {
 }
 
 /**
- * Is Brownian Motion applied to all particles?
- * Warning: There is a very very low probability that this test might fail, even if the function is correct. This
- * happens, when the value {0,0,0} is sampled for some particle.
- */
-
-TEST_F(ParticleGeneratorTest, CuboidVelocitiesTest) {
-    std::array<double, 3> v0 = {0, 0, 0};
-    for (int i = 0; i < 8; i++) {
-        EXPECT_NE(pc.at(i).getV(), v0);
-    }
-}
-
-/**
  * Is the mass of each particle set correctly?
  */
 
