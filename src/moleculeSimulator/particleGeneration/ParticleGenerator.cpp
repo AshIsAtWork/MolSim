@@ -27,12 +27,13 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
     for (unsigned n1 = 0; n1 < N1; n1++) {
         for (unsigned n2 = 0; n2 < N2; n2++) {
             for (unsigned n3 = 0; n3 < N3; n3++) {
-                particles.add({
+                Particle pToAdd = {
                     currentPosition,
                     maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity, 3) + initVelocity,
                     mass,
                     id
-                });
+                };
+                particles.add(pToAdd);
                 currentPosition[2] += h;
             }
             currentPosition[1] += h;

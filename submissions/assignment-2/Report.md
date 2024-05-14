@@ -35,7 +35,7 @@ We wrote a comment above each test to describe the idea behind it. This may help
 
 Finally, we also created two larger tests that test multiple iterations in the Simulator class ([see here](../../tests/moleculeSimulatorTest/SimulatorTest.cpp)). We have calculated the data that we use as a reference for these tests using our own implementation which might seem counterintuitive at the first glance. We have some strong reasons to think that our implementation is currently calculating correct results, which we have checked in more detail using ParaView and other unit tests. In the future, however, we may change our implementation or make optimizations. These tests ensure that our program still delivers correct results.
 
-**3. Running all Unit Tests**
+**3. Running all Unit Tests**  
 To run all unit tests, first build the whole project as described in our [README](../../README.md) file. Then change into the build folder and run `ctest` or `./MolSimTests` over the command line.
 
 ---
@@ -53,7 +53,7 @@ TODO: Add some more information. I am not sure what we did exactly here.
 
 ## Task 3: Logging ##
 
-**1. Integrating spdlog into our Project**
+**1. Integrating spdlog into our Project**  
 Like in task one, we first informed ourselves about the different possibilities of adding spdlog to our project. Because we cannot rely on any system libraries we had to add all required dependencies to this repository. Again we used the `FetchContent_Declare` function of CMake pulling automatically the latest stable version of spdlog from GitHub. Because the setup is done implicitly when building the project, this procedure ensures a good user experience for other people that will work with our project.  
 Like already done with googletest we extracted all CMake code corresponding to the integration of spdlog into a [separate CMake module](../../cmake/modules/spdlog.cmake) for the reason as stated above. 
 
@@ -76,20 +76,47 @@ You can set the log level directly over the command line using the option `-l <l
 While the previous tasks were more concerned with the set-up of our repository, in this task, we have extended the functionality of our program with some exiting new features. 
 
 **1. Generation of Cuboids of Particles**   
-The first new feature is the implementation of the new class called [Particle Generator](../../src/moleculeSimulator/particleGeneration/ParticleGenerator.h). With this class we are now able to generate cuboid like particle structures. In the first week we only were able to read single particles from a file which might become really cumbersome if you want to run a simulation containing hundreds of particles. Using this new class, you only have to specify some parameters and everything else is handled automatically. The definition of one cuboid requires seven parameters whereas some parameters like the position consist of three numbers. Handling the input over the command line seems to us, therefore, to be not the right approach. Instead, we introduced a new file format, specially for cuboid data. Additional information about this file format can be found [here](../../input/2D-cuboid-collision.txt). Additionally, we implemented a new parser being part of the class `FileReader`. For our implementation we took the already existing parser (the one that parses the file `eingabe-sonne.txt`), which was already provided, as example and adapted the function to our needs. Building on already existing functionality is often the simplest solution and therefore maybe better than coming up with something completely new. To be able to distinguish between the two file formats, the first line being not a comment of each input file must specify which data it contains, either `Particle` data (the old file format) or `Cuboid` data (the new file format). Both file formats can be processed by our program using the option `-f <path to file>`. 
+The first new feature is the implementation of the new class
+called [Particle Generator](../../src/moleculeSimulator/particleGeneration/ParticleGenerator.h).
+With this class we are now able to generate cuboid-like particle structures.
+In the first week we only were able
+to read single particles from a file
+which might become really cumbersome if you want to run a simulation containing hundreds of particles.
+Using this new class, you only have to specify some parameters and everything else is handled automatically.
+The definition of one cuboid requires seven parameters
+whereas some parameters like the position consist of three numbers.
+Handling the input over the command line seems to us, therefore, to be not the right approach.
+Instead, we introduced a new file format, specially for cuboid data.
+Additional information about this file format can be found [here](../../input/2D-cuboid-collision.txt).
+Additionally, we implemented a new parser being part of the class `FileReader`.
+For our implementation we took the already existing parser (the one that parses the file `eingabe-sonne.txt`),
+which was already provided, as example and adapted the function to our needs.
+Building on already existing functionality is often the simplest solution and therefore maybe better
+than coming up with something completely new.
+To be able to distinguish between the two file formats,
+the first line being not a comment of each input file must specify which data it contains,
+either `Particle` data (the old file format) or `Cuboid` data
+(the new file format).
+Both file formats can be processed by our program using the option `-f <path to file>`. 
 
 **2. Brownian Motion**  
 Another interesting feature is that each particle is assigned a randomised velocity at the start of the simulation in addition to its initial velocity being proportional to the temperature of the object of interest. This models the Brownian Motion that can be observed in reality. There are no particles that do not move at all. Each particle does some movement, however small it may be. We created a little video which shall highlight this effect. Click [here](Brownian-Motion.mp4) to watch.  
 
 **2. Leonard Jones Force**  
-As announced in last week's task sheet, we had to add this week a new type of force to our project. With the help of our strategy pattern this was quickly done. We just created a new class [LeonardJonesForce](../../src/moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h) as additional specialisation of our [Force](../../src/moleculeSimulator/forceCalculation/Force.h) interface. Therefore, we could easily substitute the gravitational force with the new Leonard-Jones force. To increase the efficiency of our calculation, we simplified the formula which was given on the worksheet in such a way that no high exponents like 12 occur which computation might be costly. 
+As announced in last week's task sheet, we had to add this week a new type of force to our project.
+With the help of our strategy pattern this was quickly done.
+We just created a new class [LeonardJonesForce](../../src/moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h) as additional specialisation of our [Force](../../src/moleculeSimulator/forceCalculation/Force.h) interface.
+Therefore, we could easily substitute the gravitational force with the new Leonard-Jones force.
+To increase the efficiency of our calculation,
+we simplified the formula
+which was given on the worksheet in such a way that no high exponents like 12 occur whose computation might be costly. 
 
 **3. Application of Newton's third Law of Motion**  
-As you recommended in last week's feedback and being part of this assignment sheet, we use now Newton's third law of motion to speed up the force calculation. By applying this rule it is only necessary to iterate over all unique pairs of particles and compute the force between them instead of iterating over all conceivable possibilities. According to the binomial coefficient, there are `n over 2`, that is `n*(n-1)/2` unique pairs when we consider `n` particles which is half as much as `n² - n` possible pairs that we processed in our old version. With this optimization we may not improve the asymptotically running time of our force calculation that is still in `O²`, but nevertheless may speed up our program up to a constant factor. In the next section we did some benchmarks to compare the running times of the old naive implementation we the new one.
+As you recommended in last week's feedback and being part of this assignment sheet, we use now Newton's third law of motion to speed up the force calculation. By applying this rule it is only necessary to iterate over all unique pairs of particles and compute the force between them instead of iterating over all conceivable possibilities. According to the binomial coefficient, there are `n over 2`, that is `n*(n-1)/2` unique pairs when we consider `n` particles which is half as much as `n² - n` possible pairs that we processed in our old version. With this optimization we may not improve the asymptotically running time of our force calculation that is still in `O²`, but nevertheless may speed up our program up to a constant factor. In the next section we did some benchmarks to compare the running times of the old naive implementation with the new one.
 
 **4. Benchmarks**  
 As required we measured the execution time of our program calculating the collision of two 2D bodies as stated in the worksheet.
-We run the program on the following hardware:
+We ran the program on the following hardware:
 * **Operating System**: `Ubuntu 22.04.4 LTS`
 * **Processor**: `Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz`
 * **Memory**: `16 GiB`
@@ -116,5 +143,8 @@ We also created a video showing the collision of the two bodies in ParaView. Thi
 
 ## Misc ##
 
+As you proposed in the feedback of our last submission,
+now our program calculates the force between all particles before entering the simulation loop.
+This ensures that our first position and velocity updates do not use an old force of `0` in the first iteration.
 
 
