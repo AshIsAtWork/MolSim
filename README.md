@@ -83,68 +83,68 @@ The process of building the project is described here:
 
 2. Configure the Program using Cmake.
 
-    - standard:
+   - standard:
 
-      ```bash
-      cmake ..
-      ```
+     ```bash
+     cmake ..
+     ```
 
-    - With Doxygen Documentation:
+   - With Doxygen Documentation:
 
-      ```bash
-      cmake .. -D BUILD_DOCS=ON
-      ```
+     ```bash
+     cmake .. -D BUILD_DOCS=ON
+     ```
 
 3. Building the Program
 
-    - Compile Project:
+   - Compile Project:
 
-      ```bash
-      make
-      ```
+     ```bash
+     make
+     ```
 
-    - Compile Docs using Doxygen
+   - Compile Docs using Doxygen
 
-      ```bash
-      make doc_doxygen
-      ```
+     ```bash
+     make doc_doxygen
+     ```
 
-      Note: Output present inside **build/docs/html/index.html**
+     Note: Output present inside **build/docs/html/index.html**
 
 4. Running the Program
 
-    - Inside your **build/** folder run the following command:
+   - Inside your **build/** folder run the following command:
 
-      ```bash
-      ./MolSim <FILENAME>
-      ```
+     ```bash
+     ./MolSim <FILENAME>
+     ```
 
-      Note: FILENAME includes the path and should look something like the following:
+     Note: FILENAME includes the path and should look something like the following:
 
-    - Task 1:
+     - Task 1:
 
-      ```bash
-      ./MolSim -f ../input/eingabe-sonne.txt
-      ```
+       ```bash
+       ./MolSim -f ../input/eingabe-sonne.txt
+       ```
 
-    - Task 2:
+     - Task 2:
 
-      ```bash
-      ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
-      ```
+       ```bash
+       ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
+       ```
 
 5. Running all Tests
 
-    - First: Change into your **build/** folder:
+   - First: Change into your **build/** folder:
 
-        - Using ctest:
+     - Using ctest:
 
-          ```bash
-          ctest
-          ```
+       ```bash
+       ctest
+       ```
 
-        - Using executable:
+     - Using executable:
 
-          ```bash
-          ./MolSimTests
-          ```
+       ```bash
+       ./MolSimTests
+       ```
