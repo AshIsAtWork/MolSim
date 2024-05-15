@@ -117,7 +117,6 @@ Note: Output present inside **build/docs/html/index.html**
    ```
 5. Running all Tests
    - First: Change into your **build/** folder:
-   
      - Using ctest:
      ```bash
      ctest
@@ -126,6 +125,4 @@ Note: Output present inside **build/docs/html/index.html**
      ```bash
      ./MolSimTests
      ```
-fcgvhjkdbhfwqjdhbkefivs
-
    
