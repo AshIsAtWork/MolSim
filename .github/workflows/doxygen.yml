@@ -19,6 +19,7 @@ permissions:
   id-token: write
 
 # Makes sure that only one is running at a time
+# Cancels the run if any higher priority runs are triggered
 concurrency:
   group: "pages"
   cancel-in-progress: true
