@@ -12,6 +12,12 @@ Tests:
 
 [![CTest](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml)
 
+Doxygen Documentation:
+
+[![Doxygen](https://github.com/AshIsAtWork/MolSim/actions/workflows/doxygen.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/doxygen.yml)
+
+The hosted Documentation can be found [here](https://ashisatwork.github.io/MolSim/)
+
 
 ## All Contributors
 
@@ -102,10 +108,12 @@ Note: Output present inside **build/docs/html/index.html**
    ```
    Note: FILENAME includes the path and should look something like the following:
    - Task 1:
+   
      ```bash
      ./MolSim -f ../input/eingabe-sonne.txt
      ```
    - Task 2:
+   
       ```bash
      ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
       ```
@@ -113,11 +121,15 @@ Note: Output present inside **build/docs/html/index.html**
    - First: Change into your **build/** folder:
    
      - Using ctest:
-        ```bash
+     
+     ```bash
        ctest
-        ```
+     ```
      - Using executable:
+     
         ```bash
        ./MolSimTests
         ```
+       
+
    
