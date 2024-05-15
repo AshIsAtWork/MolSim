@@ -42,13 +42,14 @@ To run all unit tests, first build the whole project as described in our [README
 
 ## Task 2: Continuous Integration ##
 For continuous integration, we use GitHub Action workflows. A workflow is a configurable, automated process that will run one or more jobs. Workflows are defined by a YAML file checked in to your repository and will run when triggered by an event in your repository, or they can be triggered manually, or at a defined schedule.  
+We took the developer liberty to extend these checks for every push on every branch and every pull request. This ensures that the code is always in a working state and that no bugs are introduced.
 
 Workflows are defined in the `.github/workflows` directory in a repository. A repository can have multiple workflows, each of which can perform a different set of tasks. For our project, we created two workflows:
 * The [first workflow](../../.github/workflows/cmake-multi-platform.yml) builds and tests pull requests and checks, if the code compiles. Code that does not even compile should be rejected.
-* The [second workflow](../../.github/workflows/unit-tests.yml) runs our unit tests whenever new code is pushed, so that bugs in the code may be spotted immediately.
+    For this we setup an Ubuntu image, with GCC and Clang. We then use the github checkout workflow to checkout the branch we are currently working on. Furthermore, we install the dependencies we need to build our project. We then build the project using CMake and make. We have also added the **fsanitize** flag to our build to check for memory leaks. If the build fails, the workflow will fail and the pull request will not be merged by us.
+* The [second workflow](../../.github/workflows/unit-tests.yml) runs our unit tests whenever new code is pushed, so that bugs in the code may be spotted immediately. We use the same setup as in the first workflow, but we also run the tests using ctest. If the tests fail, the workflow will fail and the pull request will not be merged by us.
 
-TODO: Add some more information. I am not sure what we did exactly here.
-
+* Additionally, to enforce this, we added branch protected setting to our repository. This means that no code can be merged into the main branch without passing the tests. This ensures that the main branch is always in a working state. It also requires at least one reviewer to approve the pull request before it can be merged. This ensures that the code is reviewed before it is merged into the main branch.
 ---
 
 ## Task 3: Logging ##
@@ -146,5 +147,7 @@ We also created a video showing the collision of the two bodies in ParaView. Thi
 As you proposed in the feedback of our last submission,
 now our program calculates the force between all particles before entering the simulation loop.
 This ensures that our first position and velocity updates do not use an old force of `0` in the first iteration.
+
+TODO: Add more information about the new DOCKER HERE PLEASEEEE
 
 
