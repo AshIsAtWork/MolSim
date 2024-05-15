@@ -5,7 +5,7 @@ Members:
 - [Robin Cleve](https://github.com/cleveee)
 
 # Code #
-* Link to Pull Request: [Pull Request for Assignment 2](TODO!!!)
+* Link to Pull Request: [Pull Request for Assignment 2](https://github.com/AshIsAtWork/MolSim/pull/4)
 * Compiler: gcc 11.4.0
 
 # Report #
