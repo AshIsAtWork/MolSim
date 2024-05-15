@@ -20,9 +20,9 @@ public:
      * @param source Particle which exerts the force on the target.
      * @return 3 dimensional force vector.
      *
-     * This method may be implemented by any child of this class occording to the type of force it represents.
+     * This method may be implemented by any child of this class according to the type of force it represents.
      */
-    virtual std::array<double, 3> compute(Particle& target, Particle& source) = 0;
+    virtual std::array<double, 3> compute(Particle &target, Particle &source) = 0;
 
     virtual ~Force() = default;
 };

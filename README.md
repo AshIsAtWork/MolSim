@@ -2,6 +2,17 @@
 
 This repository is for the practical course **PSE: Molecular Dynamics** for group A in the SS 2024 semester.
 
+# Repository Status
+
+CMake Multi-Platform: (Currently only tested on Ubuntu)
+
+[![CMAKE](https://github.com/AshIsAtWork/MolSim/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/cmake-multi-platform.yml)
+
+Tests:
+
+[![CTest](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/AshIsAtWork/MolSim/actions/workflows/unit-tests.yml)
+
+
 ## All Contributors
 
 **Group Members**
@@ -31,13 +42,13 @@ This is the practical project repository for the course offered by the Scientifi
 
 ou will need the following to compile the program:
 
-- Doxygen 1.10.0
+- Doxygen 1.10.0 (Only needed for generating documentation)
 
 ```bash
 sudo apt install doxygen
 ```
 
-- Graphviz 2.42.2
+- Graphviz 2.42.2 (Only needed for generating documentation)
 
 ```bash
 sudo apt install graphviz
@@ -83,14 +94,30 @@ mkdir build && cd build
    ```bash
    make doc_doxygen
    ```
-   Note: Output present inside **build/docs/html/index.html**
+Note: Output present inside **build/docs/html/index.html**
 4. Running the Program
    - Inside your **build/** folder run the following command:
    ```bash
    ./MolSim <FILENAME>
    ```
    Note: FILENAME includes the path and should look something like the following:
-   ```bash
-   ./MolSim -f ../input/eingabe-sonne.txt
-   ```
-     
+   - Task 1:
+     ```bash
+      ./MolSim -f ../input/eingabe-sonne.txt
+     ```
+   - Task 2:
+      ```bash
+       ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
+      ```
+5. Running all Tests
+   - First: Change into your **build/** folder:
+   
+     - Using ctest:
+        ```bash
+           ctest
+        ```
+     - Using executable:
+        ```bash
+          ./MolSimTests
+        ```
+   

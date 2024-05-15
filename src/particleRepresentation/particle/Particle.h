@@ -9,8 +9,7 @@
 
 #include <array>
 #include <string>
-
-#include <iostream>
+#include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 
 class Particle {

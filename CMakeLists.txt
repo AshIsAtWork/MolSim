@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # define project name, version
-project(PSEMolDyn_GroupA VERSION 0.0.1)
+project(PSEMolDyn_GroupA VERSION 0.0.2)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
@@ -19,6 +19,8 @@ file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+
 # create make target
 add_executable(MolSim ${MY_SRC})
 
@@ -35,13 +37,6 @@ target_include_directories(MolSim
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_libraries(MolSim
-        # stuff that is used in headers and source files
-        PUBLIC
-        boost_program_options
-        xerces-c
-)
-
 # activate all compiler warnings. Clean up your code :P
 # depending on the compiler different flags are used
 target_compile_options(MolSim
@@ -51,6 +46,19 @@ target_compile_options(MolSim
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
 )
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-
+target_link_libraries(MolSim
+        # stuff that is used in headers and source files
+        PUBLIC
+        boost_program_options
+        xerces-c
+        spdlog::spdlog
+        gtest_main
+        gmock_main
+)
 include(doxygen)
+
+include(spdlog)
+
+include(google-test)
+
+include(CTest)
