@@ -114,10 +114,10 @@ Note: Output present inside **build/docs/html/index.html**
    
      - Using ctest:
         ```bash
-           ctest
+        ctest
         ```
      - Using executable:
         ```bash
-          ./MolSimTests
+        ./MolSimTests
         ```
    
