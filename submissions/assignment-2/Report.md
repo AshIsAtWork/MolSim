@@ -148,6 +148,6 @@ As you proposed in the feedback of our last submission,
 now our program calculates the force between all particles before entering the simulation loop.
 This ensures that our first position and velocity updates do not use an old force of `0` in the first iteration.
 
-TODO: Add more information about the new DOCKER HERE PLEASEEEE
+TODO: Add more information about the new DOCKER HERE PLEASEEEEE
 
 
