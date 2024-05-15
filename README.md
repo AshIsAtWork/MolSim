@@ -108,28 +108,24 @@ Note: Output present inside **build/docs/html/index.html**
    ```
    Note: FILENAME includes the path and should look something like the following:
    - Task 1:
-   
-     ```bash
-     ./MolSim -f ../input/eingabe-sonne.txt
-     ```
+   ```bash
+   ./MolSim -f ../input/eingabe-sonne.txt
+   ```
    - Task 2:
-   
-      ```bash
-     ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
-      ```
+   ```bash
+   ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
+   ```
 5. Running all Tests
    - First: Change into your **build/** folder:
    
      - Using ctest:
-     
      ```bash
-       ctest
+     ctest
      ```
      - Using executable:
-     
-        ```bash
-       ./MolSimTests
-        ```
+     ```bash
+     ./MolSimTests
+     ```
        
 
    
