@@ -6,7 +6,7 @@
     ```bash
       Docker build -t molsim -f Dockerfile .
     ```
-4. Now you have an image called **molsim** and you can check this by running the following command in your terminal:
+4. Now you have an image called `molsim`, and you can check this by running the following command in your terminal:
    ```bash
    Docker images
    ```
@@ -14,13 +14,14 @@
 in-build Clion toolchain. I'd recommend setting up both
    - Setting up the terminal way
      
-     - Use the following command in your terminal and then you'll have the same experience as if you had native Ubuntu.
+     - Use the following command in your terminal, and then you'll have the same experience as if you had native Ubuntu.
         ```bash
         docker run -it --rm -v `pwd`:/work molsim
         ```
-     - Now you should notice your terminal changes to something like **root@text-here:/work** and now you can follow the **readme.md** in 
+     - Now you should notice your terminal changes to something like `root@text-here:/work`,
+       and now you can follow the `readme.md` in 
        the project dir for further instructions on the build process. 
-     - To quit and return to your macOS terminal use the following command:
+     - To quit and return to your macOS terminal, use the following command:
        ```bash
        exit
        ```

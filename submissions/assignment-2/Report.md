@@ -44,12 +44,20 @@ To run all unit tests, first build the whole project as described in our [README
 For continuous integration, we use GitHub Action workflows. A workflow is a configurable, automated process that will run one or more jobs. Workflows are defined by a YAML file checked in to your repository and will run when triggered by an event in your repository, or they can be triggered manually, or at a defined schedule.  
 We took the developer liberty to extend these checks for every push on every branch and every pull request. This ensures that the code is always in a working state and that no bugs are introduced.
 
-Workflows are defined in the `.github/workflows` directory in a repository. A repository can have multiple workflows, each of which can perform a different set of tasks. For our project, we created two workflows:
+Workflows are defined in the `.github/workflows` directory in a repository.
+A repository can have multiple workflows, each of which can perform a different set of tasks.
+For our project, we created three workflows:
 * The [first workflow](../../.github/workflows/cmake-multi-platform.yml) builds and tests pull requests and checks, if the code compiles. Code that does not even compile should be rejected.
-    For this we setup an Ubuntu image, with GCC and Clang. We then use the github checkout workflow to checkout the branch we are currently working on. Furthermore, we install the dependencies we need to build our project. We then build the project using CMake and make. We have also added the **fsanitize** flag to our build to check for memory leaks. If the build fails, the workflow will fail and the pull request will not be merged by us.
+    For this we set up an Ubuntu image, with GCC and Clang. We then use the GitHub checkout workflow to check out the branch we are currently working on. Furthermore, we install the dependencies we need to build our project. We then build the project using CMake and make. We have also added the `fsanitize` flag to our build to check for memory leaks. If the build fails, the workflow will fail and the pull request will not be merged by us.
 * The [second workflow](../../.github/workflows/unit-tests.yml) runs our unit tests whenever new code is pushed, so that bugs in the code may be spotted immediately. We use the same setup as in the first workflow, but we also run the tests using ctest. If the tests fail, the workflow will fail and the pull request will not be merged by us.
+* The [third workflow](../../.github/workflows/doxygen.yml) is for building and deploying the Doxygen documentation of this project to GitHub Pages that ensures that there is always up-to-date project documentation available on the web. If you want to visit the documentation, click [here](https://ashisatwork.github.io/MolSim/).
 
-* Additionally, to enforce this, we added branch protected setting to our repository. This means that no code can be merged into the main branch without passing the tests. This ensures that the main branch is always in a working state. It also requires at least one reviewer to approve the pull request before it can be merged. This ensures that the code is reviewed before it is merged into the main branch.
+Additionally, to enforce this, we added branch protected setting to our repository.
+This means that no code can be merged into the main branch without passing the tests.
+This ensures that the main branch is always in a working state.
+It also requires at least one reviewer to approve the pull request before it can be merged.
+This ensures that the code is reviewed before it is merged into the main branch.
+
 ---
 
 ## Task 3: Logging ##
@@ -67,7 +75,7 @@ As feedback from the last week, we have been told that our program would spam th
 You can set the log level directly over the command line using the option `-l <log level>`. All valid log levels are `trace`, `debug`, `info`, `warn`, `error`, `critical` and `off`. If the log level is not specified the log level `info` will be used. Here is a simple example, how to execute our program with the log level `debug`:
 
 ```bash
-    ./MolSim -f ../input/eingabe-sonne.txt -l debug
+    ./MolSim -f ../input/2D-cuboid-collision.txt -l debug
 ```
 
 ---
@@ -138,16 +146,16 @@ and run the following command:
 ```
 *Note: The program will use the optimised version of the force calculation that is based on Newton's third law of motion.*
 
-We also created a video showing the collision of the two bodies in ParaView. This can be found [here](Collision-of-two-Bodies.mp4).
+We also created a video showing the collision of the two bodies in ParaView. This can be found [here](Animation-Collision-of-two-Bodies.mp4).
 
 ---
 
 ## Misc ##
 
-As you proposed in the feedback of our last submission,
+* As you proposed in the feedback of our last submission,
 now our program calculates the force between all particles before entering the simulation loop.
 This ensures that our first position and velocity updates do not use an old force of `0` in the first iteration.
 
-TODO: Add more information about the new DOCKER HERE PLEASEEEEE
+* Because Robin and Daniel had problems building the project on their macs, we thought about a simple solution to fix this. We decided to use Docker, a free available software using OS-level virtualization to run software in lightweight containers. A container is an isolated environment in which you can build and run your software without doing any environment configuration on your native operating system. We created a suitable [Dockerfile](../../Dockerfile) that specifies all dependencies being necessary to use our program. [Here](../../Docker/readme.md) you can find step-by-step instructions on how to install Docker, create an image and run your program in a Docker container having macOS as a native operating system. 
 
 
