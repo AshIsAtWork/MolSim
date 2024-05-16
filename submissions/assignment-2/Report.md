@@ -146,7 +146,11 @@ and run the following command:
 ```
 *Note: The program will use the optimised version of the force calculation that is based on Newton's third law of motion.*
 
-We also created a video showing the collision of the two bodies in ParaView. This can be found [here](Animation-Collision-of-two-Bodies.mp4).
+We also created two videos showing the collision of the two bodies in ParaView,
+one fancy one with a box fight setting and one basic one.
+To watch, click on the following links:
+* [Fancy box fight](Animation-Collision-of-two-Bodies-fancy.mp4)
+* [Basic collision](Animation-Collision-of-two-Bodies-basic.mp4)
 
 ---
 
