@@ -58,6 +58,10 @@ void Particle::setV(const std::array<double, 3> &v) {
     this->v = v;
 }
 
+void Particle::setType(const int type) {
+    this->type = type;
+}
+
 std::string Particle::toString() const {
     std::stringstream stream;
     stream << "Particle: X:" << x << " v: " << v << " f: " << f

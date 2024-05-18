@@ -36,3 +36,12 @@ std::vector<Particle>::iterator ParticleContainer::end() {
 void ParticleContainer::reserve(size_t n) {
     particles.reserve(n);
 }
+
+bool ParticleContainer::contains(Particle &p) {
+    for (Particle &toCheck: particles) {
+        if (toCheck == p) {
+            return true;
+        }
+    }
+    return false;
+}

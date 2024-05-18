@@ -91,4 +91,14 @@ public:
      * @param n desired size
      */
     void reserve(size_t n);
+
+    /**
+     * @brief Check, if this particle container contains an particle p' that equals p.
+     * @param p Particle to look for
+     * @return true, if this particle container contains some particle p' that equals p, false otherwise.
+     *
+     * This method should only be used for testing purposes in small instances, because the implementation
+     * is not that efficient.
+     */
+    bool contains(Particle& p);
 };

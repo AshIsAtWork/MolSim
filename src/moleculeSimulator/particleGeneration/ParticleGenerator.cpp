@@ -4,9 +4,33 @@
 
 #include "ParticleGenerator.h"
 
+#include <valarray>
+
 //The particles of the first cuboid will all get id 1, the particles of the next cuboid id 2 and so on.
 
 int ParticleGenerator::id = 1;
+
+void ParticleGenerator::generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
+                                             const std::array<double, 3> &initVelocity, double h, double mass,
+                                             const int N, double r, std::array<int, 4> transformMatrix) {
+    std::array<double, 3> currentPosition = corner;
+    for (int d1 = 0; d1 < N - 1; d1++) {
+        int threshholdD2 = static_cast<int>(std::floor(std::sqrt(std::abs(std::pow((d1 + 1) * h, 2) - std::pow(r, 2))))
+                                            / h) + 1;
+        for (int d2 = 0; d2 < threshholdD2; d2++) {
+            Particle pToAdd = {
+                currentPosition,
+                initVelocity,
+                mass,
+                id
+            };
+            particles.add(pToAdd);
+            currentPosition[transformMatrix[1]/*d2*/] += h * transformMatrix[3]/*sign d2*/;
+        }
+        currentPosition[transformMatrix[0]/*d1*/] += h * transformMatrix[2]/*sign d1*/;
+        currentPosition[transformMatrix[1]/*d2*/] = corner[transformMatrix[1]/*d2*/];
+    }
+}
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                        unsigned N2, unsigned N3, double h, double mass,
@@ -42,6 +66,39 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
         }
         currentPosition = {currentPosition[0] + h, position[1], position[2]};
     }
-    //Increment id, so that all particles of the next cuboid being generated will receive another id.
+    //Increment id, so that all particles of the next body being generated will receive another id.
     ++id;
+}
+
+void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
+                                     const std::array<double, 3> &initVelocity, int N, double h, double mass) {
+    if (N == 0) {
+        return;
+    }
+    //First add the particle in the center
+    Particle centerParticle = {center, initVelocity, mass, id};
+    particles.add(centerParticle);
+
+    std::array<double, 3> currentPosition = center;
+
+    //Calculate radius
+    double r = h * (N - 1);
+    //Generate upper right quadrant
+    currentPosition[1] += h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, {1, 0, 1, 1});
+
+    //Generate lower left quadrant
+    currentPosition[1] -= 2*h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, {1, 0, -1, -1});
+
+    //Generate lower right quadrant
+    currentPosition[1] += h;
+    currentPosition[0] += h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, {0, 1, 1, -1});
+
+    //Generate upper left quadrant
+    currentPosition[0] -= 2*h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, {0, 1, -1, 1});
+    //Increment id, so that all particles of the next body being generated will receive another id.
+    id++;
 }
