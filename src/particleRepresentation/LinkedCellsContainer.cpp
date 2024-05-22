@@ -1,0 +1,319 @@
+//
+// Created by daniel on 21.05.24.
+//
+
+#include "LinkedCellsContainer.h"
+
+void LinkedCellsContainer::calculateHaloCellIndizes() {
+    //For 2D
+    if (twoD) {
+        //bottom, top
+        for (int x = 0; x < nX; x++) {
+            haloCells.push_back(x);
+            haloCells.push_back(x + nX * (nY - 1));
+        }
+        //left, right without bottom, top
+        for (int y = 1; y < nY - 1; y++) {
+            haloCells.push_back(nX * y);
+            haloCells.push_back((nX - 1) + nX * y);
+        }
+    }
+    //For 3D
+    else {
+        //side 1, 3
+        for (int x = 0; x < nX; x++) {
+            for (int z = 0; z < nZ; z++) {
+                haloCells.push_back(x + nX * nY * z);
+                haloCells.push_back(x + (nY - 1) * nX + nX * nY * z);
+            }
+        }
+        //side 2, 4 without side 1, 3
+        for (int y = 1; y < nY - 1; y++) {
+            for (int z = 0; z < nZ; z++) {
+                haloCells.push_back((nX - 1) + y * nX + nX * nY * z);
+                haloCells.push_back(y * nX + nX * nY * z);
+            }
+        }
+        //side 5,6 without side 1,2,3,4
+        for (int x = 1; x < nX - 1; x++) {
+            for (int y = 1; y < nY - 1; y++) {
+                haloCells.push_back(x + y * nX);
+                haloCells.push_back(x + y * nX + nX * nY * (nZ - 1));
+            }
+        }
+    }
+}
+
+void LinkedCellsContainer::calculateBoundryCellIndizes() {
+    //constants to handle 2D edge case
+    int Z1 = !twoD;
+    int Z2 = twoD ? 0 : nZ - 2;
+
+    //boundry 1
+    for (int z = Z1; z <= Z2; z++) {
+        for (int x = 1; x < nX - 1; x++) {
+            boundries[0].push_back(x + nX * nY * z);
+        }
+    }
+    //boundry 2
+    for (int z = Z1; z <= Z2; z++) {
+        for (int y = 1; y < nY - 1; y++) {
+            boundries[1].push_back((nX - 2) + nX * y + nX * nY * z);
+        }
+    }
+    //boundry 3
+    for (int z = Z1; z <= Z2; z++) {
+        for (int x = 1; x < nX - 1; x++) {
+            boundries[2].push_back(x + nX * (nY - 2) + nX * nY * z);
+        }
+    }
+    //boundry 4
+    for (int z = Z1; z <= Z2; z++) {
+        for (int y = 1; y < nY - 1; y++) {
+            boundries[3].push_back(nX * y + nX * nY * z);
+        }
+    }
+
+    if (!twoD) {
+        //boundry 5 (does only exist in three dimensional space)
+        for (int x = 1; x < nX - 1; x++) {
+            for (int y = 1; y < nY - 1; y++) {
+                boundries[4].push_back(x + nX * y);
+            }
+        }
+        //boundry 6 (does only exist in three dimensional space)
+        for (int x = 1; x < nX - 1; x++) {
+            for (int y = 1; y < nY - 1; y++) {
+                boundries[5].push_back(x + nX * y + nX * nY * (nZ - 2));
+            }
+        }
+    }
+}
+
+void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
+    //constants to handle 2D edge case
+    int Z1 = !twoD;
+    int Z2 = twoD ? 0 : nZ - 2;
+
+    int cellNumber = (nX - 2) * (nY - 2) * (twoD ? 1 : nZ - 2);
+    domainCellIterationScheme.reserve(cellNumber);
+    for(int i = 0; i < cellNumber; i++) {
+        domainCellIterationScheme.emplace_back();
+    }
+
+    int index = 0;
+    for (int z = Z1; z <= Z2; z++) {
+        for (int y = 1; y < nY - 1; y++) {
+            for (int x = 1; x < nX - 1; x++) {
+                //First insert the cell itself
+                domainCellIterationScheme[index].push_back(threeDToOneD(x,y,z));
+
+                //Then insert all relevant neighbours
+
+                //(x-1, y-1, z)
+                if (x >= 2 && y >= 2) {
+                    domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y - 1, z));
+                }
+                //(x-1, y, z)
+                if (x >= 2) {
+                    domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y, z));
+                }
+                //(x, y-1, z)
+                if (y >= 2) {
+                    domainCellIterationScheme[index].push_back(threeDToOneD(x, y - 1, z));
+                }
+                //(x+1, y-1, z)
+                if (x <= nX - 3 && y >= 2) {
+                    domainCellIterationScheme[index].push_back(threeDToOneD(x + 1, y - 1, z));
+                }
+                if(z >= 2) {
+                    if (x >= 2 && y >= 2) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y - 1, z - 1));
+                    }
+                    //(x-1, y, z - 1)
+                    if (x >= 2) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y, z - 1));
+                    }
+                    //(x, y-1, z - 1)
+                    if (y >= 2) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x, y - 1, z - 1));
+                    }
+                    //(x+1, y-1, z - 1)
+                    if (x <= nX - 3 && y >= 2) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x, y - 1, z - 1));
+                    }
+                    //(x, y, z - 1 - 1)
+                    domainCellIterationScheme[index].push_back(threeDToOneD(x, y, z - 1));
+                }
+                index++;
+            }
+        }
+    }
+}
+
+LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : rCutOff{rCutOff},
+    domainSize{domainSize}, size{0} {
+    if (domainSize[0] <= 0 || domainSize[1] <= 0 || domainSize[2] < 0) {
+        spdlog::error("Domain size is invalid!");
+        exit(-1);
+    }
+
+    //Determine if we are in 2D or 3D
+    twoD = __fpclassify(domainSize[2]) == FP_ZERO;
+
+    //Calculate number of cells in each dimension. We add here plus two, because each dimension contains two exta halo cells.
+    //If the cutOff radius is smaller than the domain size, we set the cell number to 1 because we need at least one cell.
+    nX = static_cast<int>(floor(domainSize[0] / rCutOff)) + 2 + (domainSize[0] < rCutOff ? 1 : 0);
+    nY = static_cast<int>(floor(domainSize[1] / rCutOff)) + 2 + (domainSize[1] < rCutOff ? 1 : 0);
+    //If we have only 2 dimensions, we define nZ := 1
+    nZ = twoD ? 1 : static_cast<int>(floor(domainSize[2] / rCutOff)) + 2 + (domainSize[2] < rCutOff ? 1 : 0);
+
+    //Calculate cell sizes
+    cellSizeX = domainSize[0] / (nX - 2);
+    cellSizeY = domainSize[1] / (nY - 2);
+    cellSizeZ = twoD ? 0 : domainSize[2] / (nZ - 2);
+
+    //Initialize data structure
+    cells.reserve(nX * nY * nZ);
+    cells.emplace_back(nX * nY * nZ);
+
+    //Precalculate indizes for fast access in the future
+    calculateHaloCellIndizes();
+    calculateBoundryCellIndizes();
+    calculateDomainCellsIterationScheme();
+}
+
+int LinkedCellsContainer::calcCellIndex(const std::array<double, 3>& position) {
+    int x, y, z;
+    //Particles outside the domain are administered to their corresponding halo cell
+    if (position[0] < 0) {
+        x = 0;
+    } else if (position[0] >= domainSize[0]) {
+        x = nX - 1;
+    } else {
+        x = static_cast<int>(floor(position[0] / cellSizeX)) + 1;
+    }
+
+    if (position[1] < 0) {
+        y = 0;
+    } else if (position[1] >= domainSize[1]) {
+        y = nY - 1;
+    } else {
+        y = static_cast<int>(floor(position[1] / cellSizeY)) + 1;
+    }
+
+    if (twoD) {
+        return x + nX * y;
+    }
+
+    if (position[2] < 0) {
+        z = 0;
+    } else if (position[2] >= domainSize[2]) {
+        z = nY - 1;
+    } else {
+        z = static_cast<int>(floor(position[2] / cellSizeZ)) + 1;
+    }
+
+    return x + nX * y + nX * nY * z;
+}
+
+void LinkedCellsContainer::add(Particle &p) {
+    cells[calcCellIndex(p.getX())].push_back(std::move(p));
+    size++;
+}
+
+void LinkedCellsContainer::updateForces(Force& force) {
+    //Reset all forces and save current forces in old force variables for all particles not being in any halo cell
+
+    for (auto cellGroup : domainCellIterationScheme) {
+        for(auto& p : cells[cellGroup[0]]) {
+            p.setOldF(p.getF());
+            p.setF({0, 0, 0});
+        }
+    }
+
+
+    for(auto cellGroup : domainCellIterationScheme) {
+        //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+        for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i,1)) {
+            for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j,1)) {
+                if(ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                    auto f_ij{force.compute(*p_i, *p_j)};
+                    p_i->setF(p_i->getF() + f_ij);
+                    p_j->setF(p_j->getF() - f_ij);
+                }
+            }
+        }
+        //Then, consider all neighbour cells
+
+        for(auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour,1)) {
+            for (auto& p_i : cells[cellGroup[0]]) {
+                for (auto& p_j : cells[*neighbour]) {
+                    if(ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                        auto f_ij{force.compute(p_i, p_j)};
+                        p_i.setF(p_i.getF() + f_ij);
+                        p_j.setF(p_j.getF() - f_ij);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void LinkedCellsContainer::updateVelocities(double deltaT) {
+    for (auto cellGroup : domainCellIterationScheme) {
+        for(auto& p : cells[cellGroup[0]]) {
+            p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
+        }
+    }
+}
+
+void LinkedCellsContainer::updatePositions(double deltaT) {
+    for (auto cellGroup : domainCellIterationScheme) {
+        for(auto& p : cells[cellGroup[0]]) {
+            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
+        }
+    }
+}
+
+int LinkedCellsContainer::threeDToOneD(int x, int y, int z) const {
+    return x + nX * y + nX * nY * z;
+}
+
+std::array<int, 3> LinkedCellsContainer::oneDToThreeD(int index) const {
+    int z = index / (nX * nY);
+    index -= z*(nX * nY);
+    int y = index / nX;
+    index -= y * nX;
+    return {index, y, z};
+}
+
+void LinkedCellsContainer::plot(int iteration) {
+    vtk_writer.initializeOutput(size);
+    for (auto cellGroup : domainCellIterationScheme) {
+        for(auto& p : cells[cellGroup[0]]) {
+            vtk_writer.plotParticle(p);
+        }
+    }
+    std::string fileName{"MD_vtk"};
+    vtk_writer.writeFile(fileName, iteration);
+}
+
+void LinkedCellsContainer::updateCells() {
+    for (auto & index : domainCellIterationScheme) {
+        for(auto p = cells[index[0]].begin(); p != cells[index[0]].end();) {
+            int newIndex = calcCellIndex(p->getX());
+            if(newIndex != index[0]) {
+                cells[newIndex].push_back(*p);
+                p = cells[index[0]].erase(p);
+            }
+            else {
+                ++p;
+            }
+        }
+    }
+}
+
+
+
+
