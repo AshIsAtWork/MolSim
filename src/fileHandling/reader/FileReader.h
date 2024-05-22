@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/ParticleContainer.h"
 #include <cstdlib>
 #include <fstream>
 #include <sstream>

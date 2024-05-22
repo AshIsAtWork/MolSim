@@ -152,7 +152,7 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
 }
 
 LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : rCutOff{rCutOff},
-    domainSize{domainSize}, size{0} {
+    domainSize{domainSize}, currentSize{0} {
     if (domainSize[0] <= 0 || domainSize[1] <= 0 || domainSize[2] < 0) {
         spdlog::error("Domain size is invalid!");
         exit(-1);
@@ -175,7 +175,9 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
 
     //Initialize data structure
     cells.reserve(nX * nY * nZ);
-    cells.emplace_back(nX * nY * nZ);
+    for(int n = 0; n < nX * nY * nZ; n++) {
+        cells.emplace_back();
+    }
 
     //Precalculate indizes for fast access in the future
     calculateHaloCellIndizes();
@@ -188,16 +190,20 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3>& position) {
     //Particles outside the domain are administered to their corresponding halo cell
     if (position[0] < 0) {
         x = 0;
+        spdlog::info("Halo");
     } else if (position[0] >= domainSize[0]) {
         x = nX - 1;
+        spdlog::info("Halo");
     } else {
         x = static_cast<int>(floor(position[0] / cellSizeX)) + 1;
     }
 
     if (position[1] < 0) {
         y = 0;
+        spdlog::info("Halo");
     } else if (position[1] >= domainSize[1]) {
         y = nY - 1;
+        spdlog::info("Halo");
     } else {
         y = static_cast<int>(floor(position[1] / cellSizeY)) + 1;
     }
@@ -218,8 +224,9 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3>& position) {
 }
 
 void LinkedCellsContainer::add(Particle &p) {
-    cells[calcCellIndex(p.getX())].push_back(std::move(p));
-    size++;
+    int index = calcCellIndex(p.getX());
+    cells[index].push_back(std::move(p));
+    currentSize++;
 }
 
 void LinkedCellsContainer::updateForces(Force& force) {
@@ -288,17 +295,6 @@ std::array<int, 3> LinkedCellsContainer::oneDToThreeD(int index) const {
     return {index, y, z};
 }
 
-void LinkedCellsContainer::plot(int iteration) {
-    vtk_writer.initializeOutput(size);
-    for (auto cellGroup : domainCellIterationScheme) {
-        for(auto& p : cells[cellGroup[0]]) {
-            vtk_writer.plotParticle(p);
-        }
-    }
-    std::string fileName{"MD_vtk"};
-    vtk_writer.writeFile(fileName, iteration);
-}
-
 void LinkedCellsContainer::updateCells() {
     for (auto & index : domainCellIterationScheme) {
         for(auto p = cells[index[0]].begin(); p != cells[index[0]].end();) {
@@ -309,6 +305,50 @@ void LinkedCellsContainer::updateCells() {
             }
             else {
                 ++p;
+            }
+        }
+    }
+}
+
+size_t LinkedCellsContainer::size() {
+    return currentSize;
+}
+
+void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle &)> &function) {
+    for(auto cell : cells) {
+        for(Particle& p : cell) {
+            function(p);
+        }
+    }
+}
+
+void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(Particle &)> &function) {
+    for (auto cellGroup : domainCellIterationScheme) {
+        for(auto& p : cells[cellGroup[0]]) {
+            function(p);
+        }
+    }
+}
+
+void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) {
+    for(auto cellGroup : domainCellIterationScheme) {
+        //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+        for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i,1)) {
+            for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j,1)) {
+                if(ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                   function(*p_i, *p_j);
+                }
+            }
+        }
+        //Then, consider all neighbour cells
+
+        for(auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour,1)) {
+            for (auto& p_i : cells[cellGroup[0]]) {
+                for (auto& p_j : cells[*neighbour]) {
+                    if(ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                       function(p_i,p_j);
+                    }
+                }
             }
         }
     }

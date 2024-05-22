@@ -45,8 +45,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
                  "Velocity: {}\n",
                  ArrayUtils::to_string(position), N1, N2, N3, h, mass, ArrayUtils::to_string(initVelocity)
     );
-    //To avoid multiple resizing, the required capacity is here set once.
-    particles.reserve(particles.capacity() + N1 * N2 * N3);
+
     std::array<double, 3> currentPosition = position;
 
     for (unsigned n1 = 0; n1 < N1; n1++) {

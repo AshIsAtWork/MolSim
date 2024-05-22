@@ -5,6 +5,7 @@
 #pragma once
 #include "outputWriter/VTKWriter.h"
 #include "outputWriter/XYZWriter.h"
+#include "particleRepresentation/container/ParticleContainer.h"
 #include "reader/FileReader.h"
 #include "reader/XMLReader.h"
 

@@ -52,7 +52,7 @@ Members:
 ## Task 5: Refactoring and documentation ##
 **1. Storing the particles**
 * For our implementation of storing the particles we used the predefined class std::vector from the standard library. The reason for this is that internally all objects are stored consecutive in memory, making the access cache efficient, especially, when iterating over them. To secure a performant way of iterating is really crucial to guarantee a fast simulation. Furthermore, std::vector is in contrast to std::array dynamic. This is necessary, because we can't tell before compilation, how many particles have to be stored. Additionally, we can add more particles during the simulation, without worrying of going out of storage. 
-* To keep iteration as simple as possible, we provided an iterator making the [ParticleContainer](../../src/particleRepresentation/ParticleContainer.h) suitable for iterating over pairs of particles, by simply nesting two for loops, as shown in the method calculateF() of the class [Simulator](../../src/moleculeSimulator/Simulator.h).
+* To keep iteration as simple as possible, we provided an iterator making the [ParticleContainer](../../src/particleRepresentation/container/ParticleContainer.h) suitable for iterating over pairs of particles, by simply nesting two for loops, as shown in the method calculateF() of the class [Simulator](../../src/moleculeSimulator/Simulator.h).
 * To have a better overview over the current project structure, you may have a look at our [UML class diagram](UMLClassDiagram.png).
 
 **2. Improve extendability**

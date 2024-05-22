@@ -7,6 +7,8 @@
 #include "particleRepresentation/particle/Particle.h"
 #include <vector>
 
+#include "ParticleContainer.h"
+
 /**
  * @brief Class to store the particles for simulation.
  *
@@ -14,12 +16,12 @@
  * they are stored consecutively in memory.
  */
 
-class ParticleContainer {
+class DefaultParticleContainer : public ParticleContainer{
 private:
     std::vector<Particle> particles;
 
 public:
-    ParticleContainer() = default;
+    DefaultParticleContainer() = default;
 
     /**
      * @brief Create a ParticleContainer which can store up to capacity particles.
@@ -28,7 +30,7 @@ public:
      *
      * If the capacity is exceeded the whole data structure will be extended leading to reallocation.
      */
-    explicit ParticleContainer(size_t capacity);
+    explicit DefaultParticleContainer(size_t capacity);
 
     /**
      * @brief Add one particle to this container.
@@ -37,7 +39,7 @@ public:
      *
      * Add one particle to this container. It will be appended.
      */
-    void add(Particle &p);
+    void add(Particle &p) override;
 
     /**
      * @brief Obtain particle at position i.
@@ -56,7 +58,7 @@ public:
      *
      * Provides the number of particles currently stored in the data structure.
      */
-    size_t size();
+    size_t size() override;
 
     /**
      * @brief Retrieve the capacity of this container.
@@ -101,4 +103,10 @@ public:
      * is not that efficient.
      */
     bool contains(Particle& p);
+
+    void applyToEachParticle(const std::function<void(Particle &)> &function) override;
+
+    void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
+
+ void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 };

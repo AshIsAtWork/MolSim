@@ -4,10 +4,12 @@
 
 #include <algorithm>
 #include <gtest/gtest.h>
-#include "particleRepresentation/LinkedCellsContainer.h"
+#include "particleRepresentation/container/LinkedCellsContainer.h"
 #include <spdlog/spdlog.h>
 
 #include "fileHandling/FileHandler.h"
+#include "models/LinkedCells.h"
+#include "models/Model.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 
 
@@ -135,37 +137,28 @@ TEST(HaloCellIndizes, BasicTest) {
 }
 
 TEST(IterationScheme, BasicTest) {
-    LinkedCellsContainer lcc{{180, 90, 0}, 3};
     double current_time = 0;
     double endT = 20;
     double deltaT = 0.0005;
     int iteration = 0;
 
-    ParticleContainer pc;
-    ParticleGenerator::generateCuboid(pc, {20,20,0}, 100, 20 ,1 , 1.1225, 1 ,{0,0,0});
-    ParticleGenerator::generateCuboid(pc, {70,60,0}, 20, 20 ,1 , 1.1225, 1 ,{0,-10,0});
-
     //Calculate the initial forces before starting the simulation
     LeonardJonesForce force;
-    for(Particle p : pc) {
-        lcc.add(p);
-    }
-    lcc.plot(iteration);
-    lcc.updateForces(force);
+    LinkedCells model{force,deltaT,{180,90,0},3};
+
+    model.addCuboid({20,20,0}, 100, 20 ,1 , 1.1225, 1 ,{0,0,0});
+    model.addCuboid({70,60,0}, 20, 20 ,1 , 1.1225, 1 ,{0,-10,0});
+
+    FileHandler file_handler;
+    file_handler.writeToFile(model.getParticles(), iteration, FileHandler::outputFormat::vtk);
+    model.updateForces();
 
     // for this loop, we assume: current x, current f and current v are known
     while (current_time < endT) {
-        // calculate new x
-        lcc.updatePositions(deltaT);
-        // calculate new f
-        lcc.updateForces(force);
-        // calculate new v
-        lcc.updateVelocities(deltaT);
-        // update cells of particles
-        lcc.updateCells();
+        model.step();
         iteration++;
         if(iteration % 10 == 0) {
-            lcc.plot(iteration);
+            file_handler.writeToFile(model.getParticles(), iteration, FileHandler::outputFormat::vtk);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);

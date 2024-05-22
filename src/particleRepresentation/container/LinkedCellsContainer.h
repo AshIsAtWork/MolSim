@@ -5,15 +5,16 @@
 #pragma once
 #include <vector>
 
+#include "ParticleContainer.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "moleculeSimulator/forceCalculation/Force.h"
-#include "particle/Particle.h"
+#include "particleRepresentation/particle/Particle.h"
 
-class LinkedCellsContainer {
+class LinkedCellsContainer : public ParticleContainer{
 private:
     //Data structure
     std::vector<std::vector<Particle>> cells;
-    int size;
+    int currentSize;
 
     //Precomputed indizes
     std::vector<int> haloCells;
@@ -43,7 +44,7 @@ public:
 
     LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff);
     int calcCellIndex(const std::array<double, 3>& position);
-    void add(Particle& p);
+    void add(Particle& p) override;
     void updateForces(Force& force);
 
     void updateVelocities(double deltaT);
@@ -54,9 +55,15 @@ public:
 
     std::array<int, 3> oneDToThreeD(int index) const;
 
-    void plot(int iteration);
-
     void updateCells();
+
+    size_t size() override;
+
+    void applyToEachParticle(const std::function<void(Particle &)> &function) override;
+
+    void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
+
+    void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
     //getter for tests
 

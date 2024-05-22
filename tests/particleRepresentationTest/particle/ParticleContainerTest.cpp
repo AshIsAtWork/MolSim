@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/DefaultParticleContainer.h"
 #include <spdlog/spdlog.h>
 
 
@@ -12,7 +12,7 @@
  */
 class ParticleContainerTest : public testing::Test {
 protected:
-    ParticleContainer pc;
+    DefaultParticleContainer pc;
     Particle p;
 
     ParticleContainerTest() : pc{10} {}

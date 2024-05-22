@@ -3,13 +3,14 @@
  *
  *  Created on: 01.03.2010
  *      Author: eckhardw
+ *      Adapted by daniel
  */
 
 #pragma once
 
 #include <fstream>
 
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/DefaultParticleContainer.h"
 
 namespace outputWriter {
 
@@ -20,7 +21,7 @@ public:
 
   virtual ~XYZWriter();
 
-  void plotParticles(ParticleContainer particles, const std::string &filename,
+  void plotParticles(ParticleContainer& particles, const std::string &filename,
                      int iteration);
 };
 

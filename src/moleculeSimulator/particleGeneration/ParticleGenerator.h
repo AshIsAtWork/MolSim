@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/DefaultParticleContainer.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 /**

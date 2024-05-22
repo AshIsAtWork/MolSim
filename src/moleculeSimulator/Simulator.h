@@ -6,7 +6,7 @@
 
 #include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/DefaultParticleContainer.h"
 #include <iostream>
 #include "forceCalculation/Force.h"
 
@@ -20,7 +20,7 @@
 class Simulator {
 private:
     FileHandler fileHandler;
-    ParticleContainer particles;
+    DefaultParticleContainer particles;
     Force &force;
     double deltaT;
     double endT;
@@ -98,5 +98,5 @@ public:
      *
      * @return Particle container of this simulator
      */
-    ParticleContainer &getParticles();
+    DefaultParticleContainer& getParticles();
 };

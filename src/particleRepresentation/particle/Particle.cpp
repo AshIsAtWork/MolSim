@@ -28,6 +28,11 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
         ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), type);
 }
 
+void Particle::resetForce() {
+    old_f = f;
+    f = {0,0,0};
+}
+
 Particle::~Particle() { spdlog::debug("Particle destructed"); }
 
 const std::array<double, 3> &Particle::getX() const { return x; }

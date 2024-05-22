@@ -98,6 +98,6 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer &Simulator::getParticles() {
+DefaultParticleContainer& Simulator::getParticles() {
     return particles;
 }

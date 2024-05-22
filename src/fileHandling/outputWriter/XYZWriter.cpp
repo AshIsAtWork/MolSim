@@ -3,6 +3,7 @@
  *
  *  Created on: 01.03.2010
  *      Author: eckhardw
+ *      Adapted by daniel
  */
 
 #include "XYZWriter.h"
@@ -15,7 +16,7 @@ XYZWriter::XYZWriter() = default;
 
 XYZWriter::~XYZWriter() = default;
 
-void XYZWriter::plotParticles(ParticleContainer particles,const std::string &filename, int iteration) {
+void XYZWriter::plotParticles(ParticleContainer& particles,const std::string &filename, int iteration) {
   std::ofstream file;
   std::stringstream strstr;
   strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".xyz";
@@ -26,17 +27,17 @@ void XYZWriter::plotParticles(ParticleContainer particles,const std::string &fil
           "file format doku."
        << std::endl;
 
-  for (auto &p : particles) {
-    std::array<double, 3> x = p.getX();
-    file << "Ar ";
-    file.setf(std::ios_base::showpoint);
+  particles.applyToEachParticle([&file](Particle &p) {
+      std::array<double, 3> x = p.getX();
+      file << "Ar ";
+      file.setf(std::ios_base::showpoint);
 
-    for (auto &xi : x) {
-      file << xi << " ";
-    }
+      for (auto &xi : x) {
+        file << xi << " ";
+      }
 
-    file << std::endl;
-  }
+      file << std::endl;
+  });
 
   file.close();
 }

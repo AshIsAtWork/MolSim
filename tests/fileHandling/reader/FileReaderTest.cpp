@@ -11,7 +11,7 @@
  */
 class FileReaderTest : public testing::Test {
 protected:
-    ParticleContainer pc;
+    DefaultParticleContainer pc;
 
     void SetUp() override {
         //Deactivate all console output

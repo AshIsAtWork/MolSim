@@ -66,8 +66,6 @@ int FileReader::readParticle(ParticleContainer &particles, std::ifstream &input_
     numstream >> numParticles;
     spdlog::debug("Reading {} particles", numParticles);
 
-    particles.reserve(numParticles);
-
     for (int i = 0; i < numParticles; i++) {
         tmpString.clear();
         if (getline(input_file, tmpString).eof() && tmpString.empty()) {
