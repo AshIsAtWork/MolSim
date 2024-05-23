@@ -146,11 +146,11 @@ TEST(IterationScheme, BasicTest) {
     LeonardJonesForce force;
     LinkedCells model{force,deltaT,{180,90,0},3};
 
-    model.addCuboid({20,20,0}, 100, 20 ,1 , 1.1225, 1 ,{0,0,0});
-    model.addCuboid({70,60,0}, 20, 20 ,1 , 1.1225, 1 ,{0,-10,0});
+    model.addCuboid({20,20,0}, 100, 20 ,1 , 1.1225, 1 ,{0,0,0},3);
+    model.addCuboid({70,60,0}, 20, 20 ,1 , 1.1225, 1 ,{0,-10,0},3);
 
     FileHandler file_handler;
-    file_handler.writeToFile(model.getParticles(), iteration, FileHandler::outputFormat::vtk);
+    model.plot(iteration, FileHandler::outputFormat::vtk);
     model.updateForces();
 
     // for this loop, we assume: current x, current f and current v are known
@@ -158,7 +158,7 @@ TEST(IterationScheme, BasicTest) {
         model.step();
         iteration++;
         if(iteration % 10 == 0) {
-            file_handler.writeToFile(model.getParticles(), iteration, FileHandler::outputFormat::vtk);
+            model.plot(iteration, FileHandler::outputFormat::vtk);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);

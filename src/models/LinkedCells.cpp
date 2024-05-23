@@ -13,4 +13,5 @@ void LinkedCells::step() {
     updateForces();
     updateVelocities();
     particles.updateCells();
+    particles.markHalos();
 }

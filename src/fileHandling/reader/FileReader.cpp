@@ -48,7 +48,7 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
             return -1;
         }
         datastream >> brownianMotionAverageVelocity;
-        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity);
+        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity, 2);
     }
     return 0;
 }

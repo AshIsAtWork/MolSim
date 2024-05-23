@@ -7,11 +7,15 @@
 
 #include "ParticleContainer.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include "moleculeSimulator/forceCalculation/Force.h"
 #include "particleRepresentation/particle/Particle.h"
 
 class LinkedCellsContainer : public ParticleContainer{
 private:
+
+    //Boundry selection
+
+    enum class Boundry {front, right, back, left, top, bottom};
+
     //Data structure
     std::vector<std::vector<Particle>> cells;
     int currentSize;
@@ -43,13 +47,10 @@ private:
 public:
 
     LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff);
+
     int calcCellIndex(const std::array<double, 3>& position);
+
     void add(Particle& p) override;
-    void updateForces(Force& force);
-
-    void updateVelocities(double deltaT);
-
-    void updatePositions(double deltaT);
 
     int threeDToOneD(int x, int y, int z) const;
 
@@ -64,6 +65,10 @@ public:
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
 
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
+
+    void applyToAllBoundryParticles(const std::function<void(Particle &)> &function, Boundry boundry);
+
+    void markHalos();
 
     //getter for tests
 

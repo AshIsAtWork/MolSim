@@ -34,7 +34,7 @@ void ParticleGenerator::generateDiscQuadrant(ParticleContainer &particles, const
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                        unsigned N2, unsigned N3, double h, double mass,
-                                       const std::array<double, 3> &initVelocity) {
+                                       const std::array<double, 3> &initVelocity, int dimensions) {
     spdlog::info("Generate cuboid with the following parameters:\n"
                  "Position: {}\n"
                  "N1: {}\n"
@@ -42,8 +42,9 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
                  "N3: {}\n"
                  "h: {}\n"
                  "m: {}\n"
-                 "Velocity: {}\n",
-                 ArrayUtils::to_string(position), N1, N2, N3, h, mass, ArrayUtils::to_string(initVelocity)
+                 "Velocity: {}\n"
+                 "Brownian Motion: {}D\n",
+                 ArrayUtils::to_string(position), N1, N2, N3, h, mass, ArrayUtils::to_string(initVelocity), dimensions
     );
 
     std::array<double, 3> currentPosition = position;
@@ -53,7 +54,7 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
             for (unsigned n3 = 0; n3 < N3; n3++) {
                 Particle pToAdd = {
                     currentPosition,
-                    maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity, 3) + initVelocity,
+                    maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity, dimensions) + initVelocity,
                     mass,
                     id
                 };

@@ -22,7 +22,7 @@ protected:
         //Deactivate all console output
         spdlog::set_level(spdlog::level::off);
 
-        ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 2, 2, 2, 1, 1, {0, 0, 0});
+        ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 2, 2, 2, 1, 1, {0, 0, 0}, 3);
     }
 };
 
@@ -80,7 +80,7 @@ TEST_F(ParticleGeneratorTest_Cuboid, CuboidMassTest) {
 
 TEST(ParticleGeneratorTest_Cuboid_2, OneDimensionZero) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 2, 0, 2, 1, 1, {0, 0, 0});
+    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 2, 0, 2, 1, 1, {0, 0, 0}, 3);
     EXPECT_EQ(pc.size(), 0);
 }
 
@@ -90,7 +90,7 @@ TEST(ParticleGeneratorTest_Cuboid_2, OneDimensionZero) {
 
 TEST(ParticleGeneratorTest_Cuboid_2, DifferentDimensions) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 10, 26, 8, 1, 1, {0, 0, 0});
+    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 10, 26, 8, 1, 1, {0, 0, 0}, 3);
     EXPECT_EQ(pc.size(), 10*26*8);
 }
 
@@ -102,7 +102,7 @@ TEST(ParticleGeneratorTest_Cuboid_2, ParticleContainerNotEmpty) {
     DefaultParticleContainer pc;
     Particle p;
     pc.add(p);
-    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 10, 10, 10, 1, 1, {0, 0, 0});
+    ParticleGenerator::generateCuboid(pc, {0, 0, 0}, 10, 10, 10, 1, 1, {0, 0, 0}, 3);
     EXPECT_EQ(pc.size(), 1001);
 }
 
@@ -112,7 +112,7 @@ TEST(ParticleGeneratorTest_Cuboid_2, ParticleContainerNotEmpty) {
 
 TEST(ParticleGeneratorTest_Cuboid_2, NonZeroStartingPostion) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateCuboid(pc, {10, 0, 0}, 1, 1, 1, 1, 1, {0, 0, 0});
+    ParticleGenerator::generateCuboid(pc, {10, 0, 0}, 1, 1, 1, 1, 1, {0, 0, 0}, 3);
     std::array<double, 3> pos = {10, 0, 0};
     ASSERT_EQ(pc.size(), 1);
     EXPECT_EQ(pc.at(0).getX(), pos);
@@ -124,8 +124,8 @@ TEST(ParticleGeneratorTest_Cuboid_2, NonZeroStartingPostion) {
 
 TEST(ParticleGeneratorTest_Cuboid_2, AddMultipleCuboids) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateCuboid(pc, {10, 0, 0}, 1, 1, 1, 1, 1, {0, 0, 0});
-    ParticleGenerator::generateCuboid(pc, {20, 0, 0}, 1, 10, 3, 1, 1, {0, 0, 0});
+    ParticleGenerator::generateCuboid(pc, {10, 0, 0}, 1, 1, 1, 1, 1, {0, 0, 0}, 3);
+    ParticleGenerator::generateCuboid(pc, {20, 0, 0}, 1, 10, 3, 1, 1, {0, 0, 0}, 3);
     EXPECT_EQ(pc.size(), 31);
 }
 
@@ -174,7 +174,7 @@ TEST(ParticleGeneratorTest_Disc, ZeroParticles) {
 TEST(ParticleGeneratorTest_Disc, MeshWidthCorrect) {
     DefaultParticleContainer pc, pcRef;
     ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 6, 1, 1);
-    ParticleGenerator::generateCuboid(pcRef,{-5,-5,0},11,11,1,1,1,{0,0,0});
+    ParticleGenerator::generateCuboid(pcRef,{-5,-5,0},11,11,1,1,1,{0,0,0}, 3);
     //Brownian Motion has to be removed for this test.
     for(Particle& p: pcRef) {
         p.setV({0,0,0});

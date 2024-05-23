@@ -53,10 +53,11 @@ public:
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
      * @param initVelocity Initial velocity of the of the particles.
+     * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      */
     static void generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                unsigned N2, unsigned N3,
-                               double h, double mass, const std::array<double, 3> &initVelocity);
+                               double h, double mass, const std::array<double, 3> &initVelocity, int dimensions);
 
     /**
      * @brief Generate a 2D disc structure.

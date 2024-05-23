@@ -1,7 +1,12 @@
 #include <iostream>
 #include <boost/program_options.hpp>
+
+#include "models/DirectSum.h"
+#include "models/LinkedCells.h"
 #include "moleculeSimulator/Simulator.h"
+#include "moleculeSimulator/forceCalculation/gravity/Gravity.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "particleRepresentation/container/LinkedCellsContainer.h"
 #include "utils/Benchmark.h"
 #include "utils/Logging.h"
 #include "utils/InputHander.h"
@@ -10,12 +15,16 @@
 int main(int argc, char *argsv[]) {
     double endT;
     double deltaT;
+    double rCutOff;
     std::string inputFilePath;
     std::string inputFileFormatString;
     std::string outputFileFormatString;
     FileHandler::outputFormat outputFormat;
     FileHandler::inputFormat inputFormat;
     std::string logLevel;
+    std::string selectedForce;
+    std::string selectedModel;
+    std::vector<double> domain;
     bool benchmark = false;
 
     namespace po = boost::program_options;
@@ -35,7 +44,12 @@ int main(int argc, char *argsv[]) {
                     "Format of the input file. Supported formats are txt and xml.")
             ("outputFileFormatString,o", po::value<std::string>(&outputFileFormatString)->default_value("vtk"),
                     "Format of the output file. Supported formats are vtk and xyz. Default is vtk.")
-            ("time,t", "Perform time measurement. Logging will be disabled.");
+            ("time,t", "Perform time measurement. Logging will be disabled.")
+            ("time,t", "Perform time measurement. Logging will be disabled.")
+            ("force,c",po::value<std::string>(&selectedForce)->default_value("ljf"), "Force to use: Possible options are (gravity, ljf)")
+            ("model,m", po::value<std::string>(&selectedModel)->default_value("lc"), "Model to use: Possible options are (ds, lc)")
+            ("domain", po::value<std::vector<double>>(&domain)->multitoken(), "Size of the domain: The following format is expected: --domain N1 N2 N3")
+            ("cutoff,r",po::value<double>(&rCutOff)->default_value(3.0), "The cutOffRadius. Is only considered, when the Linked Cell Model is used.");
 
     po::variables_map vm;
 
@@ -99,10 +113,47 @@ int main(int argc, char *argsv[]) {
         benchmark = true;
     }
 
+    Force* force;
+
+    if(selectedForce == "gravity") {
+        static Gravity g;
+        force = &g;
+    }else if(selectedForce == "ljf") {
+        static LeonardJonesForce lJF;
+        force = &lJF;
+    }
+    else {
+        std::cout << "Please specify a valid force option!\n";
+        std::cout << desc << "\n";
+        return -1;
+    }
+
+    Model* model;
+
+    if(selectedModel == "ds") {
+        static DirectSum directSum{*force, deltaT};
+        model = &directSum;
+    }
+    else if(selectedModel == "lc") {
+        std::cout << "Domain: " << domain << "\n";
+        if(domain.size() != 3) {
+            std::cout << "Please specify a valid domain option!\n";
+            std::cout << desc << "\n";
+            return -1;
+        }
+        static LinkedCells linkedCells{*force,deltaT,{domain[0], domain[1], domain[2]},rCutOff};
+        model = &linkedCells;
+    }
+    else {
+        std::cout << "Please specify a valid model option!\n";
+        std::cout << desc << "\n";
+        return -1;
+    }
+
+
     spdlog::info("Hello from MolSim for PSE!");
 
-    LeonardJonesForce lJF;
-    Simulator simulator(inputFilePath, lJF, endT, deltaT, inputFormat, outputFormat);
+    Simulator simulator(inputFilePath, *model,*force, endT, deltaT, inputFormat, outputFormat);
 
     if (benchmark) {
         spdlog::info("Starting time measurement...");
