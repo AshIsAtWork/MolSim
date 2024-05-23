@@ -11,7 +11,8 @@ private:
     LinkedCellsContainer particles;
 
 public:
-    LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff);
+    LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, FileHandler::inputFormat inputFormat,
+    FileHandler::outputFormat outputFormat);
 
     void step() override;
 };

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/ParticleContainer.h"
 #include "fileHandling/reader/XMLHandling/Collision.h"
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>

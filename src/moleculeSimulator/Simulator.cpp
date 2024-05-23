@@ -6,7 +6,9 @@
 //TODO: Enable this for below optimization
 //#include <ranges>
 
-Simulator::Simulator(std::string &inputFilePath, Model& model, Force &force, double endT, double deltaT) : model{model},force{force},
+Simulator::Simulator(std::string &inputFilePath, Model &model, Force &force, double endT, double deltaT,
+                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat) : model{model},
+    force{force},
     deltaT{deltaT}, endT{endT} {
     model.addViaFile(inputFilePath);
 }
@@ -24,7 +26,7 @@ void Simulator::run(bool benchmark) {
         model.step();
         iteration++;
         if (!benchmark && iteration % 10 == 0) {
-            model.plot(iteration, FileHandler::outputFormat::vtk);
+            model.plot(iteration);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);

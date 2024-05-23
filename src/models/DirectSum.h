@@ -12,7 +12,8 @@ private:
     DefaultParticleContainer particles;
 
 public:
-    DirectSum(Force &force, double deltaT);
+    DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
+              FileHandler::outputFormat outputFormat);
 
     void step() override;
 };

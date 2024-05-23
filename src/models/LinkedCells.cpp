@@ -5,7 +5,9 @@
 #include "LinkedCells.h"
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
-                         double rCutOff) : Model(particles, force, deltaT), particles(domainSize, rCutOff) {
+                         double rCutOff, FileHandler::inputFormat inputFormat,
+                         FileHandler::outputFormat outputFormat) : Model(particles, force, deltaT, inputFormat,
+                                                                         outputFormat), particles(domainSize, rCutOff) {
 }
 
 void LinkedCells::step() {

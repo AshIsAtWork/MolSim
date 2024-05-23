@@ -45,11 +45,10 @@ int main(int argc, char *argsv[]) {
             ("outputFileFormatString,o", po::value<std::string>(&outputFileFormatString)->default_value("vtk"),
                     "Format of the output file. Supported formats are vtk and xyz. Default is vtk.")
             ("time,t", "Perform time measurement. Logging will be disabled.")
-            ("time,t", "Perform time measurement. Logging will be disabled.")
             ("force,c",po::value<std::string>(&selectedForce)->default_value("ljf"), "Force to use: Possible options are (gravity, ljf)")
             ("model,m", po::value<std::string>(&selectedModel)->default_value("lc"), "Model to use: Possible options are (ds, lc)")
             ("domain", po::value<std::vector<double>>(&domain)->multitoken(), "Size of the domain: The following format is expected: --domain N1 N2 N3")
-            ("cutoff,r",po::value<double>(&rCutOff)->default_value(3.0), "The cutOffRadius. Is only considered, when the Linked Cell Model is used.");
+            ("cutoff,r",po::value<double>(&rCutOff)->default_value(3.0), "The cutoff radius. Is only considered, when the Linked Cell Model is used.");
 
     po::variables_map vm;
 
@@ -131,7 +130,7 @@ int main(int argc, char *argsv[]) {
     Model* model;
 
     if(selectedModel == "ds") {
-        static DirectSum directSum{*force, deltaT};
+        static DirectSum directSum{*force, deltaT, inputFormat, outputFormat};
         model = &directSum;
     }
     else if(selectedModel == "lc") {
@@ -141,7 +140,7 @@ int main(int argc, char *argsv[]) {
             std::cout << desc << "\n";
             return -1;
         }
-        static LinkedCells linkedCells{*force,deltaT,{domain[0], domain[1], domain[2]},rCutOff};
+        static LinkedCells linkedCells{*force,deltaT,{domain[0], domain[1], domain[2]},rCutOff, inputFormat, outputFormat};
         model = &linkedCells;
     }
     else {

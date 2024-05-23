@@ -10,13 +10,16 @@
 class Model {
 private:
     FileHandler fileHandler;
+    FileHandler::inputFormat inputFormat;
+    FileHandler::outputFormat outputFormat;
 
 protected:
     ParticleContainer &particles;
     Force &force;
     double deltaT;
 
-    Model(ParticleContainer &particles, Force &force, double deltaT);
+    Model(ParticleContainer &particles, Force &force, double deltaT,  FileHandler::inputFormat inputFormat,
+    FileHandler::outputFormat outputFormat);
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -35,7 +38,7 @@ protected:
     void updateVelocities() const;
 
 public:
-    void plot(int iteration, FileHandler::outputFormat format);
+    void plot(int iteration);
 
     /**
      * @brief Add a cuboid structure to this model.

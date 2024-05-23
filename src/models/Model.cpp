@@ -5,7 +5,8 @@
 
 #include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
 
-Model::Model(ParticleContainer &particles, Force &force, double deltaT) : particles{particles}, force{force},
+Model::Model(ParticleContainer &particles, Force &force, double deltaT,  FileHandler::inputFormat inputFormat,
+    FileHandler::outputFormat outputFormat) : inputFormat{inputFormat}, outputFormat{outputFormat}, particles{particles}, force{force},
                                                                           deltaT{deltaT} {
 }
 
@@ -34,8 +35,8 @@ void Model::updateVelocities() const{
     });
 }
 
-void Model::plot(int iteration, FileHandler::outputFormat format) {
-    fileHandler.writeToFile(particles, iteration, format);
+void Model::plot(int iteration) {
+    fileHandler.writeToFile(particles, iteration, outputFormat);
 }
 
 void Model::addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2,
@@ -48,5 +49,5 @@ void Model::addParticle(Particle &p) {
 }
 
 void Model::addViaFile(std::string &filepath) {
-    fileHandler.readFile(particles,filepath);
+    fileHandler.readFile(particles,filepath, inputFormat);
 }

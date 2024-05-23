@@ -2,7 +2,7 @@
 // Created by Ashutosh Solanki on 23.05.24.
 //
 
-#include "particleRepresentation/ParticleContainer.h"
+#include "particleRepresentation/container/ParticleContainer.h"
 #include "fileHandling/reader/XMLHandling/Collision.h"
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>

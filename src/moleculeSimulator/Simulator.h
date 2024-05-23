@@ -23,9 +23,6 @@ private:
     Force &force;
     double deltaT;
     double endT;
-    FileHandler::inputFormat inputFormat;
-    FileHandler::outputFormat outputFormat;
-
 
 public:
     Simulator() = delete;
@@ -44,10 +41,9 @@ public:
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate.
      */
-    explicit Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT,
-                       FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
-    Simulator(std::string &inputFilePath, Model &model, Force &force, double endT, double deltaT);
+    Simulator(std::string &inputFilePath, Model &model, Force &force, double endT, double deltaT,
+              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
     /**
      * @brief Run the simulation.
