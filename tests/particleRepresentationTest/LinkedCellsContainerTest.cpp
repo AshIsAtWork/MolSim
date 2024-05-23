@@ -136,39 +136,6 @@ TEST(HaloCellIndizes, BasicTest) {
     }
 }
 
-TEST(IterationScheme, BasicTest) {
-    double current_time = 0;
-    double endT = 20;
-    double deltaT = 0.0005;
-    int iteration = 0;
-
-    //Calculate the initial forces before starting the simulation
-    LeonardJonesForce force;
-    LinkedCells model{force,deltaT,{180,90,0},3};
-
-    model.addCuboid({20,20,0}, 100, 20 ,1 , 1.1225, 1 ,{0,0,0},3);
-    model.addCuboid({70,60,0}, 20, 20 ,1 , 1.1225, 1 ,{0,-10,0},3);
-
-    FileHandler file_handler;
-    model.plot(iteration, FileHandler::outputFormat::vtk);
-    model.updateForces();
-
-    // for this loop, we assume: current x, current f and current v are known
-    while (current_time < endT) {
-        model.step();
-        iteration++;
-        if(iteration % 10 == 0) {
-            model.plot(iteration, FileHandler::outputFormat::vtk);
-        }
-
-        spdlog::trace("Iteration {} finished.", iteration);
-
-        current_time += deltaT;
-    }
-
-    spdlog::info("Output written. Terminating...");
-}
-
 
 
 

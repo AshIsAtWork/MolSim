@@ -126,23 +126,44 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
                 if (x <= nX - 3 && y >= 2) {
                     domainCellIterationScheme[index].push_back(threeDToOneD(x + 1, y - 1, z));
                 }
+                //For 3D possibly up to 9 more cells do exist.
                 if (z >= 2) {
+                    //(x - 1, y - 1, z - 1)
                     if (x >= 2 && y >= 2) {
                         domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y - 1, z - 1));
                     }
-                    //(x-1, y, z - 1)
+                    //(x - 1, y, z - 1)
                     if (x >= 2) {
                         domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y, z - 1));
                     }
-                    //(x, y-1, z - 1)
+                    //(x, y - 1, z - 1)
                     if (y >= 2) {
                         domainCellIterationScheme[index].push_back(threeDToOneD(x, y - 1, z - 1));
                     }
-                    //(x+1, y-1, z - 1)
+                    //(x + 1, y - 1, z - 1)
                     if (x <= nX - 3 && y >= 2) {
                         domainCellIterationScheme[index].push_back(threeDToOneD(x, y - 1, z - 1));
                     }
-                    //(x, y, z - 1 - 1)
+                    //(x - 1, y + 1, z - 1)
+                    if (x >= 2 && y <= nY - 3) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x - 1, y + 1, z - 1));
+                    }
+                    //(x, y + 1, z - 1)
+                    if (y <= nY - 3) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x, y + 1, z - 1));
+                    }
+
+                    //(x + 1, y + 1, z - 1)
+                    if (x <= nX - 3 && y <= nY - 3) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x + 1, y + 1, z - 1));
+                    }
+
+                    //(x + 1, y , z - 1)
+                    if (x <= nX - 3) {
+                        domainCellIterationScheme[index].push_back(threeDToOneD(x, y + 1, z - 1));
+                    }
+
+                    //(x, y, z - 1)
                     domainCellIterationScheme[index].push_back(threeDToOneD(x, y, z - 1));
                 }
                 index++;
@@ -151,7 +172,8 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
     }
 }
 
-LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : currentSize{0}, rCutOff{rCutOff},
+LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : currentSize{0},
+    rCutOff{rCutOff},
     domainSize{domainSize} {
     if (domainSize[0] <= 0 || domainSize[1] <= 0 || domainSize[2] < 0) {
         spdlog::error("Domain size is invalid!");
@@ -223,7 +245,8 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
 
 void LinkedCellsContainer::add(Particle &p) {
     //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
-    if(twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO || __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
+    if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
+                 __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
         spdlog::error("Adding particles living in 3D space to a 2D Linked Cell container is not possible!");
     }
     int index = calcCellIndex(p.getX());
@@ -262,7 +285,7 @@ size_t LinkedCellsContainer::size() {
 }
 
 void LinkedCellsContainer::clearHaloCells() {
-    for(auto cell : haloCells) {
+    for (auto cell: haloCells) {
         cells[cell].clear();
     }
 }
