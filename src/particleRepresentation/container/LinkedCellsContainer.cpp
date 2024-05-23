@@ -161,6 +161,8 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
     //Determine if we are in 2D or 3D
     twoD = __fpclassify(domainSize[2]) == FP_ZERO;
 
+    spdlog::info("Creating Linked Cell Container in {}D", twoD ? 2 : 3);
+
     //Calculate number of cells in each dimension. We add here plus two, because each dimension contains two exta halo cells.
     //If the cutOff radius is smaller than the domain size, we set the cell number to 1 because we need at least one cell.
     nX = static_cast<int>(floor(domainSize[0] / rCutOff)) + 2 + (domainSize[0] < rCutOff ? 1 : 0);
@@ -220,6 +222,10 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
 }
 
 void LinkedCellsContainer::add(Particle &p) {
+    //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
+    if(twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO || __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
+        spdlog::error("Adding particles living in 3D space to a 2D Linked Cell container is not possible!");
+    }
     int index = calcCellIndex(p.getX());
     cells[index].push_back(std::move(p));
     currentSize++;
@@ -253,6 +259,12 @@ void LinkedCellsContainer::updateCells() {
 
 size_t LinkedCellsContainer::size() {
     return currentSize;
+}
+
+void LinkedCellsContainer::clearHaloCells() {
+    for(auto cell : haloCells) {
+        cells[cell].clear();
+    }
 }
 
 void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle &)> &function) {
@@ -300,14 +312,6 @@ applyToAllBoundryParticles(const std::function<void(Particle &)> &function, Boun
     for (auto cell: boundries[static_cast<int>(boundry)]) {
         for (Particle &p: cells[cell]) {
             function(p);
-        }
-    }
-}
-
-void LinkedCellsContainer::markHalos() {
-    for(auto cell : haloCells) {
-        for (Particle &p: cells[cell]) {
-           p.setType(3);
         }
     }
 }

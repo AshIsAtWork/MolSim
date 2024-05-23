@@ -60,6 +60,8 @@ public:
 
     size_t size() override;
 
+    void clearHaloCells();
+
     void applyToEachParticle(const std::function<void(Particle &)> &function) override;
 
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
@@ -67,8 +69,6 @@ public:
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
     void applyToAllBoundryParticles(const std::function<void(Particle &)> &function, Boundry boundry);
-
-    void markHalos();
 
     //getter for tests
 
