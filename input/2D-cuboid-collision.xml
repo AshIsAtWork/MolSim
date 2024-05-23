@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<!--
+
+file      : cxx/tree/hello/hello.xml
+copyright : not copyrighted - public domain
+
+-->
+
+<Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../src/fileHandling/reader/XMLHandling/Collision.xsd">
+    <Particles>2</Particles>
+    <OutputFileName>Collision2d</OutputFileName>
+    <TimeStep>0.01</TimeStep>
+    <t_end>1000</t_end>
+    <delta_t>0.0002</delta_t>
+    <Cuboid>
+        <Position>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+        </Position>
+        <N1>40</N1>
+        <N2>8</N2>
+        <N3>1</N3>
+        <Distance>1.1225</Distance>
+        <Mass>1.0</Mass>
+        <Velocity>
+            <X>0.0</X>
+            <Y>0.0</Y>
+            <Z>0.0</Z>
+        </Velocity>
+        <Brownian>0.1</Brownian>
+    </Cuboid>
+    <Cuboid>
+        <Position>
+            <X>15.0</X>
+            <Y>15.0</Y>
+            <Z>0.0</Z>
+        </Position>
+        <N1>8</N1>
+        <N2>8</N2>
+        <N3>1</N3>
+        <Distance>1.1225</Distance>
+        <Mass>1.0</Mass>
+        <Velocity>
+            <X>0.0</X>
+            <Y>-10.0</Y>
+            <Z>0.0</Z>
+        </Velocity>
+        <Brownian>0.1</Brownian>
+    </Cuboid>
+</Molecules>

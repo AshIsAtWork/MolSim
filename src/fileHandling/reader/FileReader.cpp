@@ -128,3 +128,5 @@ int FileReader::readFile(ParticleContainer &particles, const std::string &filena
     spdlog::error("Could not open file!");
     return -2;
 }
+
+

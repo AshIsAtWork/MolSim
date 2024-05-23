@@ -12,34 +12,22 @@
  * @param logLevel String containing the log level
  * @return true, of the log level is valid, false otherwise.
  */
-inline bool setLogLevel(const std::string &logLevel) {
-    if (logLevel == "off") {
-        spdlog::set_level(spdlog::level::off);
-        return true;
-    }
-    if (logLevel == "critical") {
-        spdlog::set_level(spdlog::level::critical);
-        return true;
-    }
-    if (logLevel == "error") {
-        spdlog::set_level(spdlog::level::err);
-        return true;
-    }
-    if (logLevel == "warn") {
-        spdlog::set_level(spdlog::level::warn);
-        return true;
-    }
-    if (logLevel == "info") {
-        spdlog::set_level(spdlog::level::info);
-        return true;
-    }
-    if (logLevel == "debug") {
-        spdlog::set_level(spdlog::level::debug);
-        return true;
-    }
-    if (logLevel == "trace") {
-        spdlog::set_level(spdlog::level::trace);
+inline bool setLogLevel(const std::string& logLevel) {
+    static const std::unordered_map<std::string, spdlog::level::level_enum> levelMap = {
+            {"off", spdlog::level::off},
+            {"critical", spdlog::level::critical},
+            {"error", spdlog::level::err},
+            {"warn", spdlog::level::warn},
+            {"info", spdlog::level::info},
+            {"debug", spdlog::level::debug},
+            {"trace", spdlog::level::trace}
+    };
+
+    auto it = levelMap.find(logLevel);
+    if (it != levelMap.end()) {
+        spdlog::set_level(it->second);
         return true;
     }
     return false;
 }
+

@@ -7,5 +7,6 @@ RUN apt-get install -y libboost-program-options-dev
 RUN apt install -y graphviz
 RUN apt install -y doxygen
 RUN apt install -y libxerces-c-dev
+RUN apt install -y xsdcxx
 
 WORKDIR /work

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Molecules">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Particles" type="xs:unsignedByte" />
+                <xs:element name="OutputFileName" type="xs:string" />
+                <xs:element name="TimeStep" type="xs:decimal" />
+                <xs:element name="t_end" type="xs:unsignedShort" />
+                <xs:element name="delta_t" type="xs:decimal" />
+                <xs:element maxOccurs="unbounded" name="Cuboid">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Position">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="X" type="xs:decimal" />
+                                        <xs:element name="Y" type="xs:decimal" />
+                                        <xs:element name="Z" type="xs:decimal" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="N1" type="xs:unsignedByte" />
+                            <xs:element name="N2" type="xs:unsignedByte" />
+                            <xs:element name="N3" type="xs:unsignedByte" />
+                            <xs:element name="Distance" type="xs:decimal" />
+                            <xs:element name="Mass" type="xs:decimal" />
+                            <xs:element name="Velocity">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="X" type="xs:decimal" />
+                                        <xs:element name="Y" type="xs:decimal" />
+                                        <xs:element name="Z" type="xs:decimal" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Brownian" type="xs:decimal" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

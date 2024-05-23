@@ -6,6 +6,7 @@
 #include "outputWriter/VTKWriter.h"
 #include "outputWriter/XYZWriter.h"
 #include "reader/FileReader.h"
+#include "reader/XMLReader.h"
 
 /**
  * @brief Wrapper class for file handling.
@@ -29,17 +30,25 @@ public:
      *
      * This enum class enables the user to select the desired output format in the writeToFile method.
      */
-    enum class outputFormat { vtk, xyz };
+    enum class outputFormat { vtk, xyz, invalid };
+
+    /**
+     * @brief Supported input formats.
+     *
+     * This enum class enables the user to select the desired input format.
+     */
+    enum class inputFormat { txt, xml, invalid };
 
     /**
      * @brief Read particles from a txt-file.
      *
      * @param particles Particle container in which the newly read-in particles will be stored.
      * @param filePath File path to the input txt-file of the particles to be read.
+     * @param format Type of the input file.
      *
      * Supported txt file formats at the moment: Particle, Cuboid
      */
-    static void readFile(ParticleContainer &particles, std::string &filePath);
+    static void readFile(ParticleContainer &particles, std::string &filePath, inputFormat format);
 
     /**
      * @brief Write particles to a file.

@@ -24,6 +24,9 @@ private:
     Force &force;
     double deltaT;
     double endT;
+    FileHandler::inputFormat inputFormat;
+    FileHandler::outputFormat outputFormat;
+
 
     /**
     * @brief Helper method to calculate the force of all particles.
@@ -70,11 +73,14 @@ public:
      * @param force Type of force to be used in the simulation
      * @param endT Time to which the simulation is going to run.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
+     * @param inputFormat Format of the input file. Supported formats are txt and xml.
+     * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
      *
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate. After setting the environment all parameters may be adjusted using the method configure.
      */
-    explicit Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT);
+    explicit Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT,
+                       FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
 
     /**
@@ -88,9 +94,9 @@ public:
     void run(bool benchmark);
 
     /**
-     * Get the Particle container of this simultor
+     * Get the Particle container of this simulator
      *
      * @return Particle container of this simulator
      */
-    ParticleContainer& getParticles();
+    ParticleContainer &getParticles();
 };

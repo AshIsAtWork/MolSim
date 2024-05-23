@@ -3,6 +3,8 @@
 //
 
 #include "Simulator.h"
+//TODO: Enable this for below optimization
+//#include <ranges>
 
 void Simulator::calculateF_naive() {
     for (auto &p_i: particles) {
@@ -25,13 +27,27 @@ void Simulator::calculateF() {
 
     //Iterate over all distinct pairs of particles and apply Newtons third law of motion.
 
-    for (auto p_i = particles.begin(); p_i != particles.end(); std::advance(p_i,1)) {
-        for (auto p_j = std::next(p_i); p_j != particles.end(); std::advance(p_j,1)) {
+    for (auto p_i = particles.begin(); p_i != particles.end(); std::advance(p_i, 1)) {
+        for (auto p_j = std::next(p_i); p_j != particles.end(); std::advance(p_j, 1)) {
             auto f_ij{force.compute(*p_i, *p_j)};
             p_i->setF(p_i->getF() + f_ij);
             p_j->setF(p_j->getF() - f_ij);
         }
     }
+
+//    TODO: Possible Improvement (BUT USES C++23) Change it in CMAKE to test it
+//    for (auto& p : particles) {
+//        p.setOldF(p.getF());
+//        p.setF({0, 0, 0});
+//    }
+//
+//// Iterate over all distinct pairs of particles and apply Newton's third law of motion
+//    for (const auto& [p_i, p_j] : std::views::cartesian_product(particles, particles)
+//                                  | std::views::filter([](const auto& pair) { return &pair.first != &pair.second; })) {
+//        auto f_ij = force.compute(p_i, p_j);
+//        p_i.setF(p_i.getF() + f_ij);
+//        p_j.setF(p_j.getF() - f_ij);
+//    }
 }
 
 void Simulator::calculateX() {
@@ -46,9 +62,10 @@ void Simulator::calculateV() {
     }
 }
 
-Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT) : force{force},
-    deltaT{deltaT}, endT{endT} {
-    FileHandler::readFile(particles, inputFilePath);
+Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT,
+                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat) : force{force},
+                     deltaT{deltaT}, endT{endT}, inputFormat{inputFormat}, outputFormat{outputFormat} {
+    FileHandler::readFile(particles, inputFilePath, inputFormat);
 }
 
 void Simulator::run(bool benchmark) {
@@ -70,7 +87,7 @@ void Simulator::run(bool benchmark) {
 
         iteration++;
         if (!benchmark && iteration % 10 == 0) {
-            fileHandler.writeToFile(particles, iteration, FileHandler::outputFormat::vtk);
+            fileHandler.writeToFile(particles, iteration, outputFormat);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);
@@ -81,6 +98,6 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer& Simulator::getParticles() {
+ParticleContainer &Simulator::getParticles() {
     return particles;
 }
