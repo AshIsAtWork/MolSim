@@ -10,7 +10,8 @@ Simulator::Simulator(std::string &inputFilePath, Model &model, Force &force, dou
                      FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat) : model{model},
     force{force},
     deltaT{deltaT}, endT{endT} {
-    model.addViaFile(inputFilePath);
+    model.addDisc({60, 25, 4.5},{0,-10,0},15,1.1225,1,3);
+    //model.addViaFile(inputFilePath);
 }
 
 void Simulator::run(bool benchmark) {
@@ -25,7 +26,7 @@ void Simulator::run(bool benchmark) {
     while (current_time < endT) {
         model.step();
         iteration++;
-        if (!benchmark && iteration % 10 == 0) {
+        if (!benchmark && iteration % 100 == 0) {
             model.plot(iteration);
         }
 

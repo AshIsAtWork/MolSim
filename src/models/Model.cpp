@@ -44,6 +44,11 @@ void Model::addCuboid(const std::array<double, 3> &position, unsigned N1, unsign
     ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, initVelocity, dimensions);
 }
 
+void Model::addDisc(const std::array<double, 3> &center,
+    const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions) {
+    ParticleGenerator::generateDisc(particles, center,initVelocity, N, h, mass, dimensions);
+}
+
 void Model::addParticle(Particle &p) {
     particles.add(p);
 }

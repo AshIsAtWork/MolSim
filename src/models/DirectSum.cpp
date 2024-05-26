@@ -9,7 +9,7 @@ DirectSum::DirectSum(Force &force, double deltaT, FileHandler::inputFormat input
 }
 
 void DirectSum::step() {
-    updatePositions();
     updateForces();
     updateVelocities();
+    updatePositions();
 }

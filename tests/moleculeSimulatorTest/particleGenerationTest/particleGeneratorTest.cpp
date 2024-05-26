@@ -139,7 +139,7 @@ TEST(ParticleGeneratorTest_Cuboid_2, AddMultipleCuboids) {
 
 TEST(ParticleGeneratorTest_Disc, AllParticlesInsideTheCircle) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 10, 1.5, 1);
+    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 10, 1.5, 1, 3);
     for(Particle& p : pc) {
         EXPECT_LE(ArrayUtils::L2Norm(p.getX()), 13.5);
     }
@@ -153,7 +153,7 @@ TEST(ParticleGeneratorTest_Disc, AllParticlesInsideTheCircle) {
 
 TEST(ParticleGeneratorTest_Disc, OnlyOneParticleInTheCenter) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 1, 0.2, 1);
+    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 1, 0.2, 1, 3);
     EXPECT_EQ(pc.size(),1);
 }
 
@@ -163,7 +163,7 @@ TEST(ParticleGeneratorTest_Disc, OnlyOneParticleInTheCenter) {
 
 TEST(ParticleGeneratorTest_Disc, ZeroParticles) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 0, 0.2, 1);
+    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 0, 0.2, 1, 3);
     EXPECT_EQ(pc.size(),0);
 }
 
@@ -173,7 +173,7 @@ TEST(ParticleGeneratorTest_Disc, ZeroParticles) {
 
 TEST(ParticleGeneratorTest_Disc, MeshWidthCorrect) {
     DefaultParticleContainer pc, pcRef;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 6, 1, 1);
+    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 6, 1, 1, 3);
     ParticleGenerator::generateCuboid(pcRef,{-5,-5,0},11,11,1,1,1,{0,0,0}, 3);
     //Brownian Motion has to be removed for this test.
     for(Particle& p: pcRef) {
@@ -181,6 +181,7 @@ TEST(ParticleGeneratorTest_Disc, MeshWidthCorrect) {
         p.setType(pc.at(0).getType());
     }
     for(Particle p : pc) {
+        p.setV({0,0,0});
         EXPECT_TRUE(pcRef.contains(p));
     }
 }

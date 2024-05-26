@@ -32,13 +32,14 @@ private:
      * @param mass Mass of one particle.
      * @param N Number of particles along the radius, including the particle in the center.
      * @param r Length of the radius of the circle
+     * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      * @param transformMatrix Consists of four parameters: [0]: main axis d1 (0 for x-axis, 1 for y-axis)
      *                                                     [1]: support axis d2 (0 for x-axis, 1 for y-axis)
      *                                                     [2]: direction along main axis d1 (0 for positive, 1 for negative)
      *                                                     [3]: direction along support axis d2 (0 for positive, 1 for negative)
      */
     static void generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
-                                     const std::array<double, 3> &initVelocity, double h, double mass, int N, double r,
+                                     const std::array<double, 3> &initVelocity, double h, double mass, int N, double r, int dimensions,
                                      std::array<int, 4> transformMatrix);
 
 public:
@@ -68,7 +69,8 @@ public:
      * @param N Number of particles along the radius, including the particle in the center.
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
+     * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      */
     static void generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
-                             const std::array<double, 3> &initVelocity, int N, double h, double mass);
+                             const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions);
 };

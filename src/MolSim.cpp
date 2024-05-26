@@ -112,6 +112,8 @@ int main(int argc, char *argsv[]) {
         benchmark = true;
     }
 
+    spdlog::info("Hello from MolSim for PSE!");
+
     Force* force;
 
     if(selectedForce == "gravity") {
@@ -134,13 +136,15 @@ int main(int argc, char *argsv[]) {
         model = &directSum;
     }
     else if(selectedModel == "lc") {
-        std::cout << "Domain: " << domain << "\n";
         if(domain.size() != 3) {
             std::cout << "Please specify a valid domain option!\n";
             std::cout << desc << "\n";
             return -1;
         }
-        static LinkedCells linkedCells{*force,deltaT,{domain[0], domain[1], domain[2]},rCutOff, inputFormat, outputFormat};
+        static LinkedCells linkedCells{
+            *force, deltaT, {domain[0], domain[1], domain[2]}, rCutOff, inputFormat, outputFormat,
+            LinkedCells::BoundryCondition::reflective
+        };
         model = &linkedCells;
     }
     else {
@@ -148,9 +152,6 @@ int main(int argc, char *argsv[]) {
         std::cout << desc << "\n";
         return -1;
     }
-
-
-    spdlog::info("Hello from MolSim for PSE!");
 
     Simulator simulator(inputFilePath, *model,*force, endT, deltaT, inputFormat, outputFormat);
 

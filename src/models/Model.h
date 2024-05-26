@@ -50,16 +50,30 @@ public:
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
      * @param initVelocity Initial velocity of the of the particles.
-     * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 2 and 3.
+     * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
      */
     void addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2, unsigned N3, double h, double mass,
                    const std::array<double, 3> &initVelocity, int dimensions);
+
+     /**
+     * @brief Add a 2D disc structure to this model.
+     *
+     * @param center The coordinates of the center of the disc.
+     * @param initVelocity Initial velocity of the of the particles.
+     * @param N Number of particles along the radius, including the particle in the center.
+     * @param h Distance of the particles (mesh width of the grid).
+     * @param mass Mass of one particle.
+     * * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
+     */
+    void addDisc(const std::array<double, 3> &center,
+                             const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions);
 
     /**
      * @brief Add a single particle to this model.
      *
      * @param p Particle to add to this model.
      */
+
     void addParticle(Particle &p);
 
     /**
@@ -97,7 +111,7 @@ public:
      *
      * Should be only used for testing purposes.
      */
-    ParticleContainer &getParticles() const {
+    [[nodiscard]] ParticleContainer &getParticles() const {
         return particles;
     };
 };

@@ -10,11 +10,11 @@
 #include "particleRepresentation/particle/Particle.h"
 
 class LinkedCellsContainer : public ParticleContainer{
-private:
 
-    //Boundry selection
-
+public:
     enum class Boundry {front, right, back, left, top, bottom};
+
+private:
 
     //Data structure
     std::vector<std::vector<Particle>> cells;
@@ -43,8 +43,12 @@ private:
     void calculateHaloCellIndizes();
     void calculateBoundryCellIndizes();
     void calculateDomainCellsIterationScheme();
+    double calcDistanceFromBoundry(Particle& p, Boundry boundry);
+    std::array<double, 3> calcGhostParticle(Particle& p, Boundry boundry);
 
 public:
+
+    //Construtor and methods
 
     LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff);
 
@@ -68,7 +72,7 @@ public:
 
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
-    void applyToAllBoundryParticles(const std::function<void(Particle &)> &function, Boundry boundry);
+    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Boundry boundry, double threshold);
 
     //getter for tests
 
