@@ -10,13 +10,13 @@
 #include "ParticleContainer.h"
 
 /**
- * @brief Class to store the particles for simulation.
+ * @brief Container to store the particles for simulation using the direct sum algorithm.
  *
  * The storage of the particles is based on std::vector. This guarantees fast iteration over the particles, because
  * they are stored consecutively in memory.
  */
 
-class DefaultParticleContainer : public ParticleContainer{
+class DefaultParticleContainer : public ParticleContainer {
 private:
     std::vector<Particle> particles;
 
@@ -90,23 +90,46 @@ public:
 
     /**
      * @brief Used to reserve the capacity of the vector used to storing particles
+     *
      * @param n desired size
      */
     void reserve(size_t n);
 
     /**
      * @brief Check, if this particle container contains an particle p' that equals p.
+     *
      * @param p Particle to look for
      * @return true, if this particle container contains some particle p' that equals p, false otherwise.
      *
      * This method should only be used for testing purposes in small instances, because the implementation
      * is not that efficient.
      */
-    bool contains(Particle& p);
+    bool contains(Particle &p);
 
+    /**
+     * @brief Iterate over all particles in this container and apply a lambda function to them.
+     *
+     * @param function Lambda function that is applied to each particle.
+     */
     void applyToEachParticle(const std::function<void(Particle &)> &function) override;
 
+    /**
+     * @brief Iterate over all particles that are part of the domain and apply a lambda function to them.
+     *        For this container this method does the same as applyToEachParticle(),
+     *        because every particle is in the simulation domain.
+     *
+     * @param function Lambda function that is applied to each particle.
+     */
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
 
- void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
+    /**
+     * @brief Iterate over all unique pairs of particles being part of the simulation domain
+     *        (in this container all particles) and apply a lambda function to them.
+     *
+     * @param function Lambda function that is applied to each unique pair of particles.
+     *
+     * The purpose of this function is provide an easy way of calculating the force between all particles by using
+     * Newton's third law of motion.
+     */
+    void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 };

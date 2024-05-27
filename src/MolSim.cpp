@@ -141,9 +141,16 @@ int main(int argc, char *argsv[]) {
             std::cout << desc << "\n";
             return -1;
         }
+        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings= {
+            std::pair{LinkedCellsContainer::Side::front, LinkedCells::BoundryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::right, LinkedCells::BoundryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::back, LinkedCells::BoundryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::left, LinkedCells::BoundryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::top, LinkedCells::BoundryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::bottom, LinkedCells::BoundryCondition::reflective}
+        };
         static LinkedCells linkedCells{
-            *force, deltaT, {domain[0], domain[1], domain[2]}, rCutOff, inputFormat, outputFormat,
-            LinkedCells::BoundryCondition::reflective
+            *force, deltaT, {domain[0], domain[1], domain[2]}, rCutOff, inputFormat, outputFormat, boundrySettings
         };
         model = &linkedCells;
     }

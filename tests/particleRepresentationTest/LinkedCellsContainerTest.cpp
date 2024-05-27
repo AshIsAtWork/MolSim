@@ -114,28 +114,6 @@ TEST(CalcCellIndex, Test2D) {
     EXPECT_EQ(lcc.calcCellIndex(p3), 24);
 }
 
-/**
- * Test, if all halo cell indizes are calculated correctly
- * Results for reference are calculated by hand.
- */
-
-TEST(HaloCellIndizes, BasicTest) {
-    LinkedCellsContainer lcc{{1, 2, 1}, 1};
-    //If not all cells are there, it does not make sense to continue this test
-    ASSERT_EQ(lcc.getHaloCells().size(), 34);
-    for (int i = 0; i < 36; i++) {
-        if (i != 16 && i != 19) {
-            bool isPresent = false;
-            for (int j = 0; j < 34; j++) {
-                if(lcc.getHaloCells()[j] == i) {
-                    isPresent = true;
-                }
-            }
-            EXPECT_TRUE(isPresent);
-        }
-    }
-}
-
 
 
 

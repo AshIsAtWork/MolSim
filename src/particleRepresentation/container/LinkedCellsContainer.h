@@ -9,26 +9,66 @@
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 
+/**
+ * @brief Container to store the particles for simulation using the linked cells algorithm.
+ */
 class LinkedCellsContainer : public ParticleContainer{
 
 public:
-    enum class Boundry {front, right, back, left, top, bottom};
+    /**
+     * Enum to specify the side that can be chosen in some methods.
+     */
+    enum class Side {front, right, back, left, top, bottom};
 
 private:
-
-    //Data structure
+    /**
+     *  Data structure:
+     *
+     *  -We use an 1D vector to store the flattend 3D cell structure
+     *   being an essentiat property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
+     *
+     *  -The current number of particles that is contained in this container is tracked by the attribute currentSize and kept up-to-date
+     *   through every operation.
+     */
     std::vector<std::vector<Particle>> cells;
-    int currentSize;
+    size_t currentSize;
 
-    //Precomputed indizes
-    std::vector<int> haloCells;
+    /**
+     *  Precomputed indizes:
+     *
+     *  The indizes of
+     *                 -all halo cells belonging to one or more of the 6 sides,
+     *                 -all bundry cells belonging to one or more of the 6 sides,
+     *                 -the order in which all cells within the domain are processed to process each pair of particles only ones
+     *
+     *  are precomputed in the construtor and stored in memory to provide fast access in future iterations. We invest here additional
+     *  memory space to avoid recomputing all indizes in each iteration again.
+     */
+    std::array<std::vector<int>, 6> haloCells;
     std::array<std::vector<int>, 6> boundries;
     std::vector<std::vector<int>> domainCellIterationScheme;
 
-    //Parameters
+    /**
+     * All parameters used in this model:
+     *                                      -nX : number of cells in dimension x
+     *                                      -nY : number of cells in dimension y
+     *                                      -nZ : number of cells in dimension z
+     *                                      -baseY : number of cells in one row (nX many)
+     *                                      -baseZ : number of cells in one layer (nX * nY many)
+     *                                      -cellSizeX : size of each cell in dimension x
+     *                                      -cellSizeY : size of each cell in dimension y
+     *                                      -cellSizeZ : size of each cell in dimension z
+     *                                      -rCutOff : cut-off radius
+     *                                      -twoD : specifies, if the simulation only uses 2 of 3 dimensions.
+     *                                              If this is the case, ressources can be saved.
+     *                                      -domainSize : Size of the domain {x, y , z}. The front lower left corner
+     *                                                    of the domain is set to (0,0,0) by definition.
+     */
     int nX;
     int nY;
     int nZ;
+    int baseY;
+    int baseZ;
     double cellSizeX;
     double cellSizeY;
     double cellSizeZ;
@@ -38,49 +78,162 @@ private:
 
     outputWriter::VTKWriter vtk_writer;
 
-    //Helper methods
+    /**
+     * Helper methods for index calculation and boundry conditions
+     */
 
+    /**
+     * @brief Precalculation of all halo cell indizes
+     */
     void calculateHaloCellIndizes();
+
+    /**
+     * @brief Precalculation of all boundry cell indizes
+     */
     void calculateBoundryCellIndizes();
+
+    /**
+     * @brief Precalculation of the indizes defining the processing order of cells
+     */
     void calculateDomainCellsIterationScheme();
-    double calcDistanceFromBoundry(Particle& p, Boundry boundry);
-    std::array<double, 3> calcGhostParticle(Particle& p, Boundry boundry);
+
+    /**
+     * @brief Calculate the distance that a particle has to a specific side of the domain.
+     *        In 2D the distance to sides top and bottom is always 0.
+     *
+     * @param p Particle used for distance calculation
+     * @param side Side of the domain to which the distance is calculated
+     *
+     * @return Distance of particle p to the specified side.
+     */
+    double calcDistanceFromBoundry(Particle& p, Side side);
+
+    /**
+     * @brief Calculate the position of the ghost particle with respect to a specific side used for reflective boundries.
+     *
+     * @param p Particle to calculate the corresponding ghost particle of.
+     * @param side Side of the domain at which the particle is mirrored.
+     *
+     * @return Position of the ghost particle.
+     */
+    std::array<double, 3> calcGhostParticle(Particle& p, Side side);
 
 public:
+    /**
+     * Constructor and methods
+     */
 
-    //Construtor and methods
+    /**
+     * @brief Constructor of the LinkedCellsContainer class
+     *
+     * @param domainSize Size of the simulation domain. Syntax {x, y, z}. Front lower left corner is by definition (0,0,0).
+     * @param rCutOff The cut-off radius
+     */
 
     LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff);
 
+    /**
+     * @brief Calculate the index of the cell to which a particle decided by its position belongs.
+     *
+     * @param position Position of the particle to calculate the cell index of.
+     *
+     * @return Corresponding cell index.
+     */
     int calcCellIndex(const std::array<double, 3>& position);
 
+    /**
+     * @brief Add a particle to this container.
+     *
+     * @param p Particle to be added.
+     *
+     * If the simulation environment is 2D, only particles living in 2D space are accepted. Try adding particles living in 3D space
+     * to 2D simulation environment will lead to the termination of the program.
+     */
     void add(Particle& p) override;
 
+    /**
+     * @brief Convert 3 dimensional coordinates to one dimensional coordinates.
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @param z z coordinate
+     *
+     * @return Corresponding coordinate in one dimensional space.
+     */
     int threeDToOneD(int x, int y, int z) const;
 
+    /**
+     * @brief Convert a one dimensional coordinate to three dimensional coordinates.
+     *
+     * @param index One dimensional coordinate
+     *
+     * @return Corresponding coordinates in three dimensional space.
+     */
     std::array<int, 3> oneDToThreeD(int index) const;
 
+    /**
+     * @brief Assign each particle to its correct cell after there positions have been changed.
+     */
     void updateCells();
 
-    size_t size() override;
+    /**
+     * @brief Delete all particles in all halo cells being part of a specific size.
+     *
+     * @param side Side at which all halo cells are cleared.
+     */
+    void clearHaloCells(Side side);
 
-    void clearHaloCells();
-
+    /**
+     * @brief Iterate over all particles in this container and apply a lambda function to them.
+     *
+     * @param function Lambda function that is applied to each particle.
+     */
     void applyToEachParticle(const std::function<void(Particle &)> &function) override;
 
+    /**
+     * @brief Iterate over all particles that are part of the domain and apply a lambda function to them.
+     *
+     * @param function Lambda function that is applied to each particle.
+     */
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
 
+     /**
+     * @brief Iterate over all unique pairs of particles being part of the simulation domain
+     *        and apply a lambda function to them.
+     *
+     * @param function Lambda function that is applied to each unique pair of particles.
+     *
+     * The purpose of this function is provide an easy way of calculating the force between all particles by using
+     * Newton's third law of motion.
+     */
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
-    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Boundry boundry, double threshold);
+    /**
+     * @brief Iterate over all particles in the boundry cells of a specific side
+     *        which have a distance to that side that is smaller or equal than the threshhold.
+     *
+     * @param function Lambda function that is applied to each particle fulfilling the requirements.
+     * @param boundry Side to which the boundry cells belong
+     * @param threshold Maximal distance to the side.
+     */
+    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Side boundry, double threshold);
 
-    //getter for tests
+    /**
+     * @brief Get the number of particles stored in this container.
+     *
+     * @return Number of particles stored in this container.
+     */
+    size_t size() override;
+
+    /**
+     * Getter and setters. Especially the setters should only by used for testing purposes.
+     */
 
     std::vector<std::vector<Particle>>& getCells(){
         return cells;
     }
 
-    std::vector<int>& getHaloCells(){
+    std::array<std::vector<int>,6>& getHaloCells(){
         return haloCells;
     }
 

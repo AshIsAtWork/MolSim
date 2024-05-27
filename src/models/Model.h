@@ -7,6 +7,13 @@
 #include "moleculeSimulator/forceCalculation/Force.h"
 #include "particleRepresentation/container/ParticleContainer.h"
 
+/**
+ * @brief Abstract base class for any model for molecule simulation.
+ *
+ * Each specific model should extend this class. At the moment there are two different models:
+ * -Direct Sum
+ * -Linked Cells
+ */
 class Model {
 private:
     FileHandler fileHandler;
@@ -18,8 +25,18 @@ protected:
     Force &force;
     double deltaT;
 
+    /**
+     * @brief Contructor for this model. Cannot be called from any other class but classes that extend this class,
+     *        because this class is a base class and should not be instantiated
+     *
+     * @param particles Particle container of the model. This parameter is instantiated with the appropiated container by the derived models.
+     * @param force Force to use in the simulation.
+     * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
+     * @param inputFormat Format of the input file. Supported formats are txt and xml.
+     * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+     */
     Model(ParticleContainer &particles, Force &force, double deltaT,  FileHandler::inputFormat inputFormat,
-    FileHandler::outputFormat outputFormat);
+          FileHandler::outputFormat outputFormat);
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -38,6 +55,11 @@ protected:
     void updateVelocities() const;
 
 public:
+    /**
+     *@brief Virtual default constructor to guarantee appropriate memory clean up
+     */
+    virtual ~Model() = default;
+
     void plot(int iteration);
 
     /**
@@ -101,8 +123,6 @@ public:
      */
 
     virtual void step() = 0;
-
-    virtual ~Model() = default;
 
     /**
      * @brief Get the Particles of this model.
