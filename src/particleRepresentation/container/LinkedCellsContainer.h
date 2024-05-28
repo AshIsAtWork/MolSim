@@ -215,6 +215,10 @@ public:
      * @param function Lambda function that is applied to each particle fulfilling the requirements.
      * @param boundry Side to which the boundry cells belong
      * @param threshold Maximal distance to the side.
+     *
+     * Addionally, the position of the corresponding ghost particle of each particle is calculated
+     *        and passed in the lambda function as second input. This information makes the implementation
+     *        of reflective boundries a lot easier.
      */
     void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Side boundry, double threshold);
 

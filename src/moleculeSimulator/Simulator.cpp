@@ -10,8 +10,7 @@ Simulator::Simulator(std::string &inputFilePath, Model &model, Force &force, dou
                      FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat) : model{model},
     force{force},
     deltaT{deltaT}, endT{endT} {
-    model.addDisc({60, 25, 4.5},{0,-10,0},15,1.1225,1,3);
-    //model.addViaFile(inputFilePath);
+    model.addViaFile(inputFilePath);
 }
 
 void Simulator::run(bool benchmark) {
