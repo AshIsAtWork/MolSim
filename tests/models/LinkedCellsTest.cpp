@@ -36,7 +36,7 @@ bool noExplosion(Particle& p) {
  */
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
- LeonardJonesForce lJF;
+ LeonardJonesForce lJF(5, 1);
  std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> front = {LinkedCellsContainer::Side::front, LinkedCells::BoundryCondition::reflective};
  std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> right = {LinkedCellsContainer::Side::right, LinkedCells::BoundryCondition::reflective};
  std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> back = {LinkedCellsContainer::Side::back, LinkedCells::BoundryCondition::reflective};
@@ -47,7 +47,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
 
   std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings= {front, right, back, left, top, bottom};
 
- LinkedCells linkedCellModel = {lJF,0.00005,{3,3,3},3,FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundrySettings};
+ LinkedCells linkedCellModel = {lJF,0.00005,{3,3,3},3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundrySettings};
  double current_time = 0;
 
  int iteration = 0;

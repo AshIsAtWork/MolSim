@@ -3,14 +3,56 @@
 //
 
 #include "Simulator.h"
+
+#include <memory>
+
+#include "forceCalculation/gravity/Gravity.h"
+#include "forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "models/DirectSum.h"
 //TODO: Enable this for below optimization
 //#include <ranges>
 
-Simulator::Simulator(std::string &inputFilePath, Model &model, Force &force, double endT, double deltaT,
-                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat) : model{model},
-    force{force},
-    deltaT{deltaT}, endT{endT} {
-    model.addViaFile(inputFilePath);
+Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+                     FileHandler::inputFormat inputFormat,
+                     FileHandler::outputFormat outputFormat) : deltaT{parameters.deltaT}, endT{parameters.endT} {
+    switch (parameters.force) {
+        case TypeOfForce::gravity: {
+            force = std::make_unique<Gravity>();
+        }
+        break;
+        case TypeOfForce::leonardJonesForce: {
+            force = std::make_unique<LeonardJonesForce>(parameters.epsilon, parameters.sigma);
+        }
+        break;
+        default: {
+            spdlog::error("Use of invalid force type! Programm will be terminated!");
+            exit(-1);
+        }
+    }
+    model = std::make_unique<DirectSum>(*force, parameters.deltaT, inputFormat, outputFormat);
+    model->addViaFile(inputFilePath);
+}
+
+Simulator::Simulator(LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
+                     FileHandler::inputFormat inputFormat,
+                     FileHandler::outputFormat outputFormat) : deltaT{parameters.deltaT}, endT{parameters.endT} {
+    switch (parameters.force) {
+        case TypeOfForce::gravity: {
+            force = std::make_unique<Gravity>();
+        }
+        break;
+        case TypeOfForce::leonardJonesForce: {
+            force = std::make_unique<LeonardJonesForce>(parameters.epsilon, parameters.sigma);
+        }
+        break;
+        default: {
+            spdlog::error("Use of invalid force type! Programm will be terminated!");
+            exit(-1);
+        }
+    }
+    model = std::make_unique<LinkedCells>(*force, parameters.deltaT, parameters.domainSize, parameters.rCutOff,
+                                          parameters.sigma, inputFormat, outputFormat, parameters.boundrySettings);
+    model->addViaFile(inputFilePath);
 }
 
 void Simulator::run(bool benchmark) {
@@ -19,14 +61,14 @@ void Simulator::run(bool benchmark) {
     int iteration = 0;
 
     //Calculate the initial forces before starting the simulation
-    model.updateForces();
+    model->updateForces();
 
 
     while (current_time < endT) {
-        model.step();
+        model->step();
         iteration++;
         if (!benchmark && iteration % 100 == 0) {
-            model.plot(iteration);
+            model->plot(iteration);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);
@@ -37,6 +79,6 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer& Simulator::getParticles() {
-    return model.getParticles();
+ParticleContainer &Simulator::getParticles() {
+    return model->getParticles();
 }

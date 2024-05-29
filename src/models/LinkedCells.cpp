@@ -5,13 +5,14 @@
 #include "LinkedCells.h"
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
-                         double rCutOff, FileHandler::inputFormat inputFormat,
+                         double rCutOff, double sigma, FileHandler::inputFormat inputFormat,
                          FileHandler::outputFormat outputFormat,
                          std::array<std::pair<LinkedCellsContainer::Side, BoundryCondition>, 6> &
                          boundrySettings) : Model(particles, force, deltaT, inputFormat,
                                                   outputFormat),
                                             particles(domainSize, rCutOff),
                                             boundrySettings{boundrySettings} {
+    threshhold = pow(2.0, 1.0 / 6.0) * sigma;
 }
 
 void LinkedCells::processBoundries() {

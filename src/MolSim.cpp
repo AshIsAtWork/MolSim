@@ -1,11 +1,8 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-#include "models/DirectSum.h"
 #include "models/LinkedCells.h"
 #include "moleculeSimulator/Simulator.h"
-#include "moleculeSimulator/forceCalculation/gravity/Gravity.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "particleRepresentation/container/LinkedCellsContainer.h"
 #include "utils/Benchmark.h"
 #include "utils/Logging.h"
@@ -13,9 +10,14 @@
 #include "utils/OutputHandler.h"
 
 int main(int argc, char *argsv[]) {
+    //Parameters for simulation
     double endT;
     double deltaT;
     double rCutOff;
+    //Todo: At the moment hard coded. Should be configurable within the xml
+    double epsilon = 5;
+    double sigma = 1;
+    TypeOfForce force;
     std::string inputFilePath;
     std::string inputFileFormatString;
     std::string outputFileFormatString;
@@ -26,6 +28,8 @@ int main(int argc, char *argsv[]) {
     std::string selectedModel;
     std::vector<double> domain;
     bool benchmark = false;
+
+    //Parsing of the command line arguments
 
     namespace po = boost::program_options;
 
@@ -41,14 +45,18 @@ int main(int argc, char *argsv[]) {
             ("logLevel,l", po::value<std::string>(&logLevel)->default_value("info"), "Log level:"
              " Possible options are (off, critical, error, warn, info, debug, trace)")
             ("inputFileFormatString,i", po::value<std::string>(&inputFileFormatString),
-                    "Format of the input file. Supported formats are txt and xml.")
+             "Format of the input file. Supported formats are txt and xml.")
             ("outputFileFormatString,o", po::value<std::string>(&outputFileFormatString)->default_value("vtk"),
-                    "Format of the output file. Supported formats are vtk and xyz. Default is vtk.")
+             "Format of the output file. Supported formats are vtk and xyz. Default is vtk.")
             ("time,t", "Perform time measurement. Logging will be disabled.")
-            ("force,c",po::value<std::string>(&selectedForce)->default_value("ljf"), "Force to use: Possible options are (gravity, ljf)")
-            ("model,m", po::value<std::string>(&selectedModel)->default_value("lc"), "Model to use: Possible options are (ds, lc)")
-            ("domain", po::value<std::vector<double>>(&domain)->multitoken(), "Size of the domain: The following format is expected: --domain N1 N2 N3")
-            ("cutoff,r",po::value<double>(&rCutOff)->default_value(3.0), "The cutoff radius. Is only considered, when the Linked Cell Model is used.");
+            ("force,c", po::value<std::string>(&selectedForce)->default_value("ljf"),
+             "Force to use: Possible options are (gravity, ljf)")
+            ("model,m", po::value<std::string>(&selectedModel)->default_value("lc"),
+             "Model to use: Possible options are (ds, lc)")
+            ("domain", po::value<std::vector<double> >(&domain)->multitoken(),
+             "Size of the domain: The following format is expected: --domain N1 N2 N3")
+            ("cutoff,r", po::value<double>(&rCutOff)->default_value(3.0),
+             "The cutoff radius. Is only considered, when the Linked Cell Model is used.");
 
     po::variables_map vm;
 
@@ -96,13 +104,13 @@ int main(int argc, char *argsv[]) {
         return -1;
     }
 
-    if(inputFormat = setInputFormat(inputFileFormatString); inputFormat == FileHandler::inputFormat::invalid){
+    if (inputFormat = setInputFormat(inputFileFormatString); inputFormat == FileHandler::inputFormat::invalid) {
         std::cout << "Please specify the format of the input file!" << "\n";
         std::cout << desc << "\n";
         return -1;
     }
 
-    if(outputFormat = setOutputFormat(outputFileFormatString); outputFormat == FileHandler::outputFormat::invalid){
+    if (outputFormat = setOutputFormat(outputFileFormatString); outputFormat == FileHandler::outputFormat::invalid) {
         std::cout << "Please specify the format of the output file!" << "\n";
         std::cout << desc << "\n";
         return -1;
@@ -114,34 +122,29 @@ int main(int argc, char *argsv[]) {
 
     spdlog::info("Hello from MolSim for PSE!");
 
-    Force* force;
-
-    if(selectedForce == "gravity") {
-        static Gravity g;
-        force = &g;
-    }else if(selectedForce == "ljf") {
-        static LeonardJonesForce lJF;
-        force = &lJF;
-    }
-    else {
+    if (selectedForce == "gravity") {
+        force = TypeOfForce::gravity;
+    } else if (selectedForce == "ljf") {
+        force = TypeOfForce::leonardJonesForce;
+    } else {
         std::cout << "Please specify a valid force option!\n";
         std::cout << desc << "\n";
         return -1;
     }
 
-    Model* model;
+    std::unique_ptr<Simulator> simulator;
 
-    if(selectedModel == "ds") {
-        static DirectSum directSum{*force, deltaT, inputFormat, outputFormat};
-        model = &directSum;
-    }
-    else if(selectedModel == "lc") {
-        if(domain.size() != 3) {
+    if (selectedModel == "ds") {
+        DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat);
+    } else if (selectedModel == "lc") {
+        if (domain.size() != 3) {
             std::cout << "Please specify a valid domain option!\n";
             std::cout << desc << "\n";
             return -1;
         }
-        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings= {
+        //Todo: At the moment hard coded, should be configurable within the xml file
+        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings = {
             std::pair{LinkedCellsContainer::Side::front, LinkedCells::BoundryCondition::reflective},
             std::pair{LinkedCellsContainer::Side::right, LinkedCells::BoundryCondition::reflective},
             std::pair{LinkedCellsContainer::Side::back, LinkedCells::BoundryCondition::reflective},
@@ -149,26 +152,25 @@ int main(int argc, char *argsv[]) {
             std::pair{LinkedCellsContainer::Side::top, LinkedCells::BoundryCondition::reflective},
             std::pair{LinkedCellsContainer::Side::bottom, LinkedCells::BoundryCondition::reflective}
         };
-        static LinkedCells linkedCells{
-            *force, deltaT, {domain[0], domain[1], domain[2]}, rCutOff, inputFormat, outputFormat, boundrySettings
+        LinkedCellsSimulationParameters parameters = {
+            deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundrySettings
         };
-        model = &linkedCells;
-    }
-    else {
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat);
+    } else {
         std::cout << "Please specify a valid model option!\n";
         std::cout << desc << "\n";
         return -1;
     }
 
-    Simulator simulator(inputFilePath, *model,*force, endT, deltaT, inputFormat, outputFormat);
+    //Starting simulation with or without time measurement
 
     if (benchmark) {
         spdlog::info("Starting time measurement...");
-        performBenchmark(simulator);
+        performBenchmark(*simulator);
         spdlog::info("No output written.");
     } else {
         spdlog::info("Running without time measurement...");
-        simulator.run(false);
+        simulator->run(false);
     }
     return 0;
 }

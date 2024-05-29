@@ -12,7 +12,8 @@ int ParticleGenerator::id = 1;
 
 void ParticleGenerator::generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
                                              const std::array<double, 3> &initVelocity, double h, double mass,
-                                             const int N, double r, int dimensions, std::array<int, 4> transformMatrix) {
+                                             const int N, double r, int dimensions,
+                                             double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix) {
     std::array<double, 3> currentPosition = corner;
     for (int d1 = 0; d1 < N - 1; d1++) {
         int threshholdD2 = static_cast<int>(std::floor(std::sqrt(std::abs(std::pow((d1 + 1) * h, 2) - std::pow(r, 2))))
@@ -34,7 +35,8 @@ void ParticleGenerator::generateDiscQuadrant(ParticleContainer &particles, const
 
 void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                        unsigned N2, unsigned N3, double h, double mass,
-                                       const std::array<double, 3> &initVelocity, int dimensions) {
+                                       const std::array<double, 3> &initVelocity, int dimensions,
+                                       double brownianMotionAverageVelocity) {
     spdlog::info("Generate cuboid with the following parameters:\n"
                  "Position: {}\n"
                  "N1: {}\n"
@@ -71,7 +73,8 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
 }
 
 void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
-                                     const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions) {
+                                     const std::array<double, 3> &initVelocity, int N, double h, double mass,
+                                     int dimensions, double brownianMotionAverageVelocity) {
     if (N == 0) {
         return;
     }
@@ -96,20 +99,24 @@ void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::ar
     double r = h * (N - 1);
     //Generate upper right quadrant
     currentPosition[1] += h;
-    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, dimensions, {1, 0, 1, 1});
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, dimensions,
+                         brownianMotionAverageVelocity, {1, 0, 1, 1});
 
     //Generate lower left quadrant
-    currentPosition[1] -= 2*h;
-    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r,dimensions, {1, 0, -1, -1});
+    currentPosition[1] -= 2 * h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, dimensions,
+                         brownianMotionAverageVelocity, {1, 0, -1, -1});
 
     //Generate lower right quadrant
     currentPosition[1] += h;
     currentPosition[0] += h;
-    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r,dimensions, {0, 1, 1, -1});
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, dimensions,
+                         brownianMotionAverageVelocity, {0, 1, 1, -1});
 
     //Generate upper left quadrant
-    currentPosition[0] -= 2*h;
-    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r,dimensions, {0, 1, -1, 1});
+    currentPosition[0] -= 2 * h;
+    generateDiscQuadrant(particles, currentPosition, initVelocity, h, mass, N, r, dimensions,
+                         brownianMotionAverageVelocity, {0, 1, -1, 1});
     //Increment id, so that all particles of the next body being generated will receive another id.
     id++;
 }

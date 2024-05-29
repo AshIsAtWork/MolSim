@@ -40,13 +40,13 @@ void Model::plot(int iteration) {
 }
 
 void Model::addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2,
-                      unsigned N3, double h, double mass, const std::array<double, 3> &initVelocity, int dimensions) {
-    ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, initVelocity, dimensions);
+                      unsigned N3, double h, double mass, const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity) {
+    ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, initVelocity, dimensions, brownianMotionAverageVelocity);
 }
 
 void Model::addDisc(const std::array<double, 3> &center,
-    const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions) {
-    ParticleGenerator::generateDisc(particles, center,initVelocity, N, h, mass, dimensions);
+    const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions, double brownianMotionAverageVelocity) {
+    ParticleGenerator::generateDisc(particles, center,initVelocity, N, h, mass, dimensions, brownianMotionAverageVelocity);
 }
 
 void Model::addParticle(Particle &p) {

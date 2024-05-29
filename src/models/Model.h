@@ -35,7 +35,7 @@ protected:
      * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
      */
-    Model(ParticleContainer &particles, Force &force, double deltaT,  FileHandler::inputFormat inputFormat,
+    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::inputFormat inputFormat,
           FileHandler::outputFormat outputFormat);
 
     /**
@@ -73,22 +73,25 @@ public:
      * @param mass Mass of one particle.
      * @param initVelocity Initial velocity of the of the particles.
      * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
+     * @param brownianMotionAverageVelocity
      */
     void addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2, unsigned N3, double h, double mass,
-                   const std::array<double, 3> &initVelocity, int dimensions);
+                   const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity);
 
-     /**
-     * @brief Add a 2D disc structure to this model.
-     *
-     * @param center The coordinates of the center of the disc.
-     * @param initVelocity Initial velocity of the of the particles.
-     * @param N Number of particles along the radius, including the particle in the center.
-     * @param h Distance of the particles (mesh width of the grid).
-     * @param mass Mass of one particle.
-     * * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
-     */
+    /**
+    * @brief Add a 2D disc structure to this model.
+    *
+    * @param center The coordinates of the center of the disc.
+    * @param initVelocity Initial velocity of the of the particles.
+    * @param N Number of particles along the radius, including the particle in the center.
+    * @param h Distance of the particles (mesh width of the grid).
+    * @param mass Mass of one particle.
+    * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
+    * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+    */
     void addDisc(const std::array<double, 3> &center,
-                             const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions);
+                 const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
+                 double brownianMotionAverageVelocity);
 
     /**
      * @brief Add a single particle to this model.

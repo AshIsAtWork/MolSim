@@ -2,8 +2,9 @@
 # file format:
 # Lines of comment start with '#' and are only allowed at the beginning of the file
 # Empty lines are not allowed.
-# The first line not being a comment has to specify the file type. Here Cuboid.
-# The next line has to be an integer indicating, how many cuboids there are.
+# The first line not being a comment has to specify to how many dimensions the brownian motion should be applied (0,1,2,3),
+# The second line has to specify the file type. Here Cuboid.
+# The next line has to be an integer indicating how many cuboids there are.
 #
 # Cuboid data consists of
 # * The coordinate of the lower left front-side corner (3 double values)
@@ -17,6 +18,7 @@
 #
 # position       N1     N2    N3    h         m     velocity         brownianMotion
 Cuboid
+3
 2
 0.0 0.0 0.0      40     8     1     1.1225    1.0   0.0   0.0 0.0    0.1
 15.0 15.0 0.0     8     8     1     1.1225    1.0   0.0 -10.0 0.0    0.1

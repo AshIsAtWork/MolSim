@@ -9,6 +9,7 @@
 #include <iostream>
 #include "forceCalculation/Force.h"
 #include "models/Model.h"
+#include "utils/ParameterPassing.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -19,8 +20,8 @@
 
 class Simulator {
 private:
-    Model &model;
-    Force &force;
+    std::unique_ptr<Force> force;
+    std::unique_ptr<Model> model;
     double deltaT;
     double endT;
 
@@ -28,13 +29,10 @@ public:
     Simulator() = delete;
 
     /**
-     * @brief Construct a new simulation environment.
+     * @brief Construct a new simulation environment using the direct sum algorithm.
      *
+     * @param parameters Simulation parameters for the direct sum model.
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
-     * @param model Model of the particles that is used within in simulation
-     * @param force Type of force to be used in the simulation
-     * @param endT Time to which the simulation is going to run.
-     * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
      * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
      *
@@ -42,7 +40,22 @@ public:
      * to simulate.
      */
 
-    Simulator(std::string &inputFilePath, Model &model, Force &force, double endT, double deltaT,
+    Simulator(DirectSumSimulationParameters& parameters, std::string &inputFilePath,
+              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+
+    /**
+     * @brief Construct a new simulation environment using the linked cell algorithm.
+     *
+     * @param parameters Simulation parameters for the linked cell model.
+     * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
+     * @param inputFormat Format of the input file. Supported formats are txt and xml.
+     * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+     *
+     * To create a new simulation environment you have to provide an input file containing the particles you want
+     * to simulate.
+     */
+
+    Simulator(LinkedCellsSimulationParameters& parameters, std::string &inputFilePath,
               FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
     /**

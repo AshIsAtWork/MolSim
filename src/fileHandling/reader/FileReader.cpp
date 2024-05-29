@@ -11,10 +11,17 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
     unsigned N3;
     double h;
     double mass;
+    int dimensions;
     double brownianMotionAverageVelocity;
     std::array<double, 3> velocity{};
     std::string tmpString;
     int numCuboids = 0;
+
+    getline(input_file, tmpString);
+    std::istringstream dimstream(tmpString);
+    spdlog::debug("Read line: {}", tmpString);
+    dimstream >> dimensions;
+    spdlog::debug("Applying Brownian Motion to {} dimensions", dimensions);
 
     getline(input_file, tmpString);
     std::istringstream numstream(tmpString);
@@ -48,7 +55,7 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
             return -1;
         }
         datastream >> brownianMotionAverageVelocity;
-        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity, 2);
+        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity, dimensions, brownianMotionAverageVelocity);
     }
     return 0;
 }
