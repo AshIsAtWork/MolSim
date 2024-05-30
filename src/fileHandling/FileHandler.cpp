@@ -27,10 +27,10 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, 
     }
 }
 
-void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format) {
+void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format, std::string& baseName) {
     switch (format) {
         case outputFormat::xyz: {
-            xyzWriter.plotParticles(particles, fileName, iteration);
+            xyzWriter.plotParticles(particles, baseName, iteration);
         }
             break;
         case outputFormat::vtk: {
@@ -38,7 +38,7 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
             particles.applyToEachParticle([this](Particle &p) {
                 vtkWriter.plotParticle(p);
             });
-            vtkWriter.writeFile(fileName, iteration);
+            vtkWriter.writeFile(baseName, iteration);
         }
             break;
         case outputFormat::invalid:

@@ -232,16 +232,7 @@ calculations. We also have recorded another video afterward that demonstrates re
 Click [here](Collision-of-two-Bodies-Reflective-Boundaries.mp4) if you are interested.
 
 **3. Benchmarks**   
-Now, let's compare the new linked-cells algorithm with the old direct sum implementation to be able to tell whether all
-the work was worth it. To make the comparison fair, we ensured that no particle leaves the simulation domain during the
-simulation using the linked-cells algorithm or interacting in any other way with the borders. Therefore, we chose the
-simulation domain in such a way that the rectangle just fits in, to avoid that unnecessary many cells are created.
-Because we only calculated a few time steps with a small `deltaT` and small initial velocities (Brownian average
-velocity is set to `0.1`), the particles will barely move. We tested each model with `1000`, `2000`, `4000` and `8000`
-particles forming a 2D-rectangle (a square is not possible with these values). Because we do not want to wait days to
-get the results we conducted `100` iterations in each simulation, by choosing `deltaT = 0.001` and `endT = 0.1`. We used
-2D Brownian Motion and a mesh width `h` of `1.1225` for creating the rectangles. As cut-off radius in the linked-cells
-algorithm we chose `r = 3` as in the other simulations.  
+Now, let's compare the new linked-cells algorithm with the old direct sum implementation to be able to tell whether all the work was worth it. To make the comparison fair, we ensured that no particle leaves the simulation domain during the simulation using the linked-cells algorithm or interacting in any other way with the borders. Therefore, we chose the simulation domain in such a way that the rectangle just fits in, to avoid that unnecessary many cells are created. Because we only calculated a few time steps with a small `deltaT` and small initial velocities (Brownian average velocity is set to `0.1`), the particles will barely move. We tested each model with `1000`, `2000`, `4000` and `8000` particles forming a 2D-rectangle (a square is not possible with these values). Because we do not want to wait days to get the results we conducted `100` iterations in each simulation, by choosing `deltaT = 0.001` and `endT = 0.1`. We used 2D Brownian Motion and a mesh width `h` of `1.1225` for creating the rectangles. As cut-off radius in the linked-cells algorithm we chose `r = 3` as in the other simulations.  
 Like last time we used the following hardware:
 
 * **Operating System**: `Ubuntu 22.04.4 LTS`
@@ -285,5 +276,12 @@ cells. Currently, we did not test if this makes any significant difference regar
 **Reflective**
 The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment
 sheet and used the "ghost particle approach". Always when a particle
+**Reflective**   
+The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment sheet and used the "ghost particle approach". Always when a particle gets near to some side of the simulation domain (closer than the six. root of two times sigma) which boundary condition is set to reflective, then a counter-particle is virtually created outside the domain with the same distance to that side and will apply a repulsive force at this particle pushing it away from the boundary.   
+This approach is only stable for small time steps `delta_T`, because for large time steps the particle might cross the border before the force was high enough to repel it.   
+[Here](Mixed-Boundary-Conditions.mp4) you can see a video with mixed boundary conditions. The boundary at the front is reflective, all other boundaries are set to outflow. 
 
 ## Task 4: Simulation of a Falling Drop - Wall ##
+As part of this task, we added a new method to our class [ParticleGenerator](../../src/particleRepresentation/particle) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented we conducted a first experiment to test our simulation let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain {120,50,0}, because the third dimension is not needed. 
+* Simulation in 2D: [watch](Disc-against-reflective-Boundary-2D.mp4)
+* Simulation in 3D: [watch](Disc-against-reflective-Boundary-3D.mp4)

@@ -60,7 +60,13 @@ public:
      */
     virtual ~Model() = default;
 
-    void plot(int iteration);
+    /**
+     * @brief Write current state of the model to a file.
+     *
+     * @param iteration Current iteration.
+     * @param baseName Base name of the output file.
+     */
+    void plot(int iteration, std::string& baseName);
 
     /**
      * @brief Add a cuboid structure to this model.

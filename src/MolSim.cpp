@@ -26,8 +26,10 @@ int main(int argc, char *argsv[]) {
     std::string logLevel;
     std::string selectedForce;
     std::string selectedModel;
+    std::string filename = "Experiment";
     std::vector<double> domain;
     bool benchmark = false;
+    int outputFrequency = 50;
 
     //Parsing of the command line arguments
 
@@ -137,7 +139,7 @@ int main(int argc, char *argsv[]) {
 
     if (selectedModel == "ds") {
         DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
-        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat);
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, filename);
     } else if (selectedModel == "lc") {
         if (domain.size() != 3) {
             std::cout << "Please specify a valid domain option!\n";
@@ -156,7 +158,7 @@ int main(int argc, char *argsv[]) {
         LinkedCellsSimulationParameters parameters = {
             deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundarySettings
         };
-        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat);
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, filename);
     } else {
         std::cout << "Please specify a valid model option!\n";
         std::cout << desc << "\n";

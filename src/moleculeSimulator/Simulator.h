@@ -24,6 +24,8 @@ private:
     std::unique_ptr<Model> model;
     double deltaT;
     double endT;
+    int outputFrequency;
+    std::string outputFileBaseName;
 
 public:
     Simulator() = delete;
@@ -35,13 +37,17 @@ public:
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
      * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+     * @param outputFrequency Specifies after how much timesteps an output file is written. For example an output frequency
+     *                        of 10 means that after each 10 iterations an output file is written.
+     * @param outputFileBaseName Base name of the output files.
      *
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate.
      */
 
-    Simulator(DirectSumSimulationParameters& parameters, std::string &inputFilePath,
-              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+    Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
+              std::string& outputFileBaseName);
 
     /**
      * @brief Construct a new simulation environment using the linked cell algorithm.
@@ -50,13 +56,16 @@ public:
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
      * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
-     *
+     * @param outputFrequency Specifies after how much timesteps an output file is written. For example an output frequency
+     *                        of 10 means that after each 10 iterations an output file is written.
+     * @param outputFileBaseName Base name of the output files.
      * To create a new simulation environment you have to provide an input file containing the particles you want
      * to simulate.
      */
 
-    Simulator(LinkedCellsSimulationParameters& parameters, std::string &inputFilePath,
-              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+    Simulator(LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
+              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
+              std::string& outputFileBaseName);
 
     /**
      * @brief Run the simulation.
