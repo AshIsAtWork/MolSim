@@ -7,29 +7,29 @@
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, double sigma, FileHandler::inputFormat inputFormat,
                          FileHandler::outputFormat outputFormat,
-                         std::array<std::pair<LinkedCellsContainer::Side, BoundryCondition>, 6> &
-                         boundrySettings) : Model(particles, force, deltaT, inputFormat,
+                         std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> &
+                         boundarySettings) : Model(particles, force, deltaT, inputFormat,
                                                   outputFormat),
                                             particles(domainSize, rCutOff),
-                                            boundrySettings{boundrySettings} {
-    threshhold = pow(2.0, 1.0 / 6.0) * sigma;
+                                            boundarySettings{boundarySettings} {
+    threshold = pow(2.0, 1.0 / 6.0) * sigma;
 }
 
-void LinkedCells::processBoundries() {
-    for (auto setting: boundrySettings) {
+void LinkedCells::processBoundaries() {
+    for (auto setting: boundarySettings) {
         switch (setting.second) {
-            case BoundryCondition::outflow: {
+            case BoundaryCondition::outflow: {
                 particles.clearHaloCells(setting.first);
             }
             break;
-            case BoundryCondition::reflective: {
+            case BoundaryCondition::reflective: {
                 particles.applyToAllBoundryParticles([this](Particle &p, std::array<double, 3> ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
                     Particle ghostParticle = p;
                     ghostParticle.setX(ghostPosition);
                     std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
                     p.setF(p.getF() + ghostForce);
-                }, setting.first, threshhold);
+                }, setting.first, threshold);
             }
         }
     }
@@ -37,7 +37,7 @@ void LinkedCells::processBoundries() {
 
 void LinkedCells::step() {
     updateForces();
-    processBoundries();
+    processBoundaries();
     updateVelocities();
     updatePositions();
     particles.updateCells();

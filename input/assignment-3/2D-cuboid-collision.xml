@@ -8,7 +8,7 @@ copyright : not copyrighted - public domain
 -->
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="../src/fileHandling/reader/XMLHandling/Collision.xsd">
+        xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/Collision.xsd">
     <Particles>2</Particles>
     <OutputFileName>Collision2d</OutputFileName>
     <TimeStep>0.01</TimeStep>

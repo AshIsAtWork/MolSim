@@ -8,6 +8,10 @@
 
 /**
  * @brief Model that implements the linked cell algorithm
+ *
+ * @details The linked-cells algorithm is significantly faster than the direct sum algorithm. It reduces the time complexity
+ *          from O(n²) to O(n). The following plot shows some benchmarks.
+ * @image html Benchmarks.png "Benchmarks" width=600px
  */
 
 class LinkedCells final : public Model {
@@ -15,7 +19,7 @@ public:
     /**
      * Enum to distinguish between different boundry conditions for each side.
      */
-    enum class BoundryCondition { outflow, reflective };
+    enum class BoundaryCondition { outflow, reflective };
 
 private:
     /**
@@ -23,25 +27,25 @@ private:
      */
     LinkedCellsContainer particles;
     /**
-     * Definition of the boundry condition for each side.
+     * Definition of the boundary condition for each side.
      */
-    std::array<std::pair<LinkedCellsContainer::Side, BoundryCondition>, 6> boundrySettings;
+    std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> boundarySettings;
 
     /**
-     * Threshhold for the distance that specifies, when ghost particles are spawned.
+     * Threshold for the distance that specifies, when ghost particles are spawned.
      */
-    double threshhold;
+    double threshold;
 
     /**
      * @brief Helper method that handles the boundry conditions
      */
-    void processBoundries();
+    void processBoundaries();
 
 public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,
                 FileHandler::inputFormat inputFormat,
                 FileHandler::outputFormat outputFormat,
-                std::array<std::pair<LinkedCellsContainer::Side, BoundryCondition>, 6> &boundrySettings);
+                std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> &boundarySettings);
 
     /**
      * @brief Perform one time step in the linked cells model.

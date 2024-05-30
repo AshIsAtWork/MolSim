@@ -51,7 +51,7 @@ Simulator::Simulator(LinkedCellsSimulationParameters &parameters, std::string &i
         }
     }
     model = std::make_unique<LinkedCells>(*force, parameters.deltaT, parameters.domainSize, parameters.rCutOff,
-                                          parameters.sigma, inputFormat, outputFormat, parameters.boundrySettings);
+                                          parameters.sigma, inputFormat, outputFormat, parameters.boundarySettings);
     model->addViaFile(inputFilePath);
 }
 

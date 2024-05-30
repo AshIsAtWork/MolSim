@@ -25,5 +25,5 @@ struct LinkedCellsSimulationParameters {
     TypeOfForce force;
     double rCutOff;
     std::array<double, 3> domainSize;
-    std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings;
+    std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition>, 6> boundarySettings;
 };

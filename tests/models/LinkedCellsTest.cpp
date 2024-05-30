@@ -28,7 +28,7 @@ bool noExplosion(Particle& p) {
  *
  * To test this, we put one particle into a small domain, let it fly around and let the simulation run for some time.
  * After each step we check, if the particle is still within the domain and that velocities and forces do not exceed
- * some threshhold
+ * some threshold
  *
  * --> One have to keep in mind to choose deltaT small enough to ensue that the method is stable. Otherwise, it could happen
  *     that the particle escapes the simulation domain, because the force applied by the virtual ghost particle has not been yet
@@ -37,15 +37,15 @@ bool noExplosion(Particle& p) {
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
  LeonardJonesForce lJF(5, 1);
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> front = {LinkedCellsContainer::Side::front, LinkedCells::BoundryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> right = {LinkedCellsContainer::Side::right, LinkedCells::BoundryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> back = {LinkedCellsContainer::Side::back, LinkedCells::BoundryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> left = {LinkedCellsContainer::Side::left, LinkedCells::BoundryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> top = {LinkedCellsContainer::Side::top, LinkedCells::BoundryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition> bottom = {LinkedCellsContainer::Side::bottom, LinkedCells::BoundryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> front = {LinkedCellsContainer::Side::front, LinkedCells::BoundaryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> right = {LinkedCellsContainer::Side::right, LinkedCells::BoundaryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> back = {LinkedCellsContainer::Side::back, LinkedCells::BoundaryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> left = {LinkedCellsContainer::Side::left, LinkedCells::BoundaryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> top = {LinkedCellsContainer::Side::top, LinkedCells::BoundaryCondition::reflective};
+ std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> bottom = {LinkedCellsContainer::Side::bottom, LinkedCells::BoundaryCondition::reflective};
 
 
-  std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings= {front, right, back, left, top, bottom};
+  std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition>, 6> boundrySettings= {front, right, back, left, top, bottom};
 
  LinkedCells linkedCellModel = {lJF,0.00005,{3,3,3},3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundrySettings};
  double current_time = 0;

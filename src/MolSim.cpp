@@ -144,16 +144,16 @@ int main(int argc, char *argsv[]) {
             return -1;
         }
         //Todo: At the moment hard coded, should be configurable within the xml file
-        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundryCondition>, 6> boundrySettings = {
-            std::pair{LinkedCellsContainer::Side::front, LinkedCells::BoundryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::right, LinkedCells::BoundryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::back, LinkedCells::BoundryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::left, LinkedCells::BoundryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::top, LinkedCells::BoundryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::bottom, LinkedCells::BoundryCondition::reflective}
+        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition>, 6> boundarySettings = {
+            std::pair{LinkedCellsContainer::Side::front, LinkedCells::BoundaryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::right, LinkedCells::BoundaryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::back, LinkedCells::BoundaryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::left, LinkedCells::BoundaryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::top, LinkedCells::BoundaryCondition::reflective},
+            std::pair{LinkedCellsContainer::Side::bottom, LinkedCells::BoundaryCondition::reflective}
         };
         LinkedCellsSimulationParameters parameters = {
-            deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundrySettings
+            deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundarySettings
         };
         simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat);
     } else {
