@@ -132,6 +132,12 @@ The process of building the project is described here:
        ```bash
        ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
        ```
+       
+     - Task 3:
+    
+       ```bash
+       //TODO
+       ```
 
 5. Running all Tests
 

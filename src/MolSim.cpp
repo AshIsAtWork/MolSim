@@ -35,6 +35,7 @@ int main(int argc, char *argsv[]) {
 
     po::options_description desc("Allowed options");
     //TODO: Move Write Frequency of Output, T-end and delta-t to XML file
+    //TODO: Move to txt reader
     desc.add_options()
             ("help,h", "Provides some help.")
             ("tEnd,e", po::value<double>(&endT)->default_value(1000),

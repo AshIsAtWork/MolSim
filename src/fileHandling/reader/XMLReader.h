@@ -12,6 +12,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include "XMLHandling/Collision.h"
+#include "utils/ParameterPassing.h"
 
 class XMLReader {
 
