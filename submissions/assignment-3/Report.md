@@ -55,7 +55,7 @@ As part of the implementation of the linked-cells algorithm there are multiple p
   * Form all unique pairs `(p,q)`, where `p` is part of cell `c` being currently processed and `q` belonging to some adjacent cell of `c`.<br><br>  
  
   Unfortunately, exactly following this strategy will lead to the fact that each pair is processed twice. Consider two cells `c1` and `c2` being adjacent to each other. In one iteration `c1` will process `c2` as its neighbor and in some other iteration vice versa which leads to the result described above. To avoid this, we have to ensure somehow that if `c1` looked already at its neighbor `c2`, then `c2` should ignore `c1` when the time comes at which `c2` is processed. We have solved this issue by defining some kind of ownership. For each two cells `c1` and `c2` that are adjacent to each other either `c1` owns `c2` or vice versa. This is realized in the following way: Each cell owns all adjacent cells that are left, at the front or under itself. The following drawing should make this more clear: <br>  
-![Ownership concept](Ownership-Concept.JPG) <br><br>
+![Ownership concept](Ownership-Concept.png) <br><br>
   If each cell considers only the adjacent cells that it owns, we achieve our goal that each unique pair of particles is exactly processed ones. Using this iterator, the application of Newton's third law of motion is child's play.<br>
 
 **First test: revisiting the collision of two bodies**   
