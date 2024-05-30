@@ -35,8 +35,8 @@ void Model::updateVelocities() const{
     });
 }
 
-void Model::plot(int iteration) {
-    fileHandler.writeToFile(particles, iteration, outputFormat);
+void Model::plot(int iteration, std::string& baseName) {
+    fileHandler.writeToFile(particles, iteration, outputFormat, baseName);
 }
 
 void Model::addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2,

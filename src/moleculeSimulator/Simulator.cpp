@@ -13,8 +13,11 @@
 //#include <ranges>
 
 Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
-                     FileHandler::inputFormat inputFormat,
-                     FileHandler::outputFormat outputFormat) : deltaT{parameters.deltaT}, endT{parameters.endT} {
+                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat,
+                     int outputFrequency, std::string &outputFileBaseName) : deltaT{parameters.deltaT},
+                                                                   endT{parameters.endT},
+                                                                   outputFrequency{outputFrequency},
+                                                                   outputFileBaseName{outputFileBaseName} {
     switch (parameters.force) {
         case TypeOfForce::gravity: {
             force = std::make_unique<Gravity>();
@@ -30,12 +33,16 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
         }
     }
     model = std::make_unique<DirectSum>(*force, parameters.deltaT, inputFormat, outputFormat);
-    model->addViaFile(inputFilePath);
+    //model->addViaFile(inputFilePath);
+    model->addDisc({60, 25, 0}, {0, -10, 0}, 15, 1.1225, 1, 2, 0.1);
 }
 
 Simulator::Simulator(LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
                      FileHandler::inputFormat inputFormat,
-                     FileHandler::outputFormat outputFormat) : deltaT{parameters.deltaT}, endT{parameters.endT} {
+                     FileHandler::outputFormat outputFormat, int outputFrequency,
+                     std::string &outputFileBaseName) : deltaT{parameters.deltaT},
+                                              endT{parameters.endT}, outputFrequency{outputFrequency},
+                                              outputFileBaseName{outputFileBaseName} {
     switch (parameters.force) {
         case TypeOfForce::gravity: {
             force = std::make_unique<Gravity>();
@@ -52,13 +59,18 @@ Simulator::Simulator(LinkedCellsSimulationParameters &parameters, std::string &i
     }
     model = std::make_unique<LinkedCells>(*force, parameters.deltaT, parameters.domainSize, parameters.rCutOff,
                                           parameters.sigma, inputFormat, outputFormat, parameters.boundarySettings);
-    model->addViaFile(inputFilePath);
+    //model->addViaFile(inputFilePath);
+    model->addDisc({60, 25, 0.5}, {0, -10, 0}, 15, 1.1225, 1, 3, 0.1);
 }
 
 void Simulator::run(bool benchmark) {
     double current_time = 0;
-
     int iteration = 0;
+
+    //Plot everything one time before the simulation starts.
+    if (!benchmark) {
+        model->plot(iteration, outputFileBaseName);
+    }
 
     //Calculate the initial forces before starting the simulation
     model->updateForces();
@@ -67,8 +79,8 @@ void Simulator::run(bool benchmark) {
     while (current_time < endT) {
         model->step();
         iteration++;
-        if (!benchmark && iteration % 100 == 0) {
-            model->plot(iteration);
+        if (!benchmark && iteration % outputFrequency == 0) {
+            model->plot(iteration, outputFileBaseName);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);

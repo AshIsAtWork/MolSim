@@ -19,9 +19,7 @@
 
 class FileHandler {
 private:
-    const std::string fileName{"MD_vtk"};
 
-    //write
     outputWriter::VTKWriter vtkWriter;
     outputWriter::XYZWriter xyzWriter;
 
@@ -57,9 +55,10 @@ public:
      * @param particles Particles which will be written to the file.
      * @param iteration Current iteration step of the simulation.
      * @param format Type of the output file.
+     * @param baseName Base name of the output file.
      *
      * Write particles to a file. You can choose between different output formats. The file will be created in the directory,
      * in which this program was executed.
      */
-    void writeToFile(ParticleContainer &particles, int iteration, outputFormat format);
+    void writeToFile(ParticleContainer &particles, int iteration, outputFormat format, std::string& baseName);
 };

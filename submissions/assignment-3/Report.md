@@ -87,7 +87,12 @@ Until this point, we neglected the behavior of particles that traversed the boun
 **Outflow**   
 Implementing the outflow condition was straight forward. Because our container already provides a way to iterate over all halo cells belonging to a specific side of the simulation domain, we just can iterate over all halo cells belonging to the sides at which the boundary condition is set to outflow and delete all particles contained in them after each position update. Deleting particles from vectors is not an efficient operation, because all elements being stored behind the particle to delete have to be shifted. Therefore, it might be worth a try to use lists instead of vectors in halo cells. Currently, we did not test if this makes any significant difference regarding the running time.   
 
-**Reflective**
-The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment sheet and used the "ghost particle approach". Always when a particle
+**Reflective**   
+The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment sheet and used the "ghost particle approach". Always when a particle gets near to some side of the simulation domain (closer than the six. root of two times sigma) which boundary condition is set to reflective, then a counter-particle is virtually created outside the domain with the same distance to that side and will apply a repulsive force at this particle pushing it away from the boundary.   
+This approach is only stable for small time steps `delta_T`, because for large time steps the particle might cross the border before the force was high enough to repel it.   
+[Here](Mixed-Boundary-Conditions.mp4) you can see a video with mixed boundary conditions. The boundary at the front is reflective, all other boundaries are set to outflow. 
 
 ## Task 4: Simulation of a Falling Drop - Wall ##
+As part of this task, we added a new method to our class [ParticleGenerator](../../src/particleRepresentation/particle) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented we conducted a first experiment to test our simulation let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain {120,50,0}, because the third dimension is not needed. 
+* Simulation in 2D: [watch](Disc-against-reflective-Boundary-2D.mp4)
+* Simulation in 3D: [watch](Disc-against-reflective-Boundary-3D.mp4)
