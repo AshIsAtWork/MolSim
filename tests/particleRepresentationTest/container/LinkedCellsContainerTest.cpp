@@ -400,39 +400,39 @@ TEST(Iterators, ApplyToAllBoundryParticles) {
     lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {0.1,-0.1,2.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, LinkedCellsContainer::Side::front , 0.1);
+    }, Side::front , 0.1);
 
     //Test right
     lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {3.1,1.2,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, LinkedCellsContainer::Side::right , 0.2);
+    }, Side::right , 0.2);
 
     //Test back
     lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,3.3,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, LinkedCellsContainer::Side::back , 0.3);
+    }, Side::back , 0.3);
 
     //Test left, here we choose the threshhold small enough that no particle fulfills the requirements.
     //Therefore the function should be called 0 times.
     int i = 0;
     lcc.applyToAllBoundryParticles([&i](Particle& p, std::array<double, 3> ghostPosition) {
         i++;
-    }, LinkedCellsContainer::Side::left , 0.05);
+    }, Side::left , 0.05);
     EXPECT_EQ(i, 0);
 
     //Test top
     lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.6,2.5,3.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, LinkedCellsContainer::Side::top , 0.4);
+    }, Side::top , 0.4);
 
     //Test bottom
     lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,1.5,-0.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, LinkedCellsContainer::Side::bottom , 0.4);
+    }, Side::bottom , 0.4);
 }
 
 /**
@@ -464,7 +464,7 @@ TEST(LinkedCellsContainerTest, ClearHaloCells) {
     for(int side = 0; side < 6; side++) {
         //Ensure that side contains one particle. Otherwise, testing if clearing was successful would not be meaningful
         ASSERT_EQ(numberParticlesFrontBefore, 1);
-        lcc.clearHaloCells(static_cast<LinkedCellsContainer::Side>(side));
+        lcc.clearHaloCells(static_cast<Side>(side));
         size_t numberParticlesFrontAfter = 0;
         for(auto cellIndex : lcc.getHaloCells()[side]) {
             numberParticlesFrontAfter += lcc.getCells()[cellIndex].size();
@@ -540,7 +540,7 @@ TEST(LinkedCellContainerTest, Size) {
     EXPECT_EQ(lcc.size(), 110);
 
     //Clear halo cells at the front and remove the 10 particles we have just added
-    lcc.clearHaloCells(LinkedCellsContainer::Side::front);
+    lcc.clearHaloCells(Side::front);
     EXPECT_EQ(lcc.size(), 100);
 }
 

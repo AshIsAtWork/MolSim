@@ -83,9 +83,6 @@ namespace enumsStructs {
         std::string outputFileName;
         int outputFrequency;
 
-        //force to use in the simulation
-        TypeOfForce force;
-
         //model to use in the simulation
         TypeOfModel model;
 
@@ -110,8 +107,8 @@ namespace enumsStructs {
      */
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
-            {"gravity", TypeOfForce::gravity},
-            {"ljf", TypeOfForce::leonardJonesForce}
+            {"Gravity", TypeOfForce::gravity},
+            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
@@ -127,8 +124,8 @@ namespace enumsStructs {
      */
     inline TypeOfModel setModel(const std::string &selectedModel) {
         static const std::unordered_map<std::string, TypeOfModel> formatMap = {
-            {"ds", TypeOfModel::directSum},
-            {"lc", TypeOfModel::linkedCells}
+            {"DirectSum", TypeOfModel::directSum},
+            {"LinkedCells", TypeOfModel::linkedCells}
         };
 
         auto it = formatMap.find(selectedModel);

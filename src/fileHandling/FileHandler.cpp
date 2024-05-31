@@ -11,15 +11,8 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, 
             if (FileReader::readFile(particles, filePath) != 0) {
                 exit(1);
             }
-        }
-            break;
-        case inputFormat::xml: {
-            if (XMLReader::readFile(particles, filePath) != 0) {
-                exit(1);
-            }
-        }
-            break;
-        case inputFormat::invalid: {
+        }break;
+        default: {
             spdlog::error("Invalid input format selected. Please select a valid input format.");
             spdlog::error("Code should not reach this point. Exiting program.");
             exit(1);

@@ -1,9 +1,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
-#include "models/LinkedCells.h"
 #include "moleculeSimulator/Simulator.h"
-#include "particleRepresentation/container/LinkedCellsContainer.h"
 #include "utils/Benchmark.h"
 #include "utils/Logging.h"
 #include "utils/InputHander.h"
@@ -13,23 +11,20 @@ int main(int argc, char *argsv[]) {
     //Parameters for simulation
     double endT;
     double deltaT;
-    double rCutOff;
     //Todo: At the moment hard coded. Should be configurable within the xml
     double epsilon = 5;
     double sigma = 1;
-    TypeOfForce force;
     std::string inputFilePath;
     std::string inputFileFormatString;
     std::string outputFileFormatString;
     FileHandler::outputFormat outputFormat;
     FileHandler::inputFormat inputFormat;
+    enumsStructs::TypeOfForce force;
     std::string logLevel;
     std::string selectedForce;
-    std::string selectedModel;
-    std::string filename = "Experiment";
-    std::vector<double> domain;
+    std::string outputFileName = "Experiment";
     bool benchmark = false;
-    int outputFrequency = 50;
+    int outputFrequency;
 
     //Parsing of the command line arguments
 
@@ -54,12 +49,8 @@ int main(int argc, char *argsv[]) {
             ("time,t", "Perform time measurement. Logging will be disabled.")
             ("force,c", po::value<std::string>(&selectedForce)->default_value("ljf"),
              "Force to use: Possible options are (gravity, ljf)")
-            ("model,m", po::value<std::string>(&selectedModel)->default_value("lc"),
-             "Model to use: Possible options are (ds, lc)")
-            ("domain", po::value<std::vector<double> >(&domain)->multitoken(),
-             "Size of the domain: The following format is expected: --domain N1 N2 N3")
-            ("cutoff,r", po::value<double>(&rCutOff)->default_value(3.0),
-             "The cutoff radius. Is only considered, when the Linked Cell Model is used.");
+            ("freq",po::value<int>(&outputFrequency)->default_value(50),"Output frequency.")
+            ("baseName,b",po::value<std::string>(&outputFileName)->default_value("MD_vtk_"), "Base name of the output files.");
 
     po::variables_map vm;
 
@@ -127,48 +118,25 @@ int main(int argc, char *argsv[]) {
 
     std::unique_ptr<Simulator> simulator;
 
-    //Parameters for simulation will be taken from XML file. Simulation paramters specified over the command line will be ignored.
+    //If an xml file is used parameters are taken from xml file. Simulation paramters specified over the command line will be ignored.
     if(inputFormat == FileHandler::inputFormat::xml) {
-        SimulationSettings simulationSettings;
+        enumsStructs::SimulationSettings simulationSettings;
         XMLReader::readFile(inputFilePath, simulationSettings);
+        simulator = std::make_unique<Simulator>(simulationSettings, inputFormat, outputFormat);
     }
-
-    if (selectedForce == "gravity") {
-        force = TypeOfForce::gravity;
-    } else if (selectedForce == "ljf") {
-        force = TypeOfForce::leonardJonesForce;
-    } else {
-        std::cout << "Please specify a valid force option!\n";
-        std::cout << desc << "\n";
-        return -1;
-    }
-
-    if (selectedModel == "ds") {
-        DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
-        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, filename);
-    } else if (selectedModel == "lc") {
-        if (domain.size() != 3) {
-            std::cout << "Please specify a valid domain option!\n";
+    //Legacy input over the command line
+    else {
+        if (selectedForce == "gravity") {
+            force = enumsStructs::TypeOfForce::gravity;
+        } else if (selectedForce == "ljf") {
+            force = enumsStructs::TypeOfForce::leonardJonesForce;
+        } else {
+            std::cout << "Please specify a valid force option!\n";
             std::cout << desc << "\n";
             return -1;
         }
-        //Todo: At the moment hard coded, should be configurable within the xml file
-        static std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> boundarySettings = {
-            std::pair{Side::front, enumsStructs::BoundaryCondition::reflective},
-            std::pair{Side::right, enumsStructs::BoundaryCondition::reflective},
-            std::pair{Side::back, enumsStructs::BoundaryCondition::reflective},
-            std::pair{Side::left, enumsStructs::BoundaryCondition::reflective},
-            std::pair{Side::top, enumsStructs::BoundaryCondition::reflective},
-            std::pair{Side::bottom, enumsStructs::BoundaryCondition::reflective}
-        };
-        LinkedCellsSimulationParameters parameters = {
-            deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundarySettings
-        };
-        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, filename);
-    } else {
-        std::cout << "Please specify a valid model option!\n";
-        std::cout << desc << "\n";
-        return -1;
+        enumsStructs::DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, outputFileName);
     }
 
     //Starting simulation with or without time measurement

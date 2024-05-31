@@ -52,7 +52,7 @@
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:enumeration value="DirectSum"/>
-                            <xs:enumeration value="LeonardJonesForce"/>
+                            <xs:enumeration value="LinkedCells"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>

@@ -7,6 +7,8 @@
 #include "models/LinkedCells.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 
+using namespace enumsStructs;
+
 bool isInDomain(Particle& p) {
  std::array<double, 3> lowerBound = {0,0,0};
  std::array<double, 3> upperBound = {3,3,3};
@@ -37,15 +39,15 @@ bool noExplosion(Particle& p) {
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
  LeonardJonesForce lJF(5, 1);
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> front = {LinkedCellsContainer::Side::front, LinkedCells::BoundaryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> right = {LinkedCellsContainer::Side::right, LinkedCells::BoundaryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> back = {LinkedCellsContainer::Side::back, LinkedCells::BoundaryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> left = {LinkedCellsContainer::Side::left, LinkedCells::BoundaryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> top = {LinkedCellsContainer::Side::top, LinkedCells::BoundaryCondition::reflective};
- std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition> bottom = {LinkedCellsContainer::Side::bottom, LinkedCells::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> front = {Side::front, enumsStructs::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> right = {Side::right, enumsStructs::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> back = {Side::back, enumsStructs::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> left = {Side::left, enumsStructs::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> top = {Side::top, enumsStructs::BoundaryCondition::reflective};
+ std::pair<Side, enumsStructs::BoundaryCondition> bottom = {Side::bottom, enumsStructs::BoundaryCondition::reflective};
 
 
-  std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition>, 6> boundrySettings= {front, right, back, left, top, bottom};
+  std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> boundrySettings= {front, right, back, left, top, bottom};
 
  LinkedCells linkedCellModel = {lJF,0.00005,{3,3,3},3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundrySettings};
  double current_time = 0;

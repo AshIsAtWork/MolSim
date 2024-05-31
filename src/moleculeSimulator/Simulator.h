@@ -30,10 +30,11 @@ private:
 public:
     Simulator() = delete;
 
-    Simulator(enumsStructs::SimulationSettings simulation_settings, FileHandler::outputFormat outputFormat);
+
+    Simulator(enumsStructs::SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
     /**
-     * @brief Construct a new simulation environment using the direct sum algorithm.
+     * @brief Legacy construct to construct a new simulation environment using the direct sum algorithm.
      *
      * @param parameters Simulation parameters for the direct sum model.
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
@@ -49,25 +50,7 @@ public:
 
     Simulator(enumsStructs::DirectSumSimulationParameters &parameters, std::string &inputFilePath,
               FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
-              std::string& outputFileBaseName);
-
-    /**
-     * @brief Construct a new simulation environment using the linked cell algorithm.
-     *
-     * @param parameters Simulation parameters for the linked cell model.
-     * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
-     * @param inputFormat Format of the input file. Supported formats are txt and xml.
-     * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
-     * @param outputFrequency Specifies after how much timesteps an output file is written. For example an output frequency
-     *                        of 10 means that after each 10 iterations an output file is written.
-     * @param outputFileBaseName Base name of the output files.
-     * To create a new simulation environment you have to provide an input file containing the particles you want
-     * to simulate.
-     */
-
-    Simulator(enumsStructs::LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
-              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
-              std::string& outputFileBaseName);
+              std::string &outputFileBaseName);
 
     /**
      * @brief Run the simulation.
