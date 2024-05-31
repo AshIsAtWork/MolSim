@@ -15,12 +15,6 @@
  */
 
 class LinkedCells final : public Model {
-public:
-    /**
-     * Enum to distinguish between different boundry conditions for each side.
-     */
-    enum class BoundaryCondition { outflow, reflective };
-
 private:
     /**
      * This model uses the LinkedCellsContainer to store its particles
@@ -29,7 +23,7 @@ private:
     /**
      * Definition of the boundary condition for each side.
      */
-    std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> boundarySettings;
+    std::array<std::pair<Side,enumsStructs::BoundaryCondition>, 6> boundarySettings;
 
     /**
      * Threshold for the distance that specifies, when ghost particles are spawned.
@@ -45,7 +39,7 @@ public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,
                 FileHandler::inputFormat inputFormat,
                 FileHandler::outputFormat outputFormat,
-                std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> &boundarySettings);
+                std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &boundarySettings);
 
     /**
      * @brief Perform one time step in the linked cells model.

@@ -12,20 +12,17 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include "XMLHandling/Collision.h"
-#include "utils/ParameterPassing.h"
+#include "utils/enumsStructs.h"
 
 class XMLReader {
 
 public:
     /**
-     * @brief Read xml files containing particle data.
+     * @brief Read xml files containing parameters for simulation
      *
-     * @param particles Particle Container to store the particles in.
+     * @param simulationSettings Struct to load all configurations in that have been read out of the input file.
      * @param filename Path to the file to be read.
      *
-     * The format of a xml file must be specified in the first line
-     * that is not a comment. Look at the files in the input file for more information. Any other file format will
-     * be rejected. If the specified file format is violated, the data may not be read correctly.
      */
-    static int readFile(ParticleContainer &particles, std::string &filename);
+    static int readFile(std::string &filename, enumsStructs::SimulationSettings& simulationSettings);
 };

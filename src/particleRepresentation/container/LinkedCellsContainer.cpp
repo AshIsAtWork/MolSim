@@ -4,6 +4,8 @@
 
 #include "LinkedCellsContainer.h"
 
+using namespace enumsStructs;
+
 void LinkedCellsContainer::calculateHaloCellIndizes() {
     for (int z = 0; z < nZ; z++) {
         //halo cells front

@@ -9,7 +9,7 @@
 #include <iostream>
 #include "forceCalculation/Force.h"
 #include "models/Model.h"
-#include "utils/ParameterPassing.h"
+#include "utils/enumsStructs.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -30,6 +30,8 @@ private:
 public:
     Simulator() = delete;
 
+    Simulator(enumsStructs::SimulationSettings simulation_settings, FileHandler::outputFormat outputFormat);
+
     /**
      * @brief Construct a new simulation environment using the direct sum algorithm.
      *
@@ -45,7 +47,7 @@ public:
      * to simulate.
      */
 
-    Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+    Simulator(enumsStructs::DirectSumSimulationParameters &parameters, std::string &inputFilePath,
               FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
               std::string& outputFileBaseName);
 
@@ -63,7 +65,7 @@ public:
      * to simulate.
      */
 
-    Simulator(LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
+    Simulator(enumsStructs::LinkedCellsSimulationParameters &parameters, std::string &inputFilePath,
               FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
               std::string& outputFileBaseName);
 

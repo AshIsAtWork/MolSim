@@ -8,17 +8,14 @@
 #include "ParticleContainer.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
+#include "utils/enumsStructs.h"
+
+using namespace enumsStructs;
 
 /**
  * @brief Container to store the particles for simulation using the linked cells algorithm.
  */
 class LinkedCellsContainer : public ParticleContainer{
-
-public:
-    /**
-     * Enum to specify the side that can be chosen in some methods.
-     */
-    enum class Side {front, right, back, left, top, bottom};
 
 private:
     /**

@@ -7,7 +7,7 @@
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, double sigma, FileHandler::inputFormat inputFormat,
                          FileHandler::outputFormat outputFormat,
-                         std::array<std::pair<LinkedCellsContainer::Side, BoundaryCondition>, 6> &
+                         std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &
                          boundarySettings) : Model(particles, force, deltaT, inputFormat,
                                                   outputFormat),
                                             particles(domainSize, rCutOff),
@@ -18,11 +18,11 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
 void LinkedCells::processBoundaries() {
     for (auto setting: boundarySettings) {
         switch (setting.second) {
-            case BoundaryCondition::outflow: {
+            case enumsStructs::BoundaryCondition::outflow: {
                 particles.clearHaloCells(setting.first);
             }
             break;
-            case BoundaryCondition::reflective: {
+            case enumsStructs::BoundaryCondition::reflective: {
                 particles.applyToAllBoundryParticles([this](Particle &p, std::array<double, 3> ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
                     Particle ghostParticle = p;
@@ -31,6 +31,11 @@ void LinkedCells::processBoundaries() {
                     p.setF(p.getF() + ghostForce);
                 }, setting.first, threshold);
             }
+            break;
+            case enumsStructs::BoundaryCondition::invalid: {
+                spdlog::error("Invalid boundary condition was selected. Terminating program!");
+                exit(-1);
+            };
         }
     }
 }

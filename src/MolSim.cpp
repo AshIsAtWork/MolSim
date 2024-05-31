@@ -125,6 +125,14 @@ int main(int argc, char *argsv[]) {
 
     spdlog::info("Hello from MolSim for PSE!");
 
+    std::unique_ptr<Simulator> simulator;
+
+    //Parameters for simulation will be taken from XML file. Simulation paramters specified over the command line will be ignored.
+    if(inputFormat == FileHandler::inputFormat::xml) {
+        SimulationSettings simulationSettings;
+        XMLReader::readFile(inputFilePath, simulationSettings);
+    }
+
     if (selectedForce == "gravity") {
         force = TypeOfForce::gravity;
     } else if (selectedForce == "ljf") {
@@ -134,8 +142,6 @@ int main(int argc, char *argsv[]) {
         std::cout << desc << "\n";
         return -1;
     }
-
-    std::unique_ptr<Simulator> simulator;
 
     if (selectedModel == "ds") {
         DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
@@ -147,13 +153,13 @@ int main(int argc, char *argsv[]) {
             return -1;
         }
         //Todo: At the moment hard coded, should be configurable within the xml file
-        static std::array<std::pair<LinkedCellsContainer::Side, LinkedCells::BoundaryCondition>, 6> boundarySettings = {
-            std::pair{LinkedCellsContainer::Side::front, LinkedCells::BoundaryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::right, LinkedCells::BoundaryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::back, LinkedCells::BoundaryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::left, LinkedCells::BoundaryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::top, LinkedCells::BoundaryCondition::reflective},
-            std::pair{LinkedCellsContainer::Side::bottom, LinkedCells::BoundaryCondition::reflective}
+        static std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> boundarySettings = {
+            std::pair{Side::front, enumsStructs::BoundaryCondition::reflective},
+            std::pair{Side::right, enumsStructs::BoundaryCondition::reflective},
+            std::pair{Side::back, enumsStructs::BoundaryCondition::reflective},
+            std::pair{Side::left, enumsStructs::BoundaryCondition::reflective},
+            std::pair{Side::top, enumsStructs::BoundaryCondition::reflective},
+            std::pair{Side::bottom, enumsStructs::BoundaryCondition::reflective}
         };
         LinkedCellsSimulationParameters parameters = {
             deltaT, endT, epsilon, sigma, force, rCutOff, {domain[0], domain[1], domain[2]}, boundarySettings
