@@ -5,13 +5,12 @@
 #pragma once
 
 #include "particleRepresentation/container/ParticleContainer.h"
-#include "fileHandling/reader/XMLHandling/Collision.h"
+#include "fileHandling/reader/XMLHandling/ConfigurationFile.h"
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
-#include "XMLHandling/Collision.h"
 #include "utils/enumsStructs.h"
 
 class XMLReader {

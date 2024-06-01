@@ -5,31 +5,33 @@
 
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/Collision.xsd">
+           xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>Collision</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
-    <t_end>10</t_end>
-    <delta_t>0.00005</delta_t>
-    <force>LeonardJonesForce</force>
-    <model>LinkedCells</model>
-    <Sigma>1</Sigma>
-    <Epsilon>5</Epsilon>
-    <DomainSize>
-        <First>180</First>
-        <Second>90</Second>
-        <Third>0</Third>
-    </DomainSize>
-    <rCutOff>3</rCutOff>
-    <BoundaryCondition>
-        <boundaries>
-            <Front>Reflective</Front>
-            <Back>Reflective</Back>
-            <Left>Reflective</Left>
-            <Right>Reflective</Right>
-            <Top>Reflective</Top>
-            <Bottom>Reflective</Bottom>
-        </boundaries>
-    </BoundaryCondition>
+    <model>
+        <Name>DirectSum</Name>
+        <t_end>10</t_end>
+        <delta_t>0.00005</delta_t>
+        <force>LeonardJonesForce</force>
+        <Sigma>1</Sigma>
+        <Epsilon>5</Epsilon>
+        <DomainSize>
+            <First>180</First>
+            <Second>90</Second>
+            <Third>0</Third>
+        </DomainSize>
+        <rCutOff>3</rCutOff>
+        <BoundaryCondition>
+            <boundaries>
+                <Front>Reflective</Front>
+                <Back>Reflective</Back>
+                <Left>Reflective</Left>
+                <Right>Reflective</Right>
+                <Top>Reflective</Top>
+                <Bottom>Reflective</Bottom>
+            </boundaries>
+        </BoundaryCondition>
+    </model>
     <Cuboids>
         <Size>2</Size>
         <Cuboid>

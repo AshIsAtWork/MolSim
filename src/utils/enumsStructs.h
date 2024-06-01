@@ -3,28 +3,37 @@
 //
 
 #pragma once
+
 #include <array>
 
 namespace enumsStructs {
     /**
      * Enum to specify the side that can be chosen in some methods.
      */
-    enum class Side { front, right, back, left, top, bottom };
+    enum class Side {
+        front, right, back, left, top, bottom
+    };
 
     /**
      * Enum to specify the type of force used in the simulation.
      */
-    enum class TypeOfForce { gravity, leonardJonesForce, invalid };
+    enum class TypeOfForce {
+        gravity, leonardJonesForce, invalid
+    };
 
     /**
      * Enum to specify the type of model used in the simulation.
      */
-    enum class TypeOfModel { directSum, linkedCells, invalid };
+    enum class TypeOfModel {
+        directSum, linkedCells, invalid
+    };
 
     /**
      * Enum to distinguish between different boundry conditions for each side.
      */
-    enum class BoundaryCondition { outflow, reflective, invalid };
+    enum class BoundaryCondition {
+        outflow, reflective, invalid
+    };
 
     /**
      * Struct for passing parameters of the direct sum model.
@@ -52,18 +61,18 @@ namespace enumsStructs {
     };
 
     struct Cuboid {
-        std::array <double, 3> position;
-        std::array <unsigned, 3> dimensions;
+        std::array<double, 3> position;
+        std::array<unsigned, 3> dimensions;
         double h;
         double mass;
-        std::array <double, 3> initVelocity;
+        std::array<double, 3> initVelocity;
         int dimensionsBrownianMotion;
         double brownianMotionAverageVelocity;
     };
 
     struct Disc {
-        std::array <double, 3> center;
-        std::array <double, 3> initVelocity;
+        std::array<double, 3> center;
+        std::array<double, 3> initVelocity;
         int N;
         double h;
         double mass;
@@ -107,12 +116,28 @@ namespace enumsStructs {
      */
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
-            {"Gravity", TypeOfForce::gravity},
-            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
+                {"Gravity",           TypeOfForce::gravity},
+                {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
         return (it != formatMap.end()) ? it->second : TypeOfForce::invalid;
+    }
+
+    /**
+     * @brief Convert enum value to string.
+     *
+     * @param force Enum value to convert.
+     *
+     * @return Corresponding string.
+     */
+    inline std::string getForce(TypeOfForce &force) {
+        static const std::unordered_map<TypeOfForce, std::string> formatMap = {
+                {TypeOfForce::gravity,           "Gravity"},
+                {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
+        };
+        auto it = formatMap.find(force);
+        return (it != formatMap.end()) ? it->second : "Invalid";
     }
 
     /**
@@ -124,21 +149,61 @@ namespace enumsStructs {
      */
     inline TypeOfModel setModel(const std::string &selectedModel) {
         static const std::unordered_map<std::string, TypeOfModel> formatMap = {
-            {"DirectSum", TypeOfModel::directSum},
-            {"LinkedCells", TypeOfModel::linkedCells}
+                {"DirectSum",   TypeOfModel::directSum},
+                {"LinkedCells", TypeOfModel::linkedCells}
         };
 
         auto it = formatMap.find(selectedModel);
         return (it != formatMap.end()) ? it->second : TypeOfModel::invalid;
     }
 
-    inline BoundaryCondition setBoundaryCondition(const std::string& selectedBoundaryCondition) {
+    /**
+     * @brief Convert enum value to string.
+     *
+     * @param model Enum value to convert.
+     *
+     * @return Corresponding string.
+     */
+    inline std::string getModel(TypeOfModel &model) {
+        static const std::unordered_map<TypeOfModel, std::string> formatMap = {
+                {TypeOfModel::directSum,   "DirectSum"},
+                {TypeOfModel::linkedCells, "LinkedCells"}
+        };
+        auto it = formatMap.find(model);
+        return (it != formatMap.end()) ? it->second : "Invalid";
+    }
+
+    /**
+     * @brief Convert string selection to corresponding enum value.
+     *
+     * @param selectedBoundaryCondition String to convert.
+     *
+     * @return Corresponding enum value.
+     */
+    inline BoundaryCondition setBoundaryCondition(const std::string &selectedBoundaryCondition) {
         static const std::unordered_map<std::string, BoundaryCondition> formatMap = {
-            {"Reflective", BoundaryCondition::reflective},
-            {"Outflow", BoundaryCondition::outflow}
+                {"Reflective", BoundaryCondition::reflective},
+                {"Outflow",    BoundaryCondition::outflow}
         };
         auto it = formatMap.find(selectedBoundaryCondition);
         return (it != formatMap.end()) ? it->second : BoundaryCondition::invalid;
     }
+
+    /**
+     * @brief Convert enum value to string.
+     *
+     * @param boundaryCondition Enum value to convert.
+     *
+     * @return Corresponding string.
+     */
+    inline std::string getBoundaryCondition(BoundaryCondition &boundaryCondition) {
+        static const std::unordered_map<BoundaryCondition, std::string> formatMap = {
+                {BoundaryCondition::reflective, "Reflective"},
+                {BoundaryCondition::outflow,    "Outflow"}
+        };
+        auto it = formatMap.find(boundaryCondition);
+        return (it != formatMap.end()) ? it->second : "Invalid";
+    }
+
 
 }

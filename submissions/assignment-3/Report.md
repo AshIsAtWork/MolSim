@@ -27,7 +27,7 @@ the provided test examples.
 ### XML Schema Creation
 
 Subsequently, we developed an XML schema file, defining the structure of our input file. This schema file
-is accessible [here](../../src/fileHandling/reader/XMLHandling/Collision.xsd). The schema outlines the structure and
+is accessible [here](../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd). The schema outlines the structure and
 constraints of the input data, which includes the following elements:
 
 - **Output File Name**: Specifies the name of the output file for simulation results. This name is constrained to
@@ -79,7 +79,7 @@ Upon finalizing the XML schema, we employed the Codesynthesis XSD tool to genera
 achieved using the following command:
 
 ```bash
-xsdcxx cxx-tree --std c++11 --generate-doxygen --generate-serialization --hxx-suffix .h --cxx-suffix .cpp Collision.xsd
+xsdcxx cxx-tree --std c++11 --generate-doxygen --generate-serialization --hxx-suffix .h --cxx-suffix .cpp ConfigurationFile.xsd
 ```
 
 This command generated the [Collision.h](../../src/fileHandling/reader/XMLHandling/Collision.h)
@@ -93,7 +93,7 @@ automatically validated when the
 following declaration is included in the XML definition:
 
 ```
-xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/Collision.xsd"
+xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd"
 ```
 
 This declaration links the XML file to the schema, ensuring automatic validation of the defined constraints.
@@ -104,6 +104,8 @@ Additionally, any parsing errors are detected and reported by the XMLReader clas
 We opted for Tree-Mapping for the XML file due to its ease of use and comprehensibility. This approach also facilitates
 additional features such as serialization back to DOM or XML, enabling the writing of modified XML files back to disk.
 Although this feature has not been implemented yet, it holds potential for future tasks such as checkpointing.
+
+[//]: # (TODO: Added Feature, please expand :&#41;)
 
 ## Task 2: Linked-cell Algorithm ##
 
