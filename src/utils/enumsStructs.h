@@ -46,7 +46,7 @@ namespace enumsStructs {
         TypeOfForce force;
     };
 
-    /*
+    /**
      * Struct for passing parameters of the linked cells model
      */
     struct LinkedCellsSimulationParameters {
@@ -60,6 +60,9 @@ namespace enumsStructs {
         std::array<std::pair<Side, BoundaryCondition>, 6> boundarySettings;
     };
 
+    /**
+     * Struct containing cuboid specifictations
+     */
     struct Cuboid {
         std::array<double, 3> position;
         std::array<unsigned, 3> dimensions;
@@ -70,6 +73,9 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
     };
 
+    /**
+     * Struct containing disc specifications
+     */
     struct Disc {
         std::array<double, 3> center;
         std::array<double, 3> initVelocity;
@@ -80,13 +86,18 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
     };
 
+    /**
+     * Struct containing particle specifications
+     */
     struct ParticleType {
         std::array<double, 3> x;
         std::array<double, 3> v;
         double m;
     };
 
-
+    /**
+     * Struct for storing all simulation parameters
+     */
     struct SimulationSettings {
         //general
         std::string outputFileName;
