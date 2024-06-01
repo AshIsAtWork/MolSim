@@ -40,7 +40,6 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         Molecules molecules(*elementRoot, flags, container);
 
         // Accessing elements
-        //TODO: Change to info -> debug
         if (molecules.OutputFileName().empty()) {
             spdlog::error("OutputFileName is empty");
             return 1;
@@ -58,113 +57,139 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             spdlog::debug("OutputFrequency: {}", static_cast<int>(molecules.OutputFrequency()));
         }
 
-        if (static_cast<double>(molecules.t_end()) < 0) {
+        //TODO: Use this Model
+        enumsStructs::TypeOfModel model = enumsStructs::setModel(molecules.model().Name());
+        if (model == enumsStructs::TypeOfModel::invalid) {
+            spdlog::error("Model is invalid");
+            return 1;
+        } else {
+            simulationSettings.model = model;
+            spdlog::debug("Model: {}", molecules.model().Name());
+        }
+
+        if (static_cast<double>(molecules.model().t_end()) < 0) {
             spdlog::error("t_end is less than 0");
             return 1;
         } else {
-            simulationSettings.parametersDirectSum.endT = static_cast<int>(molecules.t_end());
-            simulationSettings.parametersLinkedCells.endT = static_cast<int>(molecules.t_end());
-            spdlog::debug("t_end: {}", static_cast<double>(molecules.t_end()));
+            simulationSettings.parametersDirectSum.endT = static_cast<int>(molecules.model().t_end());
+            simulationSettings.parametersLinkedCells.endT = static_cast<int>(molecules.model().t_end());
+            spdlog::debug("t_end: {}", static_cast<double>(molecules.model().t_end()));
         }
 
-        if (static_cast<double>(molecules.delta_t()) <= 0) {
+        if (static_cast<double>(molecules.model().delta_t()) <= 0) {
             spdlog::error("delta_t is less than 0");
             return 1;
         } else {
-            simulationSettings.parametersDirectSum.deltaT = static_cast<int>(molecules.delta_t());
-            simulationSettings.parametersLinkedCells.deltaT = static_cast<int>(molecules.delta_t());
-            spdlog::debug("delta_t: {}", static_cast<double>(molecules.delta_t()));
+            simulationSettings.parametersDirectSum.deltaT = static_cast<int>(molecules.model().delta_t());
+            simulationSettings.parametersLinkedCells.deltaT = static_cast<int>(molecules.model().delta_t());
+            spdlog::debug("delta_t: {}", static_cast<double>(molecules.model().delta_t()));
         }
 
         //TODO: Use this force
-        enumsStructs::TypeOfForce force = enumsStructs::setForce(molecules.force());
+        enumsStructs::TypeOfForce force = enumsStructs::setForce(molecules.model().force());
         if (force == enumsStructs::TypeOfForce::invalid) {
             spdlog::error("Force is invalid");
             return 1;
         } else {
             simulationSettings.parametersDirectSum.force = force;
             simulationSettings.parametersLinkedCells.force = force;
-            spdlog::debug("Force: {}", molecules.force());
+            spdlog::debug("Force: {}", molecules.model().force());
         }
 
-        //TODO: Use this Model
-        enumsStructs::TypeOfModel model = enumsStructs::setModel(molecules.model());
-        if (model == enumsStructs::TypeOfModel::invalid) {
-            spdlog::error("Model is invalid");
-            return 1;
-        } else {
-            simulationSettings.model = model;
-            spdlog::debug("Model: {}", molecules.model());
-        }
-        if (static_cast<double>(molecules.Sigma()) < 0) {
+        if (static_cast<double>(molecules.model().Sigma()) < 0) {
             spdlog::error("Sigma is less than 0");
             return 1;
         } else {
-            simulationSettings.parametersDirectSum.sigma = static_cast<double>(molecules.Sigma());
-            simulationSettings.parametersLinkedCells.sigma = static_cast<double>(molecules.Sigma());
-            spdlog::debug("Sigma: {}", static_cast<double>(molecules.Sigma()));
+            simulationSettings.parametersDirectSum.sigma = static_cast<double>(molecules.model().Sigma());
+            simulationSettings.parametersLinkedCells.sigma = static_cast<double>(molecules.model().Sigma());
+            spdlog::debug("Sigma: {}", static_cast<double>(molecules.model().Sigma()));
         }
 
-        if (static_cast<double>(molecules.Epsilon()) < 0) {
+        if (static_cast<double>(molecules.model().Epsilon()) < 0) {
             spdlog::error("Epsilon is less than 0");
             return 1;
         } else {
-            simulationSettings.parametersDirectSum.epsilon = static_cast<double>(molecules.Sigma());
-            simulationSettings.parametersLinkedCells.epsilon = static_cast<double>(molecules.Sigma());
-            spdlog::debug("Epsilon: {}", static_cast<double>(molecules.Epsilon()));
+            simulationSettings.parametersDirectSum.epsilon = static_cast<double>(molecules.model().Sigma());
+            simulationSettings.parametersLinkedCells.epsilon = static_cast<double>(molecules.model().Sigma());
+            spdlog::debug("Epsilon: {}", static_cast<double>(molecules.model().Epsilon()));
         }
 
-        simulationSettings.parametersLinkedCells.domainSize = {
-            static_cast<double>(molecules.DomainSize().First()),
-            static_cast<double>(molecules.DomainSize().Second()),
-            static_cast<double>(molecules.DomainSize().Third())
-        };
+        if (molecules.model().Name() == "LinkedCells") {
+            if (molecules.model().DomainSize().present()) {
+                simulationSettings.parametersLinkedCells.domainSize = {
+                        static_cast<double>(molecules.model().DomainSize().get().First()),
+                        static_cast<double>(molecules.model().DomainSize().get().Second()),
+                        static_cast<double>(molecules.model().DomainSize().get().Third())
+                };
+                spdlog::debug("DomainSize: {}, {}, {}",
+                              static_cast<double>(molecules.model().DomainSize().get().First()),
+                              static_cast<double>(molecules.model().DomainSize().get().Second()),
+                              static_cast<double>(molecules.model().DomainSize().get().Third()));
+            } else {
+                spdlog::error("DomainSize is not present");
+                return 1;
+            }
+            if (molecules.model().rCutOff().present()) {
+                if (static_cast<double>(molecules.model().rCutOff().get()) < 0) {
+                    spdlog::error("rCutOff is less than 0");
+                    return 1;
+                } else {
+                    simulationSettings.parametersLinkedCells.rCutOff = static_cast<double>(molecules.model().rCutOff().get());
+                    spdlog::debug("rCutOff: {}", static_cast<double>(molecules.model().rCutOff().get()));
+                }
+            } else {
+                spdlog::error("rCutOff is not present");
+                return 1;
+            }
 
-        spdlog::debug("DomainSize: {}, {}, {}",
-                      static_cast<double>(molecules.DomainSize().First()),
-                      static_cast<double>(molecules.DomainSize().Second()),
-                      static_cast<double>(molecules.DomainSize().Third()));
+            if (molecules.model().BoundaryCondition().present()) {
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
+                        enumsStructs::Side::front,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Front())
+                };
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
+                        enumsStructs::Side::right,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Right())
+                };
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
+                        enumsStructs::Side::back,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Back())
+                };
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
+                        enumsStructs::Side::left,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Left())
+                };
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
+                        enumsStructs::Side::top,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Top())
+                };
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
+                        enumsStructs::Side::bottom,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Bottom())
+                };
 
-        if (static_cast<double>(molecules.rCutOff()) < 0) {
-            spdlog::error("rCutOff is less than 0");
-            return 1;
-        } else {
-            simulationSettings.parametersLinkedCells.rCutOff = static_cast<double>(molecules.rCutOff());
-            spdlog::debug("rCutOff: {}", static_cast<double>(molecules.rCutOff()));
+                simulationSettings.parametersLinkedCells.boundarySettings = {cFront, cRight, cBack, cLeft, cTop,
+                                                                             cBottom};
+
+                spdlog::debug("BoundaryCondition: Front: {}, Back: {}, Left: {}, Right: {}, Top: {}, Bottom: {}",
+                              molecules.model().BoundaryCondition().get().boundaries().Front(),
+                              molecules.model().BoundaryCondition().get().boundaries().Back(),
+                              molecules.model().BoundaryCondition().get().boundaries().Left(),
+                              molecules.model().BoundaryCondition().get().boundaries().Right(),
+                              molecules.model().BoundaryCondition().get().boundaries().Top(),
+                              molecules.model().BoundaryCondition().get().boundaries().Bottom());
+
+            } else {
+                spdlog::error("BoundaryCondition is not present");
+                return 1;
+            }
         }
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
-            enumsStructs::Side::front,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Front())
-        };
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
-            enumsStructs::Side::right,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Right())
-        };
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
-            enumsStructs::Side::back,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Back())
-        };
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
-            enumsStructs::Side::left,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Left())
-        };
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
-            enumsStructs::Side::top,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Top())
-        };
-        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
-            enumsStructs::Side::bottom,
-            enumsStructs::setBoundaryCondition(molecules.BoundaryCondition().boundaries().Bottom())
-        };
-        simulationSettings.parametersLinkedCells.boundarySettings = {cFront, cRight, cBack, cLeft, cTop, cBottom};
-
-        spdlog::debug("BoundaryCondition: Front: {}, Back: {}, Left: {}, Right: {}, Top: {}, Bottom: {}",
-                      molecules.BoundaryCondition().boundaries().Front(),
-                      molecules.BoundaryCondition().boundaries().Back(),
-                      molecules.BoundaryCondition().boundaries().Left(),
-                      molecules.BoundaryCondition().boundaries().Right(),
-                      molecules.BoundaryCondition().boundaries().Top(),
-                      molecules.BoundaryCondition().boundaries().Bottom());
 
         if (molecules.SingleParticles().present()) {
             spdlog::debug("SingleParticles Size: {}", static_cast<int>(molecules.SingleParticles().get().Size()));
@@ -174,41 +199,41 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.SingleParticles().get().Size(); i++) {
                 enumsStructs::ParticleType p{
-                    {
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().X()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().Y()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().Z())
-                    },
-                    {
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass())
+                        {
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().X()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().Y()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().Z())
+                        },
+                        {
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass())
                 };
                 simulationSettings.particles.push_back(p);
                 spdlog::debug("SingleParticle #{}: Position: {}, {}, {}",
                               i + 1 + 1,
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().X()),
+                                      i).Position().X()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().Y()),
+                                      i).Position().Y()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().Z()));
+                                      i).Position().Z()));
                 spdlog::debug("SingleParticle #{}: Velocity: {}, {}, {}",
                               i + 1 + 1,
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
             }
         }
 
@@ -220,49 +245,49 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.Cuboids().get().Size(); i++) {
                 enumsStructs::Cuboid cuboid = {
-                    {
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().X()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().Y()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().Z())
-                    },
-                    {
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N1()),
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N2()),
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N3())
-                    },
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()),
-                    {
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
+                        {
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().X()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().Y()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().Z())
+                        },
+                        {
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N1()),
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N2()),
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N3())
+                        },
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()),
+                        {
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
                 };
                 simulationSettings.cuboids.push_back(cuboid);
                 spdlog::debug("Cuboid #{}: Position: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().X()),
+                                      i).Position().X()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().Y()),
+                                      i).Position().Y()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().Z()));
+                                      i).Position().Z()));
                 spdlog::debug("Cuboid #{}: Velocity: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
                 spdlog::debug("Cuboid #{}: Mass: {}", i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()));
                 spdlog::debug("Cuboid #{}: N1: {}", i + 1,
@@ -288,45 +313,45 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.Discs().get().Size(); i++) {
                 enumsStructs::Disc disc = {
-                    {
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().X()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().Y()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().Z())
-                    },
-                    {
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
-                    static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()),
-                    static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
+                        {
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().X()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().Y()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().Z())
+                        },
+                        {
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
+                        static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()),
+                        static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
                 };
                 simulationSettings.discs.push_back(disc);
                 spdlog::debug("Disc #{}: Center: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().X()),
+                                      i).Center().X()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().Y()),
+                                      i).Center().Y()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().Z()));
+                                      i).Center().Z()));
                 spdlog::debug("Disc #{}: Velocity: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
                 spdlog::debug("Disc #{}: Mass: {}", i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()));
                 spdlog::debug("InterParticleDistance: {}",
