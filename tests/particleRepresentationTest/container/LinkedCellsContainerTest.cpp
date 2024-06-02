@@ -17,7 +17,7 @@
  * Results for reference are calculated by hand.
  */
 
-TEST(ThreeDtoOneD, BasicTest) {
+TEST(LinkedCellsContainerTest, ThreeDtoOneD_BasicTest) {
     LinkedCellsContainer lcc{{3, 3, 3}, 1};
     EXPECT_EQ(lcc.threeDToOneD(0,0,0), 0);
     EXPECT_EQ(lcc.threeDToOneD(4,4,4), 124);
@@ -29,7 +29,7 @@ TEST(ThreeDtoOneD, BasicTest) {
  * Results for reference are calculated by hand.
  */
 
-TEST(ThreeDtoOneD, TwoDTest) {
+TEST(LinkedCellsContainerTest, ThreeDtoOneD_TwoDTest) {
     LinkedCellsContainer lcc{{3, 3, 0}, 1};
     EXPECT_EQ(lcc.threeDToOneD(0,0,0), 0);
     EXPECT_EQ(lcc.threeDToOneD(4,4,0), 24);
@@ -41,7 +41,7 @@ TEST(ThreeDtoOneD, TwoDTest) {
  * Results for reference are calculated by hand.
  */
 
-TEST(OneDToThreeD, BasicTest) {
+TEST(LinkedCellsContainerTest, OneDToThreeD_BasicTest) {
     LinkedCellsContainer lcc{{1, 2, 3}, 1};
     std::array<int, 3> res = {0, 0, 0};
     EXPECT_TRUE(lcc.oneDToThreeD(0) == res);
@@ -59,7 +59,7 @@ TEST(OneDToThreeD, BasicTest) {
  * Results for reference are calculated by hand.
  */
 
-TEST(OneDToThreeD, TwoDTest) {
+TEST(LinkedCellsContainerTest, OneDToThreeD_TwoDTest) {
     LinkedCellsContainer lcc{{1, 2, 0}, 1.5};
     std::array<int, 3> res = {0, 0, 0};
     EXPECT_TRUE(lcc.oneDToThreeD(0) == res);
@@ -74,7 +74,7 @@ TEST(OneDToThreeD, TwoDTest) {
  * Results for reference are calculated by hand.
  */
 
-TEST(CalcCellIndex, BasicTest) {
+TEST(LinkedCellsContainerTest, CalcCellIndex_BasicTest) {
     LinkedCellsContainer lcc{{3, 3, 3}, 1};
     //Particles
     std::array<double, 3> p1 = {0, 0, 0};
@@ -97,7 +97,7 @@ TEST(CalcCellIndex, BasicTest) {
  * Results for reference are calculated by hand.
  */
 
-TEST(CalcCellIndex, Test2D) {
+TEST(LinkedCellsContainerTest, CalcCellIndex_Test2D) {
     LinkedCellsContainer lcc{{3, 3, 0}, 0.9};
     //Particles
     std::array<double, 3> p1 = {0, 0, 0};
@@ -115,7 +115,7 @@ TEST(CalcCellIndex, Test2D) {
  * Are the correct halo cell indizes calculated?
  */
 
-TEST(calculateHaloCellIndizes, BasicFunctionality) {
+TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_BasicFunctionality) {
     LinkedCellsContainer lcc{{3,2,1},1};
     auto haloCells = lcc.getHaloCells();
 
@@ -140,7 +140,7 @@ TEST(calculateHaloCellIndizes, BasicFunctionality) {
  * Are the correct halo cell indizes calculated in a 2D simulation environment?
  */
 
-TEST(calculateHaloCellIndizes, Test2D) {
+TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_Test2D) {
     LinkedCellsContainer lcc{{1,2,0},1};
     auto haloCells = lcc.getHaloCells();
 
@@ -165,7 +165,7 @@ TEST(calculateHaloCellIndizes, Test2D) {
  * Are the correct boundry cell indizes calculated in a 2D simulation environment?
  */
 
-TEST(calculateBoundryCellIndizes, BasicFunctionality) {
+TEST(LinkedCellsContainerTest,calculateBoundryCellIndizes_BasicFunctionality) {
     LinkedCellsContainer lcc{{2,1,3},1};
     auto boundryCells = lcc.getBoundries();
 
@@ -190,7 +190,7 @@ TEST(calculateBoundryCellIndizes, BasicFunctionality) {
  * Are the correct boundry cell indizes calculated?
  */
 
-TEST(calculateBoundryCellIndizes, Test2D) {
+TEST(LinkedCellsContainerTest, calculateBoundryCellIndizes_Test2D) {
     LinkedCellsContainer lcc{{2,2,0},1};
     auto boundryCells = lcc.getBoundries();
 
@@ -215,7 +215,7 @@ TEST(calculateBoundryCellIndizes, Test2D) {
  * Is the domain cell iteration scheme correctly calculated?
  */
 
-TEST(calculateDomainCellsIterationScheme, BasicFunctionality) {
+TEST(LinkedCellsContainerTest, calculateDomainCellsIterationScheme_BasicFunctionality) {
     LinkedCellsContainer lcc{{3,3,3},1};
     auto domainCellsIterationScheme = lcc.getDomainCellIterationScheme();
 
@@ -267,7 +267,7 @@ TEST(calculateDomainCellsIterationScheme, BasicFunctionality) {
  * Does the function applyToEachParticle apply the given function exactly one time to each particle in the linked cell container?
  */
 
-TEST(Iterators, ApplyToEachParticle) {
+TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticle) {
     LinkedCellsContainer lcc = {{3,3,3},1};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
@@ -289,7 +289,7 @@ TEST(Iterators, ApplyToEachParticle) {
  * Does the function applyToEachParticleInDomain apply the given function exactly one time to each particle in the domain of the linked cell container?
  */
 
-TEST(Iterators, ApplyToEachParticleInDomain) {
+TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
     LinkedCellsContainer lcc = {{3,3,3},1};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
@@ -340,7 +340,7 @@ TEST(Iterators, ApplyToEachParticleInDomain) {
  *
  */
 
-TEST(Iterators, ApplyToAllUniquePairsInDomain) {
+TEST(LinkedCellsContainerTest,Iterators_ApplyToAllUniquePairsInDomain) {
     LinkedCellsContainer lcc = {{3,3,3},1};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
@@ -379,7 +379,7 @@ TEST(Iterators, ApplyToAllUniquePairsInDomain) {
  * Values used as referenced are calculated by hand.
  */
 
-TEST(Iterators, ApplyToAllBoundryParticles) {
+TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
     LinkedCellsContainer lcc = {{3,3,3},1};
     //Add some particles to the container with different positions covering most parts of the domain
     std::vector<Particle> toAdd = {

@@ -1,4 +1,4 @@
-# Molecular Dynamics - Group A
+# Molecular Dynamics — Group A
 
 This repository is for the practical course **PSE: Molecular Dynamics** for group A in the SS 2024 semester.
 
@@ -116,7 +116,7 @@ The process of building the project is described here:
    - Inside your **build/** folder run the following command:
 
      ```bash
-     ./MolSim <FILENAME>
+     ./MolSim -f <FILENAME> -i <INPUTFORMAT> -o <OUTPUTFORMAT>
      ```
 
      Note: FILENAME includes the path and should look something like the following:
@@ -124,19 +124,23 @@ The process of building the project is described here:
      - Task 1:
 
        ```bash
-       ./MolSim -f ../input/eingabe-sonne.txt
+       ./MolSim -f ../input/assignment-1/eingabe-sonne.txt --force gravity -e 1000 -d 0.014 -i txt -o vtk
        ```
 
      - Task 2:
 
        ```bash
-       ./MolSim -f ../input/2D-cuboid-collision.txt -e 5 -d 0.0002
+       ./MolSim -f ../input/assignment-2/2D-cuboid-collision.txt -e 5 -d 0.0002 --force ljf -i txt -o vtk
        ```
        
-     - Task 3:
+     - Task 3.2:
     
        ```bash
-       //TODO
+       ./MolSim -f ../input/assignment-3/2D-cuboid-collision.xml -i xml -o vtk
+       ```
+     - Task 3.4
+       ```bash
+       ./MolSim -f ../input/assignment-3/disc-against-wall-xml -i xml -o vtk 
        ```
 
 5. Running all Tests

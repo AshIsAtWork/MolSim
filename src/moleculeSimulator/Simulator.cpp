@@ -4,15 +4,6 @@
 
 #include "Simulator.h"
 
-#include <memory>
-
-#include "forceCalculation/gravity/Gravity.h"
-#include "forceCalculation/leonardJones/LeonardJonesForce.h"
-#include "models/DirectSum.h"
-#include "models/LinkedCells.h"
-//TODO: Enable this for below optimization
-//#include <ranges>
-
 using namespace enumsStructs;
 
 Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,

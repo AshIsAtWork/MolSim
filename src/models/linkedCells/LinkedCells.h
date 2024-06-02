@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "Model.h"
-#include "particleRepresentation/container/LinkedCellsContainer.h"
+#include "../Model.h"
+#include "../../particleRepresentation/container/LinkedCellsContainer.h"
 
 /**
  * @brief Model that implements the linked cell algorithm

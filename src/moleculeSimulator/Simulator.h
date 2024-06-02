@@ -6,10 +6,14 @@
 
 #include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include <iostream>
 #include "forceCalculation/Force.h"
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
+#include <memory>
+#include "forceCalculation/gravity/Gravity.h"
+#include "forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "models/directSum/DirectSum.h"
+#include "../models/linkedCells/LinkedCells.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -34,7 +38,7 @@ public:
     Simulator(enumsStructs::SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
     /**
-     * @brief Legacy construct to construct a new simulation environment using the direct sum algorithm.
+     * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
      *
      * @param parameters Simulation parameters for the direct sum model.
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.

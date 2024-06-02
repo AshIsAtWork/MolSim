@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "models/LinkedCells.h"
+#include "../../src/models/linkedCells/LinkedCells.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 
 using namespace enumsStructs;

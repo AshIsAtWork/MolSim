@@ -37,7 +37,7 @@ TEST_F(ParticleContainerTest, AddTest) {
  * Is out of range access recognised and can the added particle be accessed?
  */
 
-TEST_F(ParticleContainerTest, AtTest) {
+TEST_F(ParticleContainerTest, AccesingContainerWithAtMethod) {
     pc.add(p);
     EXPECT_TRUE(pc.at(0) == p);
     EXPECT_THROW(pc.at(1), std::out_of_range);

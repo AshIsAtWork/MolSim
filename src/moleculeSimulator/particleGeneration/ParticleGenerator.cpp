@@ -4,8 +4,6 @@
 
 #include "ParticleGenerator.h"
 
-#include <valarray>
-
 //The particles of the first cuboid will all get id 1, the particles of the next cuboid id 2 and so on.
 
 int ParticleGenerator::id = 1;

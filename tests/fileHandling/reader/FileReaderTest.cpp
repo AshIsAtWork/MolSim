@@ -20,7 +20,7 @@ protected:
 };
 
 /**
- * Is the file read correctly?
+ * Is the file CuboidTest1 read correctly by the file reader?
  * Note that this can be only tested indirectly by checking, if the right particles are created, because the
  * read method calls the generateCuboid function directly after reading the parameters.
  */

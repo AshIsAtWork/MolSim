@@ -160,7 +160,7 @@ namespace enumsStructs {
      */
     inline TypeOfModel setModel(const std::string &selectedModel) {
         static const std::unordered_map<std::string, TypeOfModel> formatMap = {
-                {"DirectSum",   TypeOfModel::directSum},
+                {"directSum",   TypeOfModel::directSum},
                 {"LinkedCells", TypeOfModel::linkedCells}
         };
 
@@ -177,7 +177,7 @@ namespace enumsStructs {
      */
     inline std::string getModel(TypeOfModel &model) {
         static const std::unordered_map<TypeOfModel, std::string> formatMap = {
-                {TypeOfModel::directSum,   "DirectSum"},
+                {TypeOfModel::directSum,   "directSum"},
                 {TypeOfModel::linkedCells, "LinkedCells"}
         };
         auto it = formatMap.find(model);

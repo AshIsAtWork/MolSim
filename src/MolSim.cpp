@@ -11,7 +11,6 @@ int main(int argc, char *argsv[]) {
     //Parameters for simulation
     double endT;
     double deltaT;
-    //Todo: At the moment hard coded. Should be configurable within the xml
     double epsilon = 5;
     double sigma = 1;
     std::string inputFilePath;
@@ -22,7 +21,7 @@ int main(int argc, char *argsv[]) {
     enumsStructs::TypeOfForce force;
     std::string logLevel;
     std::string selectedForce;
-    std::string outputFileName = "Experiment";
+    std::string outputFileName = "file";
     bool benchmark = false;
     int outputFrequency;
 
@@ -118,7 +117,7 @@ int main(int argc, char *argsv[]) {
 
     std::unique_ptr<Simulator> simulator;
 
-    //If an xml file is used parameters are taken from xml file. Simulation paramters specified over the command line will be ignored.
+    //If an xml file is used parameters are taken from xml file. Simulation parameters specified over the command line will be ignored.
     if(inputFormat == FileHandler::inputFormat::xml) {
         enumsStructs::SimulationSettings simulationSettings;
         XMLReader::readFile(inputFilePath, simulationSettings);

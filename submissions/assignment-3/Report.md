@@ -19,7 +19,7 @@ Members:
 
 ### Introduction
 
-In our recent assignment, we were tasked to integrate the XML Parsing. For this purpose we utilised the Codesynthesis
+In our recent assignment, we were tasked to integrate the XML Parsing. For this purpose, we used the Codesynthesis
 XSD tool, which can be efficiently utilized within the modified Docker container as we are using apt to install xsdcxx.
 To ensure comprehensive understanding and effective use of this tool, we reviewed its documentation and thoroughly examined
 the provided test examples.
@@ -28,30 +28,41 @@ the provided test examples.
 
 Subsequently, we developed an XML schema file, defining the structure of our input file. This schema file
 is accessible [here](../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd). The schema outlines the structure and
-constraints of the input data, which includes the following elements:
-
+constraints of the input data, which includes the following elements:   
+**General parameters**   
+General information that is not directly associated with the simulation itself.   
 - **Output File Name**: Specifies the name of the output file for simulation results. This name is constrained to
   contain only alphabetical characters.
 - **Output Frequency**: Indicates the frequency at which simulation results are recorded. This value is restricted to a
-  positive integer.
-- **T_end**: Denotes the simulation end time, which is restricted to a positive double.
-- **Delta T**: Represents the time step size, constrained to a positive double.
-- **Force**: Specifies the type of force used in the simulation, either `LennardJonesForce` or `Gravity`. This is
-  managed via enumeration in the schema file.
-- **Model**: Identifies the simulation model, either `DirectSum` or `LinkedCells`, also handled through enumeration.
-- **Sigma**: Defines the sigma value for the Lennard-Jones force, restricted to a positive double.
-- **Epsilon**: Defines the epsilon value for the Lennard-Jones force, also restricted to a positive double.
-- **DomainSize**: Indicates the size of the simulation domain using three positive doubles. The third double is optional
-  for 2D simulations.
-- **rCutOff**: Specifies the cut-off radius for force calculations, restricted to a positive double.
-- **BoundaryConditions**: Determines the boundary conditions, either `Reflective` or `Outflow`, with each side of the
-  simulation domain being independently configurable.
+  positive integer.   
+
+**Simulation parameters**   
+Here you have two options for your choice of a model.
+- **Direct Sum**
+    - **T_end**: Denotes the simulation end time, which is restricted to a positive double.
+    - **Delta T**: Represents the time step size, constrained to a positive double.
+    - **Force**: Specifies the type of force used in the simulation, either `LennardJonesForce` or `Gravity`. This is
+      managed via enumeration in the schema file.
+    - **Sigma**: Defines the sigma value for the Lennard-Jones force, restricted to a positive double.
+    - **Epsilon**: Defines the epsilon value for the Lennard-Jones force, also restricted to a positive double.   <br><br>
+
+- **Linked Cells**   
+  Contains all parameters that the direct sum model contains and additional those three:
+  - **DomainSize**: Indicates the size of the simulation domain using three positive doubles. The third double is optional
+    for 2D simulations.
+  - **rCutOff**: Specifies the cut-off radius for force calculations, restricted to a positive double.
+  - **BoundaryConditions**: Determines the boundary conditions, either `Reflective` or `Outflow`, with each side of the
+    simulation domain being independently configurable.   
+
+**Particles and objects of particles to simulate**   
+Here you can add any combination of single particles, cuboids and discs to the simulation.
 - **SingleParticles**: Contains individual particle specifications:
     - **Size**: Number of single particles, restricted to a positive integer.
     - **SingleParticle**: Details of each single particle, including:
         - **Position**: Position of the particle, defined by three positive doubles.
         - **Velocity**: Velocity of the particle, defined by three positive doubles.
-        - **Mass**: Mass of the particle, restricted to a positive double.
+        - **Mass**: Mass of the particle, restricted to a positive double.   <br> <br>
+
 - **Cuboids**: Contains cuboid specifications:
     - **Size**: Number of cuboids, restricted to a positive integer.
     - **Cuboid**: Details of each cuboid, including:
@@ -61,7 +72,8 @@ constraints of the input data, which includes the following elements:
         - **Distance**: Distance between particles, restricted to a positive double.
         - **Mass**: Mass of the cuboid, restricted to a positive double.
         - **Brownian**: Brownian motion of particles, restricted to a positive double.
-        - **DimensionBrownian**: Specifies the dimension of Brownian motion (0D, 1D, 2D, or 3D).
+        - **DimensionBrownian**: Specifies the dimension of Brownian motion (0D, 1D, 2D, or 3D).   <br> <br>
+
 - **Discs**: Contains disc specifications:
     - **Size**: Number of discs, restricted to a positive integer.
     - **Disc**: Details of each disc, including:
@@ -102,10 +114,8 @@ Additionally, any parsing errors are detected and reported by the XMLReader clas
 ### Tree-Mapping and Future Enhancements
 
 We opted for Tree-Mapping for the XML file due to its ease of use and comprehensibility. This approach also facilitates
-additional features such as serialization back to DOM or XML, enabling the writing of modified XML files back to disk.
-Although this feature has not been implemented yet, it holds potential for future tasks such as checkpointing.
-
-[//]: # (TODO: Added Feature, please expand :&#41;)
+additional features such as serialization back to DOM or XML, enabling the writing of modified XML files back to disk. This
+may become useful when creating an XML writer in the next worksheet.
 
 ## Task 2: Linked-cell Algorithm ##
 
@@ -167,7 +177,7 @@ As part of the implementation of the linked-cells algorithm there are multiple p
   this place. Additionally, we store two additional cells in each dimension one at the beginning and one at the end of
   each vector. These cells are called `halo cells`. All particles that leave the simulation domain during the simulation
   at some time will be assigned to one halo cell and are not part of the simulation for the rest of the simulation time.
-  Each halo cell is infinitely big in exactly one dimension that leads to the fact that all the space not being part of
+  Each halo cell is infinitely big in at least one dimension that leads to the fact that all the space not being part of
   the simulation domain is covered by some halo cell. This implementation guarantees that each particle can be assigned
   to some cell, not matter where it is positioned. To access each cell easily in the one-dimensional vector, we
   implemented two methods `threeDToOneD` and `oneDToThreeD` that translate coordinates from one dimension into the
@@ -219,7 +229,7 @@ As part of the implementation of the linked-cells algorithm there are multiple p
   processed. We have solved this issue by defining some kind of ownership. For each two cells `c1` and `c2` that are
   adjacent to each other either `c1` owns `c2` or vice versa. This is realized in the following way: Each cell owns all
   adjacent cells that are left, at the front or under itself. The following drawing should make this more clear: <br>  
-  ![Ownership concept](Ownership-Concept.JPG) <br><br>
+  ![Ownership concept](Ownership-Concept.png) <br><br>
   If each cell considers only the adjacent cells that it owns, we achieve our goal that each unique pair of particles is
   exactly processed ones. Using this iterator, the application of Newton's third law of motion is child's play.<br>
 
@@ -275,10 +285,7 @@ position update. Deleting particles from vectors is not an efficient operation, 
 the particle to delete have to be shifted. Therefore, it might be worth a try to use lists instead of vectors in halo
 cells. Currently, we did not test if this makes any significant difference regarding the running time.
 
-**Reflective**
-The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment
-sheet and used the "ghost particle approach". Always when a particle
-**Reflective**   
+**Reflective**               
 The realisation of the boundary condition `reflective` was more involved. We followed the suggestion in the assignment sheet and used the "ghost particle approach". Always when a particle gets near to some side of the simulation domain (closer than the six. root of two times sigma) which boundary condition is set to reflective, then a counter-particle is virtually created outside the domain with the same distance to that side and will apply a repulsive force at this particle pushing it away from the boundary.   
 This approach is only stable for small time steps `delta_T`, because for large time steps the particle might cross the border before the force was high enough to repel it.   
 [Here](Mixed-Boundary-Conditions.mp4) you can see a video with mixed boundary conditions. The boundary at the front is reflective, all other boundaries are set to outflow. 
@@ -287,3 +294,7 @@ This approach is only stable for small time steps `delta_T`, because for large t
 As part of this task, we added a new method to our class [ParticleGenerator](../../src/particleRepresentation/particle) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented we conducted a first experiment to test our simulation and let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain to {120,50,0}, because the third dimension is not needed. 
 * Simulation in 2D: [watch](Disc-against-reflective-Boundary-2D.mp4)
 * Simulation in 3D: [watch](Disc-against-reflective-Boundary-3D.mp4)
+
+## Misc ##
+* We implemented the feedback from Manish by renaming some of our tests and making some other minor changes.
+* We created tests for all stand-alone methods that we have added as part of this assignment sheet. Creating tests for the whole linked cells model as one would involve a huge amount of time that we do not have. Nevertheless, we checked its correctness thoroughly with ParaView and by going through the program step by step with the debugger and sanitizing all calculations. Because the model does not do more than calling the methods we tested thoroughly, we can assume that it will work how it is supposed to do. 

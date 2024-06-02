@@ -2890,7 +2890,7 @@ _xsd_Name_convert () const
 const char* const Name::
 _xsd_Name_literals_[2] =
 {
-  "DirectSum",
+  "directSum",
   "LinkedCells"
 };
 

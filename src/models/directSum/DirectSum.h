@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Model.h"
+#include "../Model.h"
 #include "particleRepresentation/container/DefaultParticleContainer.h"
 
 /**
