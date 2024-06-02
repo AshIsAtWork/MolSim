@@ -108,8 +108,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             spdlog::error("Epsilon is less than 0");
             return 1;
         } else {
-            simulationSettings.parametersDirectSum.epsilon = static_cast<double>(molecules.model().Sigma());
-            simulationSettings.parametersLinkedCells.epsilon = static_cast<double>(molecules.model().Sigma());
+            simulationSettings.parametersDirectSum.epsilon = static_cast<double>(molecules.model().Epsilon());
+            simulationSettings.parametersLinkedCells.epsilon = static_cast<double>(molecules.model().Epsilon());
             spdlog::debug("Epsilon: {}", static_cast<double>(molecules.model().Epsilon()));
         }
 
