@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "ParticleContainer.h"
-#include "fileHandling/outputWriter/VTKWriter.h"
+#include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 #include "utils/enumsStructs.h"
 

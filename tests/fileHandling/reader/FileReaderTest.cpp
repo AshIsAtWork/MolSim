@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "fileHandling/reader/FileReader.h"
+#include "fileHandling/reader/FileReader/FileReader.h"
 #include <spdlog/spdlog.h>
 
 /**

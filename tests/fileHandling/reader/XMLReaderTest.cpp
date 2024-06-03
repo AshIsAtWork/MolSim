@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "fileHandling/reader/XMLReader.h"
+#include "fileHandling/reader/XMLReader/XMLReader.h"
 
 /**
  * Simple test that checks whether all the parameters in the test file are being parsed correctly.

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "fileHandling/FileHandler.h"
-#include "fileHandling/outputWriter/VTKWriter.h"
+#include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "forceCalculation/Force.h"
 #include "models/Model.h"
 #include "utils/enumsStructs.h"

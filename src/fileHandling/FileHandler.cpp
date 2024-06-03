@@ -20,7 +20,7 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, 
     }
 }
 
-void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format, std::string& baseName) {
+void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outputFormat format, std::string &baseName) {
     switch (format) {
         case outputFormat::xyz: {
             xyzWriter.plotParticles(particles, baseName, iteration);
@@ -33,6 +33,11 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
             });
             vtkWriter.writeFile(baseName, iteration);
         }
+            break;
+        case outputFormat::xml: {
+//                xmlWriter.writeToFile(baseName, iteration, )
+//            TODO: Implement
+            }
             break;
         case outputFormat::invalid:
             spdlog::error("Invalid output format selected. Please select a valid output format.");

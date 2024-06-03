@@ -3,11 +3,12 @@
 //
 
 #pragma once
-#include "outputWriter/VTKWriter.h"
-#include "outputWriter/XYZWriter.h"
+#include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
+#include "fileHandling/outputWriter/XYZWriter/XYZWriter.h"
 #include "particleRepresentation/container/ParticleContainer.h"
-#include "reader/FileReader.h"
-#include "reader/XMLReader.h"
+#include "fileHandling/reader/FileReader/FileReader.h"
+#include "fileHandling/reader/XMLReader/XMLReader.h"
+#include "fileHandling/outputWriter/XMLWriter/XMLWriter.h"
 
 /**
  * @brief Wrapper class for file handling.
@@ -22,14 +23,14 @@ private:
 
     outputWriter::VTKWriter vtkWriter;
     outputWriter::XYZWriter xyzWriter;
-
+//    XMLWriter xmlWriter;
 public:
     /**
      * @brief Supported output formats.
      *
      * This enum class enables the user to select the desired output format in the writeToFile method.
      */
-    enum class outputFormat { vtk, xyz, invalid };
+    enum class outputFormat { vtk, xyz, xml, invalid };
 
     /**
      * @brief Supported input formats.
