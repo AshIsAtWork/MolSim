@@ -35,8 +35,7 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
         }
             break;
         case outputFormat::xml: {
-//                xmlWriter.writeToFile(baseName, iteration, )
-//            TODO: Implement
+            // TODO: Will be implemented as part of the next worksheet
             }
             break;
         case outputFormat::invalid:

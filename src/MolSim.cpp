@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 
+#include "fileHandling/reader/XMLReader/XMLReader.h"
 #include "moleculeSimulator/Simulator.h"
 #include "utils/Benchmark.h"
 #include "utils/Logging.h"
@@ -30,8 +31,7 @@ int main(int argc, char *argsv[]) {
     namespace po = boost::program_options;
 
     po::options_description desc("Allowed options");
-    //TODO: Move Write Frequency of Output, T-end and delta-t to XML file
-    //TODO: Move to txt reader
+
     desc.add_options()
             ("help,h", "Provides some help.")
             ("tEnd,e", po::value<double>(&endT)->default_value(1000),
@@ -78,7 +78,7 @@ int main(int argc, char *argsv[]) {
         return -1;
     }
 
-    po::notify(vm);
+    notify(vm);
 
     if (argc <= 1 || vm.count("help")) {
         std::cout << desc << "\n";
@@ -119,22 +119,22 @@ int main(int argc, char *argsv[]) {
 
     //If an xml file is used parameters are taken from xml file. Simulation parameters specified over the command line will be ignored.
     if(inputFormat == FileHandler::inputFormat::xml) {
-        enumsStructs::SimulationSettings simulationSettings;
+        SimulationSettings simulationSettings;
         XMLReader::readFile(inputFilePath, simulationSettings);
         simulator = std::make_unique<Simulator>(simulationSettings, inputFormat, outputFormat);
     }
     //Legacy input over the command line
     else {
         if (selectedForce == "gravity") {
-            force = enumsStructs::TypeOfForce::gravity;
+            force = TypeOfForce::gravity;
         } else if (selectedForce == "ljf") {
-            force = enumsStructs::TypeOfForce::leonardJonesForce;
+            force = TypeOfForce::leonardJonesForce;
         } else {
             std::cout << "Please specify a valid force option!\n";
             std::cout << desc << "\n";
             return -1;
         }
-        enumsStructs::DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
+        DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
         simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, outputFileName);
     }
 

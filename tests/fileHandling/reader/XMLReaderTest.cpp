@@ -18,7 +18,7 @@ protected:
 
 /**
  * Simple test that checks whether all the parameters in the test file are being parsed correctly.
- * Test file is the 2D-cuboid-collision.xml form assignment 3
+ma * Test file is the 2D-cuboid-collision.xml form assignment 3
  */
 
 TEST_F(XMLReaderTest, Basic_XMLTest) {

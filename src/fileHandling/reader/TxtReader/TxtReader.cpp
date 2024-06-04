@@ -2,7 +2,7 @@
 // Created by daniel on 05.05.24.
 //
 
-#include "FileReader.h"
+#include "TxtReader.h"
 
 int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_file) {
     std::array<double, 3> position{};

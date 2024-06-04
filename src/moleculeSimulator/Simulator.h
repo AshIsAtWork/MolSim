@@ -35,7 +35,7 @@ public:
     Simulator() = delete;
 
 
-    Simulator(enumsStructs::SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+    Simulator(SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
 
     /**
      * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
@@ -52,7 +52,7 @@ public:
      * to simulate.
      */
 
-    Simulator(enumsStructs::DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+    Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
               FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
               std::string &outputFileBaseName);
 

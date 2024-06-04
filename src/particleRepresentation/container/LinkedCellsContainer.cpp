@@ -85,7 +85,7 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
     for (int i = 0; i < cellNumber; i++) {
         domainCellIterationScheme.emplace_back();
     }
-
+    //calculate iteration route
     int index = 0;
     for (int z = Z1; z <= Z2; z++) {
         for (int y = 1; y < nY - 1; y++) {
@@ -94,6 +94,14 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
                 domainCellIterationScheme[index].push_back(threeDToOneD(x, y, z));
 
                 //Then insert all relevant neighbours
+                //
+                //         z-1         z           z+1
+                //
+                //       ^ ooo      ^ xxx        ^ xxx          c: current cell
+                //     y | ooo    y | ocx     y  | xxx          x: ignored adjacent cells
+                //       | ooo      | ooo        | xxx          o: considered adjacent cells
+                //        ----->     ----->       ----->
+                //         x          x            x
 
                 //(x-1, y-1, z)
                 if (x >= 2 && y >= 2) {
@@ -347,7 +355,7 @@ void LinkedCellsContainer::clearHaloCells(Side side) {
 }
 
 void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle &)> &function) {
-    for (auto& cell: cells) {
+    for (auto &cell: cells) {
         for (Particle &p: cell) {
             function(p);
         }
@@ -355,7 +363,7 @@ void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle
 }
 
 void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(Particle &)> &function) {
-    for (auto& cellGroup: domainCellIterationScheme) {
+    for (auto &cellGroup: domainCellIterationScheme) {
         for (auto &p: cells[cellGroup[0]]) {
             function(p);
         }
@@ -363,8 +371,9 @@ void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(
 }
 
 void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) {
-    for (auto& cellGroup: domainCellIterationScheme) {
+    for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
                 if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
@@ -386,14 +395,16 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
     }
 }
 
-void LinkedCellsContainer::
-applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Side boundry,
-                           double threshhold) {
+void LinkedCellsContainer::applyToAllBoundryParticles(
+    const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundry,
+    double threshhold) {
     for (auto cell: boundries[static_cast<int>(boundry)]) {
         for (Particle &p: cells[cell]) {
             double distanceFromBoundry = calcDistanceFromBoundry(p, boundry);
-            if (0 < distanceFromBoundry && distanceFromBoundry <= threshhold)
-                function(p, calcGhostParticle(p, boundry));
+            if (0 < distanceFromBoundry && distanceFromBoundry <= threshhold) {
+                auto ghostPosition = calcGhostParticle(p, boundry);
+                function(p, ghostPosition);
+            }
         }
     }
 }

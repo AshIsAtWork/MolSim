@@ -217,7 +217,7 @@ public:
      *        and passed in the lambda function as second input. This information makes the implementation
      *        of reflective boundries a lot easier.
      */
-    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>)> &function, Side boundry, double threshold);
+    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundry, double threshold);
 
     /**
      * @brief Get the number of particles stored in this container.

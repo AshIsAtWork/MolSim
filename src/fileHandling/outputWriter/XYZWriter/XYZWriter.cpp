@@ -7,8 +7,7 @@
  */
 
 #include "XYZWriter.h"
-#include <iomanip>
-#include <sstream>
+
 
 namespace outputWriter {
 

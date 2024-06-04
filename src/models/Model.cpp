@@ -54,5 +54,5 @@ void Model::addParticle(Particle &p) {
 }
 
 void Model::addViaFile(std::string &filepath) {
-    fileHandler.readFile(particles,filepath, inputFormat);
+    FileHandler::readFile(particles,filepath, inputFormat);
 }

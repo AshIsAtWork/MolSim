@@ -6,9 +6,7 @@
 #include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "fileHandling/outputWriter/XYZWriter/XYZWriter.h"
 #include "particleRepresentation/container/ParticleContainer.h"
-#include "fileHandling/reader/FileReader/FileReader.h"
-#include "fileHandling/reader/XMLReader/XMLReader.h"
-#include "fileHandling/outputWriter/XMLWriter/XMLWriter.h"
+#include "fileHandling/reader/TxtReader/TxtReader.h"
 
 /**
  * @brief Wrapper class for file handling.
@@ -23,7 +21,7 @@ private:
 
     outputWriter::VTKWriter vtkWriter;
     outputWriter::XYZWriter xyzWriter;
-//    XMLWriter xmlWriter;
+
 public:
     /**
      * @brief Supported output formats.

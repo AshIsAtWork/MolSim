@@ -18,12 +18,12 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
 void LinkedCells::processBoundaries() {
     for (auto setting: boundarySettings) {
         switch (setting.second) {
-            case enumsStructs::BoundaryCondition::outflow: {
+            case BoundaryCondition::outflow: {
                 particles.clearHaloCells(setting.first);
             }
             break;
-            case enumsStructs::BoundaryCondition::reflective: {
-                particles.applyToAllBoundryParticles([this](Particle &p, std::array<double, 3> ghostPosition) {
+            case BoundaryCondition::reflective: {
+                particles.applyToAllBoundryParticles([this](Particle &p, std::array<double, 3>& ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
                     Particle ghostParticle = p;
                     ghostParticle.setX(ghostPosition);
@@ -32,7 +32,7 @@ void LinkedCells::processBoundaries() {
                 }, setting.first, threshold);
             }
             break;
-            case enumsStructs::BoundaryCondition::invalid: {
+            case BoundaryCondition::invalid: {
                 spdlog::error("Invalid boundary condition was selected. Terminating program!");
                 exit(-1);
             };

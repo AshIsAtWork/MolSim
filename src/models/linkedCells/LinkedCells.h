@@ -31,7 +31,7 @@ private:
     double threshold;
 
     /**
-     * @brief Helper method that handles the boundry conditions
+     * @brief Helper method that handles the boundary conditions
      */
     void processBoundaries();
 

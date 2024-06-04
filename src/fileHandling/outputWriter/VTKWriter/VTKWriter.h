@@ -9,6 +9,10 @@
 
 #include "particleRepresentation/particle/Particle.h"
 #include "fileHandling/outputWriter/VTKHandling/vtk-unstructured.h"
+#include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <string>
 
 namespace outputWriter {
 

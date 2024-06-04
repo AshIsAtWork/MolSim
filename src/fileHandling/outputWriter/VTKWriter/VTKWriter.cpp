@@ -7,12 +7,6 @@
 
 #include "VTKWriter.h"
 
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <string>
-
 namespace outputWriter {
 
 VTKWriter::VTKWriter() = default;

@@ -18,7 +18,6 @@ inline FileHandler::outputFormat setOutputFormat(const std::string &OutputFormat
     static const std::unordered_map<std::string, FileHandler::outputFormat> formatMap = {
             {"vtk", FileHandler::outputFormat::vtk},
             {"xyz", FileHandler::outputFormat::xyz}
-            //TODO: Add support for XML output format
     };
 
     auto it = formatMap.find(OutputFormat);
