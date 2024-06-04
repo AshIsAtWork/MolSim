@@ -43,7 +43,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         if (molecules.OutputFileName().empty()) {
             spdlog::error("OutputFileName is empty");
             return 1;
-        } else {
+        } else if (std::any_of(molecules.OutputFileName().begin(), molecules.OutputFileName().end(), ::isdigit)) {
+            spdlog::error("OutputFileName contains a number");
+            return 1;
+        } else{
             simulationSettings.outputFileName = static_cast<std::string>(molecules.OutputFileName());
             spdlog::debug("OutputFileName: {}", molecules.OutputFileName());
         }
