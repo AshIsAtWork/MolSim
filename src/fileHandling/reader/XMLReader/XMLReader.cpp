@@ -457,6 +457,6 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
     spdlog::info("{}: parse OK", filename);
 
-    xercesc::XMLPlatformUtils::Terminate();
+    //xercesc::XMLPlatformUtils::Terminate();
     return 0;
 }
