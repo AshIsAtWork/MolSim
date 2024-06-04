@@ -460,5 +460,6 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
     delete parser;
     delete errHandler;
+    xercesc::XMLPlatformUtils::Terminate();
     return 0;
 }
