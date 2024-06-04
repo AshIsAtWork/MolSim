@@ -115,7 +115,6 @@ TEST_F(XMLReaderTest, Basic_XMLTest) {
 class XMLReaderFailureTest : public XMLReaderTest, public ::testing::WithParamInterface<std::string> {};
 
 TEST_P(XMLReaderFailureTest, FailureCases) {
-    std::cout << readXMLFile(GetParam()) << std::endl;
     ASSERT_EQ(readXMLFile(GetParam()), 1);
 }
 

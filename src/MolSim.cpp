@@ -120,7 +120,11 @@ int main(int argc, char *argsv[]) {
     //If an xml file is used parameters are taken from xml file. Simulation parameters specified over the command line will be ignored.
     if(inputFormat == FileHandler::inputFormat::xml) {
         SimulationSettings simulationSettings;
-        XMLReader::readFile(inputFilePath, simulationSettings);
+        const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
+        if(returnedErrorHandlingInt != 0) {
+            spdlog::error("Error while reading the XML file. Please check the file and try again. Exiting...");
+            exit(-1);
+        }
         simulator = std::make_unique<Simulator>(simulationSettings, inputFormat, outputFormat);
     }
     //Legacy input over the command line
