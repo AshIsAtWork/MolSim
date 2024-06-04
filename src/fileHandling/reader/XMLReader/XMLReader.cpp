@@ -19,7 +19,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
     parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
     parser->setDoNamespaces(true);
 
-    auto *errHandler = (xercesc::ErrorHandler *) new xercesc::HandlerBase();
+    auto *errHandler = (xercesc::ErrorHandler * )
+    new xercesc::HandlerBase();
     parser->setErrorHandler(errHandler);
 
     try {
@@ -46,7 +47,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         } else if (std::any_of(molecules.OutputFileName().begin(), molecules.OutputFileName().end(), ::isdigit)) {
             spdlog::error("OutputFileName contains a number");
             return 1;
-        } else{
+        } else {
             simulationSettings.outputFileName = static_cast<std::string>(molecules.OutputFileName());
             spdlog::debug("OutputFileName: {}", molecules.OutputFileName());
         }
@@ -119,9 +120,9 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         if (molecules.model().Name() == "LinkedCells") {
             if (molecules.model().DomainSize().present()) {
                 simulationSettings.parametersLinkedCells.domainSize = {
-                    static_cast<double>(molecules.model().DomainSize().get().First()),
-                    static_cast<double>(molecules.model().DomainSize().get().Second()),
-                    static_cast<double>(molecules.model().DomainSize().get().Third())
+                        static_cast<double>(molecules.model().DomainSize().get().First()),
+                        static_cast<double>(molecules.model().DomainSize().get().Second()),
+                        static_cast<double>(molecules.model().DomainSize().get().Third())
                 };
                 spdlog::debug("DomainSize: {}, {}, {}",
                               static_cast<double>(molecules.model().DomainSize().get().First()),
@@ -137,7 +138,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     return 1;
                 } else {
                     simulationSettings.parametersLinkedCells.rCutOff = static_cast<double>(molecules.model().rCutOff().
-                        get());
+                            get());
                     spdlog::debug("rCutOff: {}", static_cast<double>(molecules.model().rCutOff().get()));
                 }
             } else {
@@ -146,40 +147,40 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
 
             if (molecules.model().BoundaryCondition().present()) {
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
-                    enumsStructs::Side::front,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Front())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
+                        enumsStructs::Side::front,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Front())
                 };
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
-                    enumsStructs::Side::right,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Right())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
+                        enumsStructs::Side::right,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Right())
                 };
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
-                    enumsStructs::Side::back,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Back())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
+                        enumsStructs::Side::back,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Back())
                 };
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
-                    enumsStructs::Side::left,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Left())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
+                        enumsStructs::Side::left,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Left())
                 };
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
-                    enumsStructs::Side::top,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Top())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
+                        enumsStructs::Side::top,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Top())
                 };
-                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
-                    enumsStructs::Side::bottom,
-                    enumsStructs::setBoundaryCondition(
-                        molecules.model().BoundaryCondition().get().boundaries().Bottom())
+                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
+                        enumsStructs::Side::bottom,
+                        enumsStructs::setBoundaryCondition(
+                                molecules.model().BoundaryCondition().get().boundaries().Bottom())
                 };
 
                 simulationSettings.parametersLinkedCells.boundarySettings = {
-                    cFront, cRight, cBack, cLeft, cTop,
-                    cBottom
+                        cFront, cRight, cBack, cLeft, cTop,
+                        cBottom
                 };
 
                 spdlog::debug("BoundaryCondition: Front: {}, Back: {}, Left: {}, Right: {}, Top: {}, Bottom: {}",
@@ -204,41 +205,41 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.SingleParticles().get().Size(); i++) {
                 enumsStructs::ParticleType p{
-                    {
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().X()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().Y()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Position().Z())
-                    },
-                    {
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass())
+                        {
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().X()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().Y()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Position().Z())
+                        },
+                        {
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass())
                 };
                 simulationSettings.particles.push_back(p);
                 spdlog::debug("SingleParticle #{}: Position: {}, {}, {}",
                               i + 1 + 1,
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().X()),
+                                      i).Position().X()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().Y()),
+                                      i).Position().Y()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Position().Z()));
+                                      i).Position().Z()));
                 spdlog::debug("SingleParticle #{}: Velocity: {}, {}, {}",
                               i + 1 + 1,
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
             }
         }
 
@@ -251,49 +252,49 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.Cuboids().get().Size(); i++) {
                 enumsStructs::Cuboid cuboid = {
-                    {
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().X()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().Y()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Position().Z())
-                    },
-                    {
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N1()),
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N2()),
-                        static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N3())
-                    },
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()),
-                    {
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
-                    static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
+                        {
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().X()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().Y()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Position().Z())
+                        },
+                        {
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N1()),
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N2()),
+                                static_cast<unsigned>(molecules.Cuboids().get().Cuboid().at(i).N3())
+                        },
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Distance()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()),
+                        {
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.Cuboids().get().Cuboid().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
+                        static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian())
                 };
                 simulationSettings.cuboids.push_back(cuboid);
                 spdlog::debug("Cuboid #{}: Position: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().X()),
+                                      i).Position().X()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().Y()),
+                                      i).Position().Y()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Position().Z()));
+                                      i).Position().Z()));
                 spdlog::debug("Cuboid #{}: Velocity: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
                 spdlog::debug("Cuboid #{}: Mass: {}", i + 1,
                               static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()));
                 spdlog::debug("Cuboid #{}: N1: {}", i + 1,
@@ -320,45 +321,45 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
             for (auto i = 0; i < molecules.Discs().get().Size(); i++) {
                 enumsStructs::Disc disc = {
-                    {
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().X()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().Y()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Center().Z())
-                    },
-                    {
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().X()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().Y()),
-                        static_cast<double>(molecules.Discs().get().Disc().at(
-                            i).Velocity().Z())
-                    },
-                    static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()),
-                    static_cast<double>(molecules.Discs().get().Disc().at(i).InterParticleDistance()),
-                    static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()),
-                    static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()),
-                    static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian())
+                        {
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().X()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().Y()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Center().Z())
+                        },
+                        {
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().X()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().Y()),
+                                static_cast<double>(molecules.Discs().get().Disc().at(
+                                        i).Velocity().Z())
+                        },
+                        static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()),
+                        static_cast<double>(molecules.Discs().get().Disc().at(i).InterParticleDistance()),
+                        static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()),
+                        static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()),
+                        static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian())
                 };
                 simulationSettings.discs.push_back(disc);
                 spdlog::debug("Disc #{}: Center: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().X()),
+                                      i).Center().X()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().Y()),
+                                      i).Center().Y()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Center().Z()));
+                                      i).Center().Z()));
                 spdlog::debug("Disc #{}: Velocity: {}, {}, {}",
                               i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().X()),
+                                      i).Velocity().X()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().Y()),
+                                      i).Velocity().Y()),
                               static_cast<double>(molecules.Discs().get().Disc().at(
-                                  i).Velocity().Z()));
+                                      i).Velocity().Z()));
                 spdlog::debug("Disc #{}: Mass: {}", i + 1,
                               static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()));
                 spdlog::debug("InterParticleDistance: {}",
@@ -381,8 +382,11 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         spdlog::error("Exception message is: \n{}", message);
         xercesc::XMLString::release(&message);
         return 1;
+    } catch (std::exception &e) {
+        spdlog::error("Exception message is: \n{}", e.what());
+        return 1;
     } catch (...) {
-        spdlog::error("Encountered an exception during parsing");
+        spdlog::error("Encountered an exception during parsing, Most likely missing Parameter(s).");
         return 1;
     }
 
