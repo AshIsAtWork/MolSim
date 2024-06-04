@@ -335,8 +335,8 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
  *      2.) We use the type of each particle for storing the number of pairs, each particle is part of.
  *
  *      3.) We compare the results with those computed by hand:
- *          Example: The cell in the middle of the cuboid has 26 adjacent cells being its neighbours. Therefore each particle in this cell should
- *                   be part of 52 + 1 unique pairs, because in each cell are 2 particles and in there in one additional particle in its own cell.
+ *          Example: The cell in the middle of the cuboid has 26 adjacent cells being its neighbours. Therefore, each particle in this cell should
+ *                   be part of 52 + 1 unique pairs, because in each cell are 2 particles and there is one additional particle in its own cell.
  *
  */
 

@@ -117,6 +117,8 @@ We opted for Tree-Mapping for the XML file due to its ease of use and comprehens
 additional features such as serialization back to DOM or XML, enabling the writing of modified XML files back to disk. This
 may become useful when creating an XML writer in the next worksheet.
 
+---
+
 ## Task 2: Linked-cell Algorithm ##
 
 **1. Introduction**     
@@ -244,7 +246,7 @@ calculations. We also have recorded another video afterward that demonstrates re
 Click [here](Collision-of-two-Bodies-Reflective-Boundaries.mp4) if you are interested.
 
 **3. Benchmarks**   
-Now, let's compare the new linked-cells algorithm with the old direct sum implementation to be able to tell whether all the work was worth it. To make the comparison fair, we ensured that no particle leaves the simulation domain during the simulation using the linked-cells algorithm or interacting in any other way with the borders. Therefore, we chose the simulation domain in such a way that the rectangle just fits in, to avoid that unnecessary many cells are created. Because we only calculated a few time steps with a small `deltaT` and small initial velocities (Brownian average velocity is set to `0.1`), the particles will barely move. We tested each model with `1000`, `2000`, `4000` and `8000` particles forming a 2D-rectangle (a square is not possible with these values). Because we do not want to wait days to get the results we conducted `100` iterations in each simulation, by choosing `deltaT = 0.001` and `endT = 0.1`. We used 2D Brownian Motion and a mesh width `h` of `1.1225` for creating the rectangles. As cut-off radius in the linked-cells algorithm we chose `r = 3` as in the other simulations.  
+Now, let's compare the new linked-cells algorithm with the old direct sum implementation to be able to tell whether all the work was worth it. To make the comparison fair, we ensured that no particle leaves the simulation domain during the simulation using the linked-cells algorithm or interacting in any other way with the borders. Therefore, we chose the simulation domain in such a way that the rectangle just fits in, to avoid that unnecessary many cells are created. Because we only calculated a few time steps with a small `deltaT` and small initial velocities (Brownian average velocity is set to `0.1`), the particles will barely move. We tested each model with `100`, `200`, `400`, `800`, `1000`, `2000`, `4000`, `8000` particles forming a 2D-rectangle (a square is not possible with these values). Because we do not want to wait days to get the results we conducted `100` iterations in each simulation, by choosing `deltaT = 0.001` and `endT = 0.1`. We used 2D Brownian Motion and a mesh width `h` of `1.1225` for creating the rectangles. As cut-off radius in the linked-cells algorithm we chose `r = 3` as in the other simulations.  
 Like last time we used the following hardware:
 
 * **Operating System**: `Ubuntu 22.04.4 LTS`
@@ -253,6 +255,10 @@ Like last time we used the following hardware:
 
 | Number of particles | Form of the rectangle | Direct Sum | Linked Cells | Speed Up |
 |---------------------|-----------------------|------------|--------------|----------|
+| 100                 | 10x10                 | 0.04 s     | 0.150 s      | 3.75     |
+| 200                 | 20x10                 | 0.16 s     | 0.024 s      | 6.67     |
+| 400                 | 20x20                 | 0.64 s     | 0.043 s      | 14.88    |
+| 800                 | 40x20                 | 2.55 s     | 0.080 s      | 31.88    |
 | 1000                | 50x20                 | 3.89 s     | 0.10 s       | 38.90    |
 | 2000                | 50x40                 | 15.90 s    | 0.21 s       | 75.72    |
 | 4000                | 80x50                 | 64.29 s    | 0.41 s       | 156.80   |
@@ -260,15 +266,24 @@ Like last time we used the following hardware:
 
 ![Benchmarks chart](Benchmarks.png)<br><br>
 
-It immediately catches the eye that the linked-cells implementation is much faster than the direct sum implementation.
-It is so fast that in the plot, its running time almost seems to be constant zero. The runtime class of the respective
-algorithm is directly reflected in the results. While the runtime of the linked-cells algorithm only doubles
+To get a plot with reasonable scales, we only visualized our results up to `800`.
+After this point, the difference
+between both implementations is so significant that visualizing it does not make any sense.
+Therefore, we created the table above.
+It immediately catches the eye that the linked-cells implementation is much faster than the direct sum implementation. 
+The runtime class of the respective
+algorithm is directly reflected in the results.
+While the runtime of the linked-cells algorithm only doubles
 approximately when the number of particles is doubled, linear increase: `O(n)`, the runtime of the direct sum
-implementation quadruples approximately, which indicates a quadratic runtime complexity of `0(n²)`. To emphasize the
+implementation quadruples approximately, which indicates a quadratic runtime complexity of `0(n²)`.
+To emphasize the
 complexity of each algorithm, we have embedded a linear and a polynomial regression of second order respectively in the
 graph.   
-As required, we embedded the plot into our doxygen documentation. It can be found in the detailed description of the
-class `LinkedCells`.
+As required, we embedded the plot into our doxygen documentation.
+It can be found in the detailed description of the
+class `LinkedCells`. Click [here](https://ashisatwork.github.io/MolSim/class_linked_cells.html#details) to have a look.
+
+---
 
 ## Task 3: Boundary Conditions ##
 
@@ -290,10 +305,14 @@ The realisation of the boundary condition `reflective` was more involved. We fol
 This approach is only stable for small time steps `delta_T`, because for large time steps the particle might cross the border before the force was high enough to repel it.   
 [Here](Mixed-Boundary-Conditions.mp4) you can see a video with mixed boundary conditions. The boundary at the front is reflective, all other boundaries are set to outflow. 
 
+---
+
 ## Task 4: Simulation of a Falling Drop - Wall ##
 As part of this task, we added a new method to our class [ParticleGenerator](../../src/particleRepresentation/particle) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented we conducted a first experiment to test our simulation and let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain to {120,50,0}, because the third dimension is not needed. 
 * Simulation in 2D: [watch](Disc-against-reflective-Boundary-2D.mp4)
 * Simulation in 3D: [watch](Disc-against-reflective-Boundary-3D.mp4)
+
+---
 
 ## Misc ##
 * We implemented the feedback from Manish by renaming some of our tests and making some other minor changes.

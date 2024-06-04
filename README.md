@@ -140,7 +140,7 @@ The process of building the project is described here:
        ```
      - Task 3.4
        ```bash
-       ./MolSim -f ../input/assignment-3/disc-against-wall-xml -i xml -o vtk 
+       ./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk 
        ```
 
 5. Running all Tests
