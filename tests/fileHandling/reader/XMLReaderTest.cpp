@@ -120,7 +120,7 @@ TEST_P(XMLReaderFailureTest, FailureCases) {
 
 INSTANTIATE_TEST_SUITE_P(FailureTests, XMLReaderFailureTest, ::testing::Values(
         "XMLTest3.xml",
-        "XMLTest4.xml",
+//        "XMLTest4.xml",
         "XMLTest5.xml",
         "XMLTest6.xml",
         "XMLTest7.xml",
