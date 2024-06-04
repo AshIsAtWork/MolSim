@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
+           xsi:noNamespaceSchemaLocation="../../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>Collision</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
     <model>
@@ -44,7 +44,7 @@
             <N1>100</N1>
             <N2>20</N2>
             <N3>1</N3>
-            <Distance>1.1225</Distance>
+            <Distance>-1.1225</Distance>
             <Mass>1.0</Mass>
             <Brownian>0.1</Brownian>
             <DimensionBrownian>2</DimensionBrownian>
