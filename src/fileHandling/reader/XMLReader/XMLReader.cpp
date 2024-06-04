@@ -19,8 +19,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
     parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
     parser->setDoNamespaces(true);
 
-    auto *errHandler = (xercesc::ErrorHandler * )
-    new xercesc::HandlerBase();
+    auto *errHandler = (xercesc::ErrorHandler *)
+            new xercesc::HandlerBase();
     parser->setErrorHandler(errHandler);
 
     try {
@@ -53,6 +53,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         }
 
         // static_cast<int> is required because internally the value is stored as a custom type
+
         if (static_cast<int>(molecules.OutputFrequency() <= 0)) {
             spdlog::error("OutputFrequency is less than 0");
             return 1;
@@ -119,6 +120,18 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
         if (molecules.model().Name() == "LinkedCells") {
             if (molecules.model().DomainSize().present()) {
+                if (static_cast<double>(molecules.model().DomainSize().get().First()) < 0) {
+                    spdlog::error("Domain Size First is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.model().DomainSize().get().Second()) < 0) {
+                    spdlog::error("Domain Size Second is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.model().DomainSize().get().Third()) < 0) {
+                    spdlog::error("Domain Size Third is negative");
+                    return 1;
+                }
                 simulationSettings.parametersLinkedCells.domainSize = {
                         static_cast<double>(molecules.model().DomainSize().get().First()),
                         static_cast<double>(molecules.model().DomainSize().get().Second()),
@@ -147,32 +160,32 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
             }
 
             if (molecules.model().BoundaryCondition().present()) {
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
                         enumsStructs::Side::front,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Front())
                 };
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
                         enumsStructs::Side::right,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Right())
                 };
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
                         enumsStructs::Side::back,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Back())
                 };
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
                         enumsStructs::Side::left,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Left())
                 };
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
                         enumsStructs::Side::top,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Top())
                 };
-                std::pair <enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
+                std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
                         enumsStructs::Side::bottom,
                         enumsStructs::setBoundaryCondition(
                                 molecules.model().BoundaryCondition().get().boundaries().Bottom())
@@ -204,6 +217,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 return 1;
             }
             for (auto i = 0; i < molecules.SingleParticles().get().Size(); i++) {
+                if (static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass()) < 0) {
+                    spdlog::error("Mass of SingleParticle is negative");
+                    return 1;
+                }
                 enumsStructs::ParticleType p{
                         {
                                 static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(
@@ -251,6 +268,35 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 return 1;
             }
             for (auto i = 0; i < molecules.Cuboids().get().Size(); i++) {
+                if (static_cast<double >(molecules.Cuboids().get().Cuboid().at(i).Distance()) < 0) {
+                    spdlog::error("Distance of Cuboid is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()) < 0) {
+                    spdlog::error("Mass of Cuboid is negative");
+                    return 1;
+                }
+                if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()) < 0) {
+                    spdlog::error("DimensionBrownian is negative");
+                    return 1;
+
+                }
+                if (static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian()) < 0) {
+                    spdlog::error("Brownian for Cuboid is negative");
+                    return 1;
+                }
+                if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N1()) < 0) {
+                    spdlog::error("N1 for cuboid is negative");
+                    return 1;
+                }
+                if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N2()) < 0) {
+                    spdlog::error("N2 for cuboid is negative");
+                    return 1;
+                }
+                if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N3()) < 0) {
+                    spdlog::error("N3 for cuboid is negative");
+                    return 1;
+                }
                 enumsStructs::Cuboid cuboid = {
                         {
                                 static_cast<double>(molecules.Cuboids().get().Cuboid().at(
@@ -320,6 +366,26 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 return 1;
             }
             for (auto i = 0; i < molecules.Discs().get().Size(); i++) {
+                if (static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()) < 0) {
+                    spdlog::error("Discs Radius is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.Discs().get().Disc().at(i).InterParticleDistance()) < 0) {
+                    spdlog::error("Discs InterParticleDistance is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()) < 0) {
+                    spdlog::error("Discs Mass is negative");
+                    return 1;
+                }
+                if (static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()) < 0) {
+                    spdlog::error("DimensionBrownian is negative");
+                    return 1;
+                }
+                if (static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian()) < 0) {
+                    spdlog::error("Brownian for Disc is negative");
+                    return 1;
+                }
                 enumsStructs::Disc disc = {
                         {
                                 static_cast<double>(molecules.Discs().get().Disc().at(

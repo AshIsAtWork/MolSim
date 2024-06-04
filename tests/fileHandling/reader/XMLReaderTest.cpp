@@ -119,8 +119,8 @@ TEST_P(XMLReaderFailureTest, FailureCases) {
 }
 
 INSTANTIATE_TEST_SUITE_P(FailureTests, XMLReaderFailureTest, ::testing::Values(
-        "XMLTest3.xml",/*
-        "XMLTest4.xml",*/
+        "XMLTest3.xml",
+        "XMLTest4.xml",
         "XMLTest5.xml",
         "XMLTest6.xml",
         "XMLTest7.xml",
@@ -130,12 +130,12 @@ INSTANTIATE_TEST_SUITE_P(FailureTests, XMLReaderFailureTest, ::testing::Values(
         "XMLTest11.xml",
         "XMLTest12.xml",
         "XMLTest13.xml",
-        "XMLTest14.xml",/*
-        "XMLTest15.xml",*/
-        "XMLTest16.xml"/*,
+        "XMLTest14.xml",
+        "XMLTest15.xml",
+        "XMLTest16.xml",
         "XMLTest17.xml",
         "XMLTest18.xml",
         "XMLTest19.xml",
         "XMLTest20.xml",
-        "XMLTest21.xml"*/
+        "XMLTest21.xml"
 ));
