@@ -15,13 +15,12 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
         return 1;
     }
 
-    auto *parser = new xercesc::XercesDOMParser();
+    auto parser = std::make_unique<xercesc::XercesDOMParser>();
     parser->setValidationScheme(xercesc::XercesDOMParser::Val_Always);
     parser->setDoNamespaces(true);
 
-    auto *errHandler = (xercesc::ErrorHandler *)
-            new xercesc::HandlerBase();
-    parser->setErrorHandler(errHandler);
+    auto errHandler = std::make_unique<xercesc::HandlerBase>();
+    parser->setErrorHandler(errHandler.get());
 
     try {
         parser->parse(filename.c_str());
@@ -458,8 +457,6 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
     spdlog::info("{}: parse OK", filename);
 
-    delete parser;
-    delete errHandler;
     xercesc::XMLPlatformUtils::Terminate();
     return 0;
 }
