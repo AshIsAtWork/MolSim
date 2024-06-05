@@ -56,7 +56,6 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     spdlog::debug("OutputFrequency: {}", static_cast<int>(molecules.OutputFrequency()));
                 }
 
-                //TODO: Use this Model
                 enumsStructs::TypeOfModel model = enumsStructs::setModel(molecules.model().Name());
                 if (model == enumsStructs::TypeOfModel::invalid) {
                     spdlog::error("Model is invalid");
