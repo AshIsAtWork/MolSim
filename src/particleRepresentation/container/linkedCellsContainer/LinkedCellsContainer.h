@@ -5,7 +5,7 @@
 #pragma once
 #include <vector>
 
-#include "ParticleContainer.h"
+#include "../ParticleContainer.h"
 #include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 #include "utils/enumsStructs.h"
@@ -21,8 +21,8 @@ private:
     /**
      *  Data structure:
      *
-     *  -We use an 1D vector to store the flattend 3D cell structure
-     *   being an essentiat property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
+     *  -We use an 1D vector to store the flattened 3D cell structure
+     *   being an essential property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
      *
      *  -The current number of particles that is contained in this container is tracked by the attribute currentSize and kept up-to-date
      *   through every operation.
@@ -35,14 +35,14 @@ private:
      *
      *  The indizes of
      *                 -all halo cells belonging to one or more of the 6 sides,
-     *                 -all bundry cells belonging to one or more of the 6 sides,
+     *                 -all boundary cells belonging to one or more of the 6 sides,
      *                 -the order in which all cells within the domain are processed to process each pair of particles only ones
      *
-     *  are precomputed in the construtor and stored in memory to provide fast access in future iterations. We invest here additional
+     *  are precomputed in the constructor and stored in memory to provide fast access in future iterations. We invest here additional
      *  memory space to avoid recomputing all indizes in each iteration again.
      */
     std::array<std::vector<int>, 6> haloCells;
-    std::array<std::vector<int>, 6> boundries;
+    std::array<std::vector<int>, 6> boundaries;
     std::vector<std::vector<int>> domainCellIterationScheme;
 
     /**
@@ -57,7 +57,7 @@ private:
      *                                      -cellSizeZ : size of each cell in dimension z
      *                                      -rCutOff : cut-off radius
      *                                      -twoD : specifies, if the simulation only uses 2 of 3 dimensions.
-     *                                              If this is the case, ressources can be saved.
+     *                                              If this is the case, resources can be saved.
      *                                      -domainSize : Size of the domain {x, y , z}. The front lower left corner
      *                                                    of the domain is set to (0,0,0) by definition.
      */
@@ -76,21 +76,21 @@ private:
     outputWriter::VTKWriter vtk_writer;
 
     /**
-     * Helper methods for index calculation and boundry conditions
+     * Helper methods for index calculation and boundary conditions.
      */
 
     /**
-     * @brief Precalculation of all halo cell indizes
+     * @brief Precalculation of all halo cell indizes.
      */
     void calculateHaloCellIndizes();
 
     /**
-     * @brief Precalculation of all boundry cell indizes
+     * @brief Precalculation of all boundry cell indizes.
      */
-    void calculateBoundryCellIndizes();
+    void calculateBoundaryCellIndizes();
 
     /**
-     * @brief Precalculation of the indizes defining the processing order of cells
+     * @brief Precalculation of the indizes defining the processing order of cells.
      */
     void calculateDomainCellsIterationScheme();
 
@@ -103,10 +103,10 @@ private:
      *
      * @return Distance of particle p to the specified side.
      */
-    double calcDistanceFromBoundry(Particle& p, Side side);
+    double calcDistanceFromBoundary(Particle& p, Side side);
 
     /**
-     * @brief Calculate the position of the ghost particle with respect to a specific side used for reflective boundries.
+     * @brief Calculate the position of the ghost particle with respect to a specific side used for reflective boundaries.
      *
      * @param p Particle to calculate the corresponding ghost particle of.
      * @param side Side of the domain at which the particle is mirrored.
@@ -207,17 +207,17 @@ public:
 
     /**
      * @brief Iterate over all particles in the boundry cells of a specific side
-     *        which have a distance to that side that is smaller or equal than the threshhold.
+     *        which have a distance to that side that is smaller or equal than the threshold.
      *
      * @param function Lambda function that is applied to each particle fulfilling the requirements.
-     * @param boundry Side to which the boundry cells belong
+     * @param boundary Side to which the boundary cells belong.
      * @param threshold Maximal distance to the side.
      *
-     * Addionally, the position of the corresponding ghost particle of each particle is calculated
+     * Additionally, the position of the corresponding ghost particle of each particle is calculated
      *        and passed in the lambda function as second input. This information makes the implementation
-     *        of reflective boundries a lot easier.
+     *        of reflective boundaries a lot easier.
      */
-    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundry, double threshold);
+    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary, double threshold);
 
     /**
      * @brief Get the number of particles stored in this container.
@@ -238,8 +238,8 @@ public:
         return haloCells;
     }
 
-   std::array<std::vector<int>,6>& getBoundries(){
-        return boundries;
+   std::array<std::vector<int>,6>& getBoundaries(){
+        return boundaries;
     }
 
 
@@ -247,39 +247,39 @@ public:
         return domainCellIterationScheme;
     }
 
-    int getNX() const {
+    [[nodiscard]] int getNX() const {
         return nX;
     }
 
-    int getNY() const {
+    [[nodiscard]] int getNY() const {
         return nY;
     }
 
-    int getNZ() const {
+    [[nodiscard]] int getNZ() const {
         return nZ;
     }
 
-    double getCellSizeX() const {
+    [[nodiscard]] double getCellSizeX() const {
         return cellSizeX;
     }
 
-    double getCellSizeY() const {
+    [[nodiscard]] double getCellSizeY() const {
         return cellSizeY;
     }
 
-    double getCellSizeZ() const {
+    [[nodiscard]] double getCellSizeZ() const {
         return cellSizeZ;
     }
 
-    double getRCutOff() const {
+    [[nodiscard]] double getRCutOff() const {
         return rCutOff;
     }
 
-    bool isTwoD() const {
+    [[nodiscard]] bool isTwoD() const {
         return twoD;
     }
 
-    std::array<double, 3> getDomainSize() const {
+    [[nodiscard]] std::array<double, 3> getDomainSize() const {
         return domainSize;
     }
 };

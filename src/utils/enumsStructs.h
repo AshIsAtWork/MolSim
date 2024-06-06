@@ -29,7 +29,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Enum to distinguish between different boundry conditions for each side.
+     * Enum to distinguish between different boundary conditions for each side.
      */
     enum class BoundaryCondition {
         outflow, reflective, invalid
@@ -47,7 +47,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct for passing parameters of the linked cells model
+     * Struct for passing parameters of the linked cells model.
      */
     struct LinkedCellsSimulationParameters {
         double deltaT;
@@ -61,7 +61,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct containing cuboid specifictations
+     * Struct containing cuboid specifications.
      */
     struct Cuboid {
         std::array<double, 3> position;
@@ -74,7 +74,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct containing disc specifications
+     * Struct containing disc specifications.
      */
     struct Disc {
         std::array<double, 3> center;
@@ -87,7 +87,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct containing particle specifications
+     * Struct containing particle specifications.
      */
     struct ParticleType {
         std::array<double, 3> x;
@@ -96,7 +96,7 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct for storing all simulation parameters
+     * Struct for storing all simulation parameters.
      */
     struct SimulationSettings {
         //general

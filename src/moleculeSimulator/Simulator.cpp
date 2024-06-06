@@ -69,6 +69,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
     }
 
     //Add particles and objects of particles
+
     //Particles
     for (auto pT: simulationSettings.particles) {
         Particle p{pT.x, pT.v, pT.m};
@@ -139,6 +140,6 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer &Simulator::getParticles() {
+ParticleContainer& Simulator::getParticles() {
     return model->getParticles();
 }

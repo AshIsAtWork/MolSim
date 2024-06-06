@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "particleRepresentation/container/DefaultParticleContainer.h"
+#include "particleRepresentation/container/defaultParticleContainer/DefaultParticleContainer.h"
 
 namespace outputWriter {
 

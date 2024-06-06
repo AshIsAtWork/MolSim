@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "particleRepresentation/container/DefaultParticleContainer.h"
+#include "particleRepresentation/container/defaultParticleContainer/DefaultParticleContainer.h"
 #include <spdlog/spdlog.h>
 
 

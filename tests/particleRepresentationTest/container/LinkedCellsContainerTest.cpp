@@ -8,7 +8,7 @@
 #include <spdlog/spdlog.h>
 
 #include "../../../src/fileHandling/FileHandler.h"
-#include "../../../src/particleRepresentation/container/LinkedCellsContainer.h"
+#include "../../../src/particleRepresentation/container/linkedCellsContainer/LinkedCellsContainer.h"
 
 
 
@@ -167,7 +167,7 @@ TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_Test2D) {
 
 TEST(LinkedCellsContainerTest,calculateBoundryCellIndizes_BasicFunctionality) {
     LinkedCellsContainer lcc{{2,1,3},1};
-    auto boundryCells = lcc.getBoundries();
+    auto boundryCells = lcc.getBoundaries();
 
     std::set<int> front = {17,18,29,30,41,42};
     std::set<int> right = {18,30,42};
@@ -192,7 +192,7 @@ TEST(LinkedCellsContainerTest,calculateBoundryCellIndizes_BasicFunctionality) {
 
 TEST(LinkedCellsContainerTest, calculateBoundryCellIndizes_Test2D) {
     LinkedCellsContainer lcc{{2,2,0},1};
-    auto boundryCells = lcc.getBoundries();
+    auto boundryCells = lcc.getBoundaries();
 
     std::set<int> front = {5,6};
     std::set<int> right = {6,10};

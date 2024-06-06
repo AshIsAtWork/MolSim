@@ -44,7 +44,7 @@ public:
      * @param filePath File path to the input txt-file of the particles to be read.
      * @param format Type of the input file.
      *
-     * Supported txt file formats at the moment: Particle, Cuboid
+     * Supported txt file formats at the moment: Particle, Cuboid.
      */
     static void readFile(ParticleContainer &particles, std::string &filePath, inputFormat format);
 

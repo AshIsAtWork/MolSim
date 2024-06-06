@@ -44,7 +44,7 @@ public:
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
      * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
-     * @param outputFrequency Specifies after how much timesteps an output file is written. For example an output frequency
+     * @param outputFrequency Specifies after how much time steps an output file is written. For example an output frequency
      *                        of 10 means that after each 10 iterations an output file is written.
      * @param outputFileBaseName Base name of the output files.
      *

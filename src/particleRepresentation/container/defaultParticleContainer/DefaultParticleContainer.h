@@ -7,7 +7,7 @@
 #include "particleRepresentation/particle/Particle.h"
 #include <vector>
 
-#include "ParticleContainer.h"
+#include "../ParticleContainer.h"
 
 /**
  * @brief Container to store the particles for simulation using the direct sum algorithm.
@@ -49,7 +49,7 @@ public:
      *
      * Before access, it will be checked, if the position is valid. Otherwise an exception will be thrown.
      */
-    Particle &at(size_t i);
+    Particle& at(size_t i);
 
     /**
      * @brief Retrieve the size of the data structure.

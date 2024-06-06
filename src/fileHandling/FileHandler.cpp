@@ -9,13 +9,13 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, 
     switch (format) {
         case inputFormat::txt: {
             if (FileReader::readFile(particles, filePath) != 0) {
-                exit(1);
+                exit(-1);
             }
         }break;
         default: {
             spdlog::error("Invalid input format selected. Please select a valid input format.");
             spdlog::error("Code should not reach this point. Exiting program.");
-            exit(1);
+            exit(-1);
         }
     }
 }
@@ -35,12 +35,14 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
         }
             break;
         case outputFormat::xml: {
-            // TODO: Will be implemented as part of the next worksheet
+            // TODO: Will be implemented as part of the next worksheet.
+            spdlog::error("Not implemented yet. Terminating program!");
+            exit(-1);
             }
             break;
         case outputFormat::invalid:
             spdlog::error("Invalid output format selected. Please select a valid output format.");
             spdlog::error("Code should not reach this point. Exiting program.");
-            exit(1);
+            exit(-1);
     }
 }

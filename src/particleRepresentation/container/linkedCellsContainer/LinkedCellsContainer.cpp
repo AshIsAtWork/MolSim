@@ -29,46 +29,46 @@ void LinkedCellsContainer::calculateHaloCellIndizes() {
     if (!twoD) {
         for (int x = 0; x < nX; x++) {
             for (int y = 0; y < nY; y++) {
-                //halo cells top (does only exist in three dimensional space)
+                //halo cells top (do only exist in three-dimensional space)
                 haloCells[4].push_back(threeDToOneD(x, y, nZ - 1));
-                //halo cells bottom (does only exist in three dimensional space)
+                //halo cells bottom (do only exist in three-dimensional space)
                 haloCells[5].push_back(threeDToOneD(x, y, 0));
             }
         }
     }
 }
 
-void LinkedCellsContainer::calculateBoundryCellIndizes() {
+void LinkedCellsContainer::calculateBoundaryCellIndizes() {
     //constants to handle 2D edge case
     int Z1 = !twoD;
     int Z2 = twoD ? 0 : nZ - 2;
 
     for (int z = Z1; z <= Z2; z++) {
-        //boundry front
+        //boundary front
         for (int x = 1; x < nX - 1; x++) {
-            boundries[0].push_back(threeDToOneD(x, 1, z));
+            boundaries[0].push_back(threeDToOneD(x, 1, z));
         }
-        //boundry right
+        //boundary right
         for (int y = 1; y < nY - 1; y++) {
-            boundries[1].push_back(threeDToOneD(nX - 2, y, z));
+            boundaries[1].push_back(threeDToOneD(nX - 2, y, z));
         }
-        //boundry back
+        //boundary back
         for (int x = 1; x < nX - 1; x++) {
-            boundries[2].push_back(threeDToOneD(x, nY - 2, z));
+            boundaries[2].push_back(threeDToOneD(x, nY - 2, z));
         }
-        //boundry left
+        //boundary left
         for (int y = 1; y < nY - 1; y++) {
-            boundries[3].push_back(threeDToOneD(1, y, z));
+            boundaries[3].push_back(threeDToOneD(1, y, z));
         }
     }
 
     if (!twoD) {
         for (int x = 1; x < nX - 1; x++) {
             for (int y = 1; y < nY - 1; y++) {
-                //boundry top (does only exist in three dimensional space)
-                boundries[4].push_back(threeDToOneD(x, y, nZ - 2));
-                //boundry bottom (does only exist in three dimensional space)
-                boundries[5].push_back(threeDToOneD(x, y, 1));
+                //boundary top (does only exist in three-dimensional space)
+                boundaries[4].push_back(threeDToOneD(x, y, nZ - 2));
+                //boundary bottom (does only exist in three-dimensional space)
+                boundaries[5].push_back(threeDToOneD(x, y, 1));
             }
         }
     }
@@ -165,7 +165,7 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
     }
 }
 
-double LinkedCellsContainer::calcDistanceFromBoundry(Particle &p, Side side) {
+double LinkedCellsContainer::calcDistanceFromBoundary(Particle &p, Side side) {
     switch (side) {
         case Side::front: {
             return p.getX()[1];
@@ -186,7 +186,7 @@ double LinkedCellsContainer::calcDistanceFromBoundry(Particle &p, Side side) {
             return p.getX()[2];
         }
     }
-    spdlog::error("A boundry was specified that does not exist!");
+    spdlog::error("A boundary was specified that does not exist!");
     return -1;
 }
 
@@ -258,7 +258,7 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
 
     //Precalculate indizes for fast access in the future
     calculateHaloCellIndizes();
-    calculateBoundryCellIndizes();
+    calculateBoundaryCellIndizes();
     calculateDomainCellsIterationScheme();
 }
 
@@ -396,13 +396,13 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 }
 
 void LinkedCellsContainer::applyToAllBoundryParticles(
-    const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundry,
-    double threshhold) {
-    for (auto cell: boundries[static_cast<int>(boundry)]) {
+    const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary,
+    double threshold) {
+    for (auto cell: boundaries[static_cast<int>(boundary)]) {
         for (Particle &p: cells[cell]) {
-            double distanceFromBoundry = calcDistanceFromBoundry(p, boundry);
-            if (0 < distanceFromBoundry && distanceFromBoundry <= threshhold) {
-                auto ghostPosition = calcGhostParticle(p, boundry);
+            double distanceFromBoundry = calcDistanceFromBoundary(p, boundary);
+            if (0 < distanceFromBoundry && distanceFromBoundry <= threshold) {
+                auto ghostPosition = calcGhostParticle(p, boundary);
                 function(p, ghostPosition);
             }
         }

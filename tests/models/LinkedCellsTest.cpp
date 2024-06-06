@@ -22,7 +22,7 @@ bool noExplosion(Particle& p) {
 }
 
 /**
- * Here we test, if the implementation of the reflective boundries does work.
+ * Here we test, if the implementation of the reflective boundaries does work.
  * Testing this thoroughly is difficult, because there are only qualitative requirements.
  * The key requirements are:
  *                          1.) No particle should leave the domain
@@ -56,7 +56,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
 
  linkedCellModel.updateForces();
 
- //We use a velocity vector here that will guarantee that all boundries are being hit.
+ //We use a velocity vector here that will guarantee that all boundaries are being hit.
 
  Particle p = {{1.5,1.5,1.5},{10,20,30},1};
  linkedCellModel.addParticle(p);

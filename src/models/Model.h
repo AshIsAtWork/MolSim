@@ -26,10 +26,10 @@ protected:
     double deltaT;
 
     /**
-     * @brief Contructor for this model. Cannot be called from any other class but classes that extend this class,
+     * @brief Constructor for this model. Cannot be called from any other class but classes that extend this class,
      *        because this class is a base class and should not be instantiated
      *
-     * @param particles Particle container of the model. This parameter is instantiated with the appropiated container by the derived models.
+     * @param particles Particle container of the model. This parameter is instantiated with the appropriated container by the derived models.
      * @param force Force to use in the simulation.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
      * @param inputFormat Format of the input file. Supported formats are txt and xml.

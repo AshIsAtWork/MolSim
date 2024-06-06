@@ -11,7 +11,7 @@ Model::Model(ParticleContainer &particles, Force &force, double deltaT,  FileHan
 }
 
 void Model::updateForces() const {
-    //Before calculating the new forces, the current forces have to be reseted
+    //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         p.resetForce();
     });

@@ -5,15 +5,15 @@
 #pragma once
 
 #include "../Model.h"
-#include "particleRepresentation/container/DefaultParticleContainer.h"
+#include "particleRepresentation/container/defaultParticleContainer/DefaultParticleContainer.h"
 
 /**
- * @brief Model that implements the direct sum algorithm
+ * @brief Model that implements the direct sum algorithm.
  */
 class DirectSum final : public Model {
 private:
     /**
-    * This model uses the DefaultParticleContainer to store its particles
+    * This model uses the DefaultParticleContainer to store its particles.
     */
     DefaultParticleContainer particles;
 

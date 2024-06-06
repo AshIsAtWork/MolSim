@@ -94,12 +94,12 @@ achieved using the following command:
 xsdcxx cxx-tree --std c++11 --generate-doxygen --generate-serialization --hxx-suffix .h --cxx-suffix .cpp ConfigurationFile.xsd
 ```
 
-This command generated the [Collision.h](../../src/fileHandling/reader/XMLHandling/Collision.h)
-and [Collision.cpp](../../src/fileHandling/reader/XMLHandling/Collision.cpp) files.
+This command generated the [Collision.h](../../src/fileHandling/reader/XMLHandling/ConfigurationFile.h)
+and [Collision.cpp](../../src/fileHandling/reader/XMLHandling/ConfigurationFile.cpp) files.
 
 ### Development of XMLReader
 
-We then proceeded to develop the [XMLReader.cpp](../../src/fileHandling/reader/XMLReader.cpp) class, responsible for
+We then proceeded to develop the [XMLReader.cpp](../../src/fileHandling/reader/XMLReader/XMLReader.cpp) class, responsible for
 parsing the XML file. We ensured adherence to the constraints specified in the schema file. These constraints are
 automatically validated when the
 following declaration is included in the XML definition:
@@ -148,9 +148,9 @@ times of two models for different numbers of particles.
 
 **Creating a new particle container and introducing a new inheritance hierarchy**   
 As a first step, we implemented a new particle container
-called [LinkedCellsContainer](../../src/particleRepresentation/container/LinkedCellsContainer.h) and refactored the old
+called [LinkedCellsContainer](../../src/particleRepresentation/container/linkedCellsContainer/LinkedCellsContainer.h) and refactored the old
 one for the direct sum implementation and gave it the new
-name [DefaultParticleContainer](../../src/particleRepresentation/container/DefaultParticleContainer.h). Both particle
+name [DefaultParticleContainer](../../src/particleRepresentation/container/defaultParticleContainer/DefaultParticleContainer.h). Both particle
 containers extend the abstract base
 class [ParticleContainer](../../src/particleRepresentation/container/ParticleContainer.h) that provides the
 possibilities of adding particles to the container and various means of iterating over particles and pairs of particles
@@ -308,7 +308,7 @@ This approach is only stable for small time steps `delta_T`, because for large t
 ---
 
 ## Task 4: Simulation of a Falling Drop - Wall ##
-As part of this task, we added a new method to our class [ParticleGenerator](../../src/particleRepresentation/particle) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented we conducted a first experiment to test our simulation and let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain to {120,50,0}, because the third dimension is not needed. 
+As part of this task, we added a new method to our class [ParticleGenerator](../../src/moleculeSimulator/particleGeneration/ParticleGenerator.h) that generates two-dimensional discs of particles. We also made it possible to specify discs within the XML file. Having these features implemented, we conducted a first experiment to test our simulation and let a disc fly against a reflective boundary. Because it is not exactly specified if the simulation should be in 2D or 3D we did both. For the 3D simulation, we shifted the center of the disc to (60,25,0.5) to position it vertically centered in the simulation domain. In the 2D case, we set the simulation domain to {120,50,0}, because the third dimension is not needed. 
 * Simulation in 2D: [watch](Disc-against-reflective-Boundary-2D.mp4)
 * Simulation in 3D: [watch](Disc-against-reflective-Boundary-3D.mp4)
 
@@ -317,3 +317,5 @@ As part of this task, we added a new method to our class [ParticleGenerator](../
 ## Misc ##
 * We implemented the feedback from Manish by renaming some of our tests and making some other minor changes.
 * We created tests for all stand-alone methods that we have added as part of this assignment sheet. Creating tests for the whole linked cells model as one would involve a huge amount of time that we do not have. Nevertheless, we checked its correctness thoroughly with ParaView and by going through the program step by step with the debugger and sanitizing all calculations. Because the model does not do more than calling the methods we tested thoroughly, we can assume that it will work how it is supposed to do. 
+* We performed a code coverage by using cmake flags: We added `-DCMAKE_CXX_FLAGS= --coverage -DCMAKE_C_FLAGS=--coverage` to our cmake. This can be set in profiles and then be used to run coverage by using in-built clion options.
+* We added valgrind to our docker container. It can be used over the command line or in build clion options (first, you have to set the executable to usr/bin/valgrind). 

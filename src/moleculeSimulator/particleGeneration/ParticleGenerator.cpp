@@ -14,9 +14,9 @@ void ParticleGenerator::generateDiscQuadrant(ParticleContainer &particles, const
                                              double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix) {
     std::array<double, 3> currentPosition = corner;
     for (int d1 = 0; d1 < N - 1; d1++) {
-        int threshholdD2 = static_cast<int>(std::floor(std::sqrt(std::abs(std::pow((d1 + 1) * h, 2) - std::pow(r, 2))))
+        int threshold2D = static_cast<int>(std::floor(std::sqrt(std::abs(std::pow((d1 + 1) * h, 2) - std::pow(r, 2))))
                                             / h) + 1;
-        for (int d2 = 0; d2 < threshholdD2; d2++) {
+        for (int d2 = 0; d2 < threshold2D; d2++) {
             Particle pToAdd = {
                 currentPosition,
                 initVelocity + maxwellBoltzmannDistributedVelocity(brownianMotionAverageVelocity, dimensions),
