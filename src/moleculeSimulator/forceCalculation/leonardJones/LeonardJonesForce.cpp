@@ -4,6 +4,9 @@
 
 #include "LeonardJonesForce.h"
 
+
+LeonardJonesForce::LeonardJonesForce(double epsilon, double sigma) : epsilon{epsilon}, sigma{sigma} {}
+
 std::array<double, 3> LeonardJonesForce::compute(Particle &target, Particle &source) {
     auto difference = source.getX() - target.getX();
     double squared_distance = std::pow(ArrayUtils::L2Norm(difference), 2);

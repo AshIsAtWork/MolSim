@@ -4,73 +4,132 @@
 
 #include "Simulator.h"
 
-void Simulator::calculateF_naive() {
-    for (auto &p_i: particles) {
-        p_i.setOldF(p_i.getF());
-        p_i.setF({0, 0, 0});
-        for (auto &p_j: particles) {
-            if (&p_i != &p_j) {
-                p_i.setF(p_i.getF() + force.compute(p_i, p_j));
+using namespace enumsStructs;
+
+Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,
+                     FileHandler::outputFormat outputFormat) {
+    //Set model independent parameters
+    outputFrequency = simulationSettings.outputFrequency;
+    outputFileBaseName = simulationSettings.outputFileName;
+
+    //Set model dependent parameters
+    switch (simulationSettings.model) {
+        case TypeOfModel::directSum: {
+            switch (simulationSettings.parametersDirectSum.force) {
+                case TypeOfForce::gravity: {
+                    force = std::make_unique<Gravity>();
+                }
+                break;
+                case TypeOfForce::leonardJonesForce: {
+                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersDirectSum.epsilon,
+                                                                simulationSettings.parametersDirectSum.sigma);
+                }
+                break;
+                default: {
+                    spdlog::error("Use of invalid force type! Programm will be terminated!");
+                    exit(-1);
+                }
             }
+            deltaT = simulationSettings.parametersDirectSum.deltaT;
+            endT = simulationSettings.parametersDirectSum.endT;
+            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, inputFormat,
+                                                outputFormat);
+        }
+        break;
+        case TypeOfModel::linkedCells: {
+            switch (simulationSettings.parametersLinkedCells.force) {
+                case TypeOfForce::gravity: {
+                    force = std::make_unique<Gravity>();
+                }
+                break;
+                case TypeOfForce::leonardJonesForce: {
+                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersLinkedCells.epsilon,
+                                                                simulationSettings.parametersLinkedCells.sigma);
+                }
+                break;
+                default: {
+                    spdlog::error("Use of invalid force type! Programm will be terminated!");
+                    exit(-1);
+                }
+            }
+            deltaT = simulationSettings.parametersLinkedCells.deltaT;
+            endT = simulationSettings.parametersLinkedCells.endT;
+            model = std::make_unique<LinkedCells>(*force, simulationSettings.parametersLinkedCells.deltaT,
+                                                  simulationSettings.parametersLinkedCells.domainSize,
+                                                  simulationSettings.parametersLinkedCells.rCutOff,
+                                                  simulationSettings.parametersLinkedCells.sigma, inputFormat,
+                                                  outputFormat,
+                                                  simulationSettings.parametersLinkedCells.boundarySettings);
+        }
+        break;
+        default: {
+            spdlog::error("Use of invalid model type! Programm will be terminated!");
+            exit(-1);
         }
     }
+
+    //Add particles and objects of particles
+
+    //Particles
+    for (auto pT: simulationSettings.particles) {
+        Particle p{pT.x, pT.v, pT.m};
+        model->addParticle(p);
+    }
+    //Cuboids
+    for (auto cuboid: simulationSettings.cuboids) {
+        model->addCuboid(cuboid.position, cuboid.dimensions[0], cuboid.dimensions[1], cuboid.dimensions[2], cuboid.h,
+                         cuboid.mass, cuboid.initVelocity, cuboid.dimensionsBrownianMotion,
+                         cuboid.brownianMotionAverageVelocity);
+    }
+    //Discs
+    for (auto disc: simulationSettings.discs) {
+        model->addDisc(disc.center, disc.initVelocity, disc.N, disc.h, disc.mass, disc.dimensionsBrownianMotion,
+                       disc.brownianMotionAverageVelocity);
+    }
 }
 
-void Simulator::calculateF() {
-    //Reset all forces and save current forces in old force variables.
-    for (auto &p: particles) {
-        p.setOldF(p.getF());
-        p.setF({0, 0, 0});
-    }
-
-    //Iterate over all distinct pairs of particles and apply Newtons third law of motion.
-
-    for (auto p_i = particles.begin(); p_i != particles.end(); std::advance(p_i,1)) {
-        for (auto p_j = std::next(p_i); p_j != particles.end(); std::advance(p_j,1)) {
-            auto f_ij{force.compute(*p_i, *p_j)};
-            p_i->setF(p_i->getF() + f_ij);
-            p_j->setF(p_j->getF() - f_ij);
+Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat,
+                     int outputFrequency, std::string &outputFileBaseName) : deltaT{parameters.deltaT},
+                                                                             endT{parameters.endT},
+                                                                             outputFrequency{outputFrequency},
+                                                                             outputFileBaseName{outputFileBaseName} {
+    switch (parameters.force) {
+        case TypeOfForce::gravity: {
+            force = std::make_unique<Gravity>();
+        }
+        break;
+        case TypeOfForce::leonardJonesForce: {
+            force = std::make_unique<LeonardJonesForce>(parameters.epsilon, parameters.sigma);
+        }
+        break;
+        default: {
+            spdlog::error("Use of invalid force type! Programm will be terminated!");
+            exit(-1);
         }
     }
-}
-
-void Simulator::calculateX() {
-    for (auto &p: particles) {
-        p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
-    }
-}
-
-void Simulator::calculateV() {
-    for (auto &p: particles) {
-        p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
-    }
-}
-
-Simulator::Simulator(std::string &inputFilePath, Force &force, double endT, double deltaT) : force{force},
-    deltaT{deltaT}, endT{endT} {
-    FileHandler::readFile(particles, inputFilePath);
+    model = std::make_unique<DirectSum>(*force, parameters.deltaT, inputFormat, outputFormat);
+    model->addViaFile(inputFilePath);
 }
 
 void Simulator::run(bool benchmark) {
     double current_time = 0;
-
     int iteration = 0;
 
+    //Plot everything one time before the simulation starts.
+    if (!benchmark) {
+        model->plot(iteration, outputFileBaseName);
+    }
+
     //Calculate the initial forces before starting the simulation
-    calculateF();
+    model->updateForces();
 
-    // for this loop, we assume: current x, current f and current v are known
+
     while (current_time < endT) {
-        // calculate new x
-        calculateX();
-        // calculate new f
-        calculateF();
-        // calculate new v
-        calculateV();
-
+        model->step();
         iteration++;
-        if (!benchmark && iteration % 10 == 0) {
-            fileHandler.writeToFile(particles, iteration, FileHandler::outputFormat::vtk);
+        if (!benchmark && iteration % outputFrequency == 0) {
+            model->plot(iteration, outputFileBaseName);
         }
 
         spdlog::trace("Iteration {} finished.", iteration);
@@ -82,5 +141,5 @@ void Simulator::run(bool benchmark) {
 }
 
 ParticleContainer& Simulator::getParticles() {
-    return particles;
+    return model->getParticles();
 }
