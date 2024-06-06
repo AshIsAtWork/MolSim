@@ -8,7 +8,7 @@ Members:
 
 # Code #
 
-* Link to Pull Request: [Pull Request for Assignment 3](TODO!!!)
+* Link to Pull Request: [Pull Request for Assignment 3](https://github.com/AshIsAtWork/MolSim/pull/6)
 * Compiler: gcc 11.4.0
 
 # Report #
