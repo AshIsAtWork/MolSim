@@ -372,7 +372,7 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllUniquePairsInDomain) {
 }
 
 /**
- * Does the function applyToAllBoundryParticles:
+ * Does the function applyToAllBoundaryParticles:
  *         -apply the given function exactly one time to each particle in the boundry cells of a specific side?
  *         -calculate the position of the corresponding ghost particle correctly?
  *         -if the distance of the particle to one side is greater than threshhold: is the particle ignored?
@@ -397,19 +397,19 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
     }
 
     //Test front
-    lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {0.1,-0.1,2.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
     }, Side::front , 0.1);
 
     //Test right
-    lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {3.1,1.2,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
     }, Side::right , 0.2);
 
     //Test back
-    lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,3.3,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
     }, Side::back , 0.3);
@@ -417,19 +417,19 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
     //Test left, here we choose the threshhold small enough that no particle fulfills the requirements.
     //Therefore the function should be called 0 times.
     int i = 0;
-    lcc.applyToAllBoundryParticles([&i](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([&i](Particle& p, std::array<double, 3> ghostPosition) {
         i++;
     }, Side::left , 0.05);
     EXPECT_EQ(i, 0);
 
     //Test top
-    lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.6,2.5,3.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
     }, Side::top , 0.4);
 
     //Test bottom
-    lcc.applyToAllBoundryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
+    lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,1.5,-0.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
     }, Side::bottom , 0.4);

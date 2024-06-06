@@ -85,7 +85,7 @@ private:
     void calculateHaloCellIndizes();
 
     /**
-     * @brief Precalculation of all boundry cell indizes.
+     * @brief Precalculation of all boundary cell indizes.
      */
     void calculateBoundaryCellIndizes();
 
@@ -217,7 +217,7 @@ public:
      *        and passed in the lambda function as second input. This information makes the implementation
      *        of reflective boundaries a lot easier.
      */
-    void applyToAllBoundryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary, double threshold);
+    void applyToAllBoundaryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary, double threshold);
 
     /**
      * @brief Get the number of particles stored in this container.

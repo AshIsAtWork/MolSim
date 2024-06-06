@@ -400,7 +400,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
     }
 }
 
-void LinkedCellsContainer::applyToAllBoundryParticles(
+void LinkedCellsContainer::applyToAllBoundaryParticles(
     const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary,
     double threshold) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {

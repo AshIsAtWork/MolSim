@@ -23,7 +23,7 @@ void LinkedCells::processBoundaries() {
             }
             break;
             case BoundaryCondition::reflective: {
-                particles.applyToAllBoundryParticles([this](Particle &p, std::array<double, 3>& ghostPosition) {
+                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3>& ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
                     Particle ghostParticle = p;
                     ghostParticle.setX(ghostPosition);
