@@ -44,7 +44,7 @@ This is the practical project repository for the course offered by the Scientifi
 
 ### Current Project Structure
 
-![UML Project Structure](images/project-Structure.png)
+<div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/project-Structure.png" width="100%" alt=""></div>
 
 ---
 
@@ -139,7 +139,7 @@ The process of building the project is described here:
 
    - **Sprint 1 — Halley's Comet**
      
-     <img src="images/halleys-Comet.png" width="1000">
+     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/halleys-Comet.png" width="1000px" alt=""></div>
        
       ```bash
       ./MolSim -f ../input/assignment-1/eingabe-sonne.txt --force gravity -e 1000 -d 0.014 -i txt -o vtk
@@ -147,23 +147,22 @@ The process of building the project is described here:
 
    - **Sprint 2 — 2D collision of two bodies**
         
-      <img src="images/collision-of-two-bodies.png" width="1000">
+      <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/collision-of-two-bodies.png" width="1000px" alt=""></div>
 
      ```bash
      ./MolSim -f ../input/assignment-2/2D-cuboid-collision.txt -e 5 -d 0.0002 --force ljf -i txt -o vtk
      ```
-       
+     
    - **Sprint 3 — 2D collision of two bodies revisited** 
         
-      <img src="images/collision-of-two-bodies-reflective-boundaries.png" width="1000">
+       <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/collision-of-two-bodies-reflective-boundaries.png" width="1000px" alt=""></div>
     
      ```bash
      ./MolSim -f ../input/assignment-3/2D-cuboid-collision.xml -i xml -o vtk
      ```
    - **Sprint 3 — Disc flying against a reflective boundary**
-        
-      <img src="images/disc-flying-against-reflective-boundary.png" width="1000">    
-    
+     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/disc-flying-against-reflective-boundary.png" width="1000px" alt=""></div>
+
      ```bash
      ./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk 
      ```
@@ -184,7 +183,3 @@ The process of building the project is described here:
        ./MolSimTests
        ```
 
-Using HTML Tags but HTML img
-<div>
-   <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/collision-of-two-bodies-reflective-boundaries.png" width="100px" height="100px" alt="">
-</div>
