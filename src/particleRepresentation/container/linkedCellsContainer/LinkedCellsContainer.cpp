@@ -228,6 +228,11 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
         exit(-1);
     }
 
+    if(rCutOff < std::min({domainSize[0],domainSize[1], domainSize[2]})){
+        spdlog::error("The domain size in each dimension should at least be as large as the cut-off radius!");
+        exit(-1);
+    }
+
     //Determine if we are in 2D or 3D
     twoD = __fpclassify(domainSize[2]) == FP_ZERO;
 
