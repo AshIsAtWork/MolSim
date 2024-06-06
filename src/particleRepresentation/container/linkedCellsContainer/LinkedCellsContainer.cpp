@@ -228,8 +228,8 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
         exit(-1);
     }
 
-    if(rCutOff < std::min({domainSize[0],domainSize[1], domainSize[2]})){
-        spdlog::error("The domain size in each dimension should at least be as large as the cut-off radius!");
+    if(rCutOff <= 0) {
+        spdlog::error("Cut-off radius is invalid! It should be greater than 0!");
         exit(-1);
     }
 
@@ -401,7 +401,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 }
 
 void LinkedCellsContainer::applyToAllBoundaryParticles(
-    const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary,
+    const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary,
     double threshold) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
         for (Particle &p: cells[cell]) {
