@@ -6,8 +6,8 @@ name: Doxygen Documentation to GitHub Pages
 #This is a workflow that will build and deploy the documentation to GitHub Pages
 #It will run on all branches and pull requests
 on:
-  push:
-    branches: [ "**" ]
+#  push:
+#    branches: [ "**" ]
   pull_request:
     branches: [ "**" ]
 
