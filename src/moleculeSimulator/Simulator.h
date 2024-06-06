@@ -6,11 +6,9 @@
 
 #include "fileHandling/FileHandler.h"
 #include "fileHandling/outputWriter/VTKWriter.h"
-#include "forceCalculation/gravity/Gravity.h"
 #include "particleRepresentation/ParticleContainer.h"
-#include "utils/ArrayUtils.h"
-
 #include <iostream>
+#include "forceCalculation/Force.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -20,9 +18,7 @@
  */
 
 class Simulator {
-
 private:
-
     FileHandler fileHandler;
     ParticleContainer particles;
     Force &force;
@@ -33,10 +29,21 @@ private:
     * @brief Helper method to calculate the force of all particles.
     *
     * After each time step the forces acting between the particles have changed due to their new positions, so
-    * they have to be recalculated.
+    * they have to be recalculated. This method uses Newtons third law of motion to simplify calculations and make
+    * them more efficient.
     */
 
     void calculateF();
+
+    /**
+    * @brief Depreciated helper method to calculate the force of all particles.
+    *
+    * After each time step the forces acting between the particles have changed due to their new positions, so
+    * they have to be recalculated. This method iterates naively over all pairs of particles and is only their for
+    * comparing time measurements.
+    */
+
+    void calculateF_naive();
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -52,7 +59,6 @@ private:
     * After each time step the velocity of each particle may have changed due to forces that act between the particles.
     */
     void calculateV();
-
 
 public:
     Simulator() = delete;
@@ -76,7 +82,15 @@ public:
      *
      * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
      * the default parameters will be used.
+     *
+     * @param benchmark Activate or deactivate time measurement
      */
-    void run();
+    void run(bool benchmark);
 
+    /**
+     * Get the Particle container of this simultor
+     *
+     * @return Particle container of this simulator
+     */
+    ParticleContainer& getParticles();
 };

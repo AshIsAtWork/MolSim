@@ -1,0 +1,69 @@
+# References: https://github.com/actions/upload-pages-artifact
+# https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+# https://github.com/actions/deploy-pages
+name: Doxygen Documentation to GitHub Pages
+
+#This is a workflow that will build and deploy the documentation to GitHub Pages
+#It will run on all branches and pull requests
+on:
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+#Allow permissions to read and write to the repository
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Makes sure that only one is running at a time
+# Cancels the run if any higher priority runs are triggered
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Define the jobs that will run in this workflow
+# Uses the ubuntu-latest runner like rest of the workflows
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository so that the workflow can access the code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Setup the pages so that the workflow can deploy the documentation
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      # Install all the dependencies required for the workflow
+      - name: Install Dependencies
+        run: |
+          sudo apt install libxerces-c-dev
+          sudo apt-get install libboost-program-options-dev
+          sudo apt install doxygen
+          sudo apt install graphviz
+
+      # Generate the documentation using Doxygen
+      - name: Change Directory and Build Doxygen Documentation
+        run: |
+          mkdir build
+          cd build
+          cmake .. -D BUILD_DOCS=ON
+          make doc_doxygen
+
+      # Upload all of the documentation to GitHub Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './build/docs/html'
+
+      # Deploy the documentation to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

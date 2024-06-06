@@ -9,11 +9,11 @@ ParticleContainer::ParticleContainer(size_t capacity) {
     particles.reserve(capacity);
 }
 
-void ParticleContainer::add(const Particle& p) {
-    particles.push_back(p);
+void ParticleContainer::add(Particle &p) {
+    particles.push_back(std::move(p));
 }
 
-Particle& ParticleContainer::at(size_t i) {
+Particle &ParticleContainer::at(size_t i) {
     return particles.at(i);
 }
 
@@ -36,6 +36,3 @@ std::vector<Particle>::iterator ParticleContainer::end() {
 void ParticleContainer::reserve(size_t n) {
     particles.reserve(n);
 }
-
-
-
