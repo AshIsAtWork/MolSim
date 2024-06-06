@@ -186,5 +186,5 @@ The process of building the project is described here:
 
 Using HTML Tags but HTML img
 <div>
-   <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/collision-of-two-bodies-reflective-boundaries.png" width="100%" height="100%" alt="">
+   <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3-INT/images/collision-of-two-bodies-reflective-boundaries.png" width="100px" height="100px" alt="">
 </div>
