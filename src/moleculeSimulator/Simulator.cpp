@@ -4,10 +4,11 @@
 
 #include "Simulator.h"
 
+#include <iostream>
+
 using namespace enumsStructs;
 
-Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,
-                     FileHandler::outputFormat outputFormat) {
+Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::outputFormat outputFormat) {
     //Set model independent parameters
     outputFrequency = simulationSettings.outputFrequency;
     outputFileBaseName = simulationSettings.outputFileName;
@@ -32,8 +33,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
             }
             deltaT = simulationSettings.parametersDirectSum.deltaT;
             endT = simulationSettings.parametersDirectSum.endT;
-            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, inputFormat,
-                                                outputFormat);
+            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, outputFormat);
         }
         break;
         case TypeOfModel::linkedCells: {
@@ -57,7 +57,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
             model = std::make_unique<LinkedCells>(*force, simulationSettings.parametersLinkedCells.deltaT,
                                                   simulationSettings.parametersLinkedCells.domainSize,
                                                   simulationSettings.parametersLinkedCells.rCutOff,
-                                                  simulationSettings.parametersLinkedCells.sigma, inputFormat,
+                                                  simulationSettings.parametersLinkedCells.sigma,
                                                   outputFormat,
                                                   simulationSettings.parametersLinkedCells.boundarySettings);
         }
@@ -66,6 +66,24 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
             spdlog::error("Use of invalid model type! Programm will be terminated!");
             exit(-1);
         }
+    }
+
+    //Set thermostat, if it is used
+    useThermostat = simulationSettings.thermostatParameters.useThermostat;
+
+    if(useThermostat) {
+        applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
+        nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
+        initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
+        thermostat = std::make_unique<Thermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
+                                              simulationSettings.thermostatParameters.targetTemperature,
+                                              simulationSettings.thermostatParameters.maxTemperatureChange,
+                                              simulationSettings.thermostatParameters.dimensions);
+    }else {
+        thermostat = nullptr;
+        applyScalingGradually = false;
+        nThermostat = INT32_MAX;
+        initialiseSystemWithBrownianMotion = false;
     }
 
     //Add particles and objects of particles
@@ -89,7 +107,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
 }
 
 Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
-                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat,
+                     FileHandler::outputFormat outputFormat,
                      int outputFrequency, std::string &outputFileBaseName) : deltaT{parameters.deltaT},
                                                                              endT{parameters.endT},
                                                                              outputFrequency{outputFrequency},
@@ -108,13 +126,25 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
             exit(-1);
         }
     }
-    model = std::make_unique<DirectSum>(*force, parameters.deltaT, inputFormat, outputFormat);
-    model->addViaFile(inputFilePath);
+    model = std::make_unique<DirectSum>(*force, parameters.deltaT, outputFormat);
+    model->addViaFile(inputFilePath, FileHandler::inputFormat::txt);
+
+    //Thermostat is not used
+    useThermostat = false;
+    thermostat = nullptr;
+    applyScalingGradually = false;
+    nThermostat = INT32_MAX;
+    initialiseSystemWithBrownianMotion = false;
 }
 
 void Simulator::run(bool benchmark) {
     double current_time = 0;
     int iteration = 0;
+
+    //Set the temperature of the system if specified
+    if (initialiseSystemWithBrownianMotion) {
+        thermostat->initialiseSystem();
+    }
 
     //Plot everything one time before the simulation starts.
     if (!benchmark) {
@@ -126,7 +156,18 @@ void Simulator::run(bool benchmark) {
 
 
     while (current_time < endT) {
+        //Do one simulation step
         model->step();
+
+        //Control temperature if thermostat is specified
+        if(useThermostat && iteration % nThermostat == 0) {
+            if (applyScalingGradually) {
+                thermostat->setTemperatureOfTheSystemViaGradualVelocityScaling();
+            } else {
+                thermostat->setTemperatureOfTheSystemViaVelocityScaling();
+            }
+        }
+
         iteration++;
         if (!benchmark && iteration % outputFrequency == 0) {
             model->plot(iteration, outputFileBaseName);
@@ -140,6 +181,6 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer& Simulator::getParticles() {
+ParticleContainer &Simulator::getParticles() {
     return model->getParticles();
 }

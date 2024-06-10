@@ -96,12 +96,33 @@ namespace enumsStructs {
     };
 
     /**
+     * Struct containing the specifications of the thermostat.
+     */
+
+    struct ThermostatParameters {
+        //If set to false, all other parameters are ignored
+        bool useThermostat;
+        bool initialiseSystemWithBrownianMotion;
+        //If set to false, maxTemperatureChange will be ignored
+        bool applyScalingGradually;
+        double initialTemperature;
+        double targetTemperature;
+        double maxTemperatureChange;
+        int applyAfterHowManySteps;
+        int dimensions;
+    };
+
+
+    /**
      * Struct for storing all simulation parameters.
      */
     struct SimulationSettings {
         //general
         std::string outputFileName;
         int outputFrequency;
+
+        //thermostat
+        ThermostatParameters thermostatParameters;
 
         //model to use in the simulation
         TypeOfModel model;

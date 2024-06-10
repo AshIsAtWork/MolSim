@@ -121,11 +121,13 @@ int main(int argc, char *argsv[]) {
     if(inputFormat == FileHandler::inputFormat::xml) {
         SimulationSettings simulationSettings;
         const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
+        ThermostatParameters thermostatParameters = {true, false, false, 10, 100, 0.01, 1000,2};
+        simulationSettings.thermostatParameters = thermostatParameters;
         if(returnedErrorHandlingInt != 0) {
             spdlog::error("Error while reading the XML file. Please check the file and try again. Exiting...");
             exit(-1);
         }
-        simulator = std::make_unique<Simulator>(simulationSettings, inputFormat, outputFormat);
+        simulator = std::make_unique<Simulator>(simulationSettings, outputFormat);
     }
     //Legacy input over the command line
     else {
@@ -139,7 +141,7 @@ int main(int argc, char *argsv[]) {
             return -1;
         }
         DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
-        simulator = std::make_unique<Simulator>(parameters, inputFilePath, inputFormat, outputFormat, outputFrequency, outputFileName);
+        simulator = std::make_unique<Simulator>(parameters, inputFilePath, outputFormat, outputFrequency, outputFileName);
     }
 
     //Starting simulation with or without time measurement

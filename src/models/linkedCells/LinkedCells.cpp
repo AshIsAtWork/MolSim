@@ -5,13 +5,11 @@
 #include "LinkedCells.h"
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
-                         double rCutOff, double sigma, FileHandler::inputFormat inputFormat,
-                         FileHandler::outputFormat outputFormat,
+                         double rCutOff, double sigma, FileHandler::outputFormat outputFormat,
                          std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &
-                         boundarySettings) : Model(particles, force, deltaT, inputFormat,
-                                                  outputFormat),
-                                            particles(domainSize, rCutOff),
-                                            boundarySettings{boundarySettings} {
+                         boundarySettings) : Model(particles, force, deltaT, outputFormat),
+                                             particles(domainSize, rCutOff),
+                                             boundarySettings{boundarySettings} {
     threshold = pow(2.0, 1.0 / 6.0) * sigma;
 }
 
@@ -23,7 +21,7 @@ void LinkedCells::processBoundaries() {
             }
             break;
             case BoundaryCondition::reflective: {
-                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3>& ghostPosition) {
+                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
                     Particle ghostParticle = p;
                     ghostParticle.setX(ghostPosition);

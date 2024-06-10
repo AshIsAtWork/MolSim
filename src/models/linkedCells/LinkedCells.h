@@ -37,7 +37,6 @@ private:
 
 public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,
-                FileHandler::inputFormat inputFormat,
                 FileHandler::outputFormat outputFormat,
                 std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &boundarySettings);
 

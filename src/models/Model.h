@@ -20,7 +20,6 @@ class Model {
 
 private:
     FileHandler fileHandler;
-    FileHandler::inputFormat inputFormat;
     FileHandler::outputFormat outputFormat;
 
 protected:
@@ -35,11 +34,9 @@ protected:
      * @param particles Particle container of the model. This parameter is instantiated with the appropriated container by the derived models.
      * @param force Force to use in the simulation.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
-     * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
      */
-    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-          FileHandler::outputFormat outputFormat);
+    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::outputFormat outputFormat);
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -114,8 +111,9 @@ public:
      * @brief Add new particles / particle structures to the model via a file
      *
      * @param filepath Path to the file. Example: ../input/eingabe-sonne.txt
+     * @param inputFormat Format of the input file (txt, xml)
      */
-    void addViaFile(std::string &filepath);
+    void addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat);
 
     /**
     * @brief Helper method to calculate the force between all particles.

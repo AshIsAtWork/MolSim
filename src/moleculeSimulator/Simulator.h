@@ -10,6 +10,7 @@
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
 #include <memory>
+#include <moleculeSimulator/thermostat/Thermostat.h>
 #include "forceCalculation/gravity/Gravity.h"
 #include "forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "models/directSum/DirectSum.h"
@@ -24,12 +25,18 @@
 
 class Simulator {
 private:
+    //thermostat
+    std::unique_ptr<Thermostat> thermostat;
+    int nThermostat;
+    bool useThermostat;
+    bool initialiseSystemWithBrownianMotion;
+    bool applyScalingGradually;
+
     //simulation dependent
     std::unique_ptr<Force> force;
     std::unique_ptr<Model> model;
     double deltaT;
     double endT;
-    int nThermostat;
 
     //output
     int outputFrequency;
@@ -39,15 +46,19 @@ public:
     Simulator() = delete;
 
 
-    Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,
-              FileHandler::outputFormat outputFormat);
+    /**
+     * @brief Constructor to contruct a new simulation evironment.
+     *
+     * @param simulationSettings Specify all parameters of the simulation environment.
+     * @param outputFormat Format of the output files.
+     */
+    Simulator(SimulationSettings &simulationSettings, FileHandler::outputFormat outputFormat);
 
     /**
      * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
      *
      * @param parameters Simulation parameters for the direct sum model.
      * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
-     * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
      * @param outputFrequency Specifies after how much time steps an output file is written. For example an output frequency
      *                        of 10 means that after each 10 iterations an output file is written.
@@ -58,7 +69,7 @@ public:
      */
 
     Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
-              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
+              FileHandler::outputFormat outputFormat, int outputFrequency,
               std::string &outputFileBaseName);
 
     /**

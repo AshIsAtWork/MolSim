@@ -5,9 +5,9 @@
 
 #include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
 
-Model::Model(ParticleContainer &particles, Force &force, double deltaT,  FileHandler::inputFormat inputFormat,
-    FileHandler::outputFormat outputFormat) : inputFormat{inputFormat}, outputFormat{outputFormat}, particles{particles}, force{force},
-                                                                          deltaT{deltaT} {
+Model::Model(ParticleContainer &particles, Force &force, double deltaT,
+             FileHandler::outputFormat outputFormat) : outputFormat{outputFormat}, particles{particles}, force{force},
+                                                       deltaT{deltaT} {
 }
 
 void Model::updateForces() const {
@@ -23,36 +23,40 @@ void Model::updateForces() const {
     });
 }
 
-void Model::updatePositions() const{
+void Model::updatePositions() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
         p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
     });
 }
 
-void Model::updateVelocities() const{
+void Model::updateVelocities() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
         p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
     });
 }
 
-void Model::plot(int iteration, std::string& baseName) {
+void Model::plot(int iteration, std::string &baseName) {
     fileHandler.writeToFile(particles, iteration, outputFormat, baseName);
 }
 
 void Model::addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2,
-                      unsigned N3, double h, double mass, const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity) {
-    ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, initVelocity, dimensions, brownianMotionAverageVelocity);
+                      unsigned N3, double h, double mass, const std::array<double, 3> &initVelocity, int dimensions,
+                      double brownianMotionAverageVelocity) {
+    ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, initVelocity, dimensions,
+                                      brownianMotionAverageVelocity);
 }
 
 void Model::addDisc(const std::array<double, 3> &center,
-    const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions, double brownianMotionAverageVelocity) {
-    ParticleGenerator::generateDisc(particles, center,initVelocity, N, h, mass, dimensions, brownianMotionAverageVelocity);
+                    const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
+                    double brownianMotionAverageVelocity) {
+    ParticleGenerator::generateDisc(particles, center, initVelocity, N, h, mass, dimensions,
+                                    brownianMotionAverageVelocity);
 }
 
 void Model::addParticle(Particle &p) {
     particles.add(p);
 }
 
-void Model::addViaFile(std::string &filepath) {
-    FileHandler::readFile(particles,filepath, inputFormat);
+void Model::addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat) {
+    FileHandler::readFile(particles, filepath, inputFormat);
 }

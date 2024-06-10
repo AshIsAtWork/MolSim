@@ -54,7 +54,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
     };
 
     LinkedCells linkedCellModel = {
-        lJF, 0.00005, {3, 3, 3}, 3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundarySettings
+        lJF, 0.00005, {3, 3, 3}, 3, 1, FileHandler::outputFormat::vtk, boundarySettings
     };
     double current_time = 0;
 
@@ -101,7 +101,7 @@ TEST(LinkedCellsTest, Outflow) {
     };
 
     LinkedCells linkedCellModel = {
-        lJF, 0.05, {3, 3, 3}, 3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundarySettings
+        lJF, 0.05, {3, 3, 3}, 3, 1, FileHandler::outputFormat::vtk, boundarySettings
     };
     double current_time = 0;
 

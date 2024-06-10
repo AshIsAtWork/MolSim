@@ -4,8 +4,8 @@
 
 #include "DirectSum.h"
 
-DirectSum::DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-    FileHandler::outputFormat outputFormat) : Model(particles, force, deltaT, inputFormat, outputFormat) {
+DirectSum::DirectSum(Force &force, double deltaT, FileHandler::outputFormat outputFormat) : Model(
+    particles, force, deltaT, outputFormat) {
 }
 
 void DirectSum::step() {

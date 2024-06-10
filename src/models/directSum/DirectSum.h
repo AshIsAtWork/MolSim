@@ -18,8 +18,7 @@ private:
     DefaultParticleContainer particles;
 
 public:
-    DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-              FileHandler::outputFormat outputFormat);
+    DirectSum(Force &force, double deltaT, FileHandler::outputFormat outputFormat);
 
     /**
      * @brief Perform one time step in the direct sum model.
