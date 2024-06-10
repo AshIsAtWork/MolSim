@@ -33,6 +33,10 @@ void Particle::resetForce() {
     f = {0,0,0};
 }
 
+double Particle::calculateEKin() const {
+    return 0.5 * m *  (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+}
+
 Particle::~Particle() { spdlog::trace("Particle destructed"); }
 
 const std::array<double, 3> &Particle::getX() const { return x; }

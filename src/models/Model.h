@@ -15,6 +15,9 @@
  * -Linked Cells
  */
 class Model {
+    //The thermostat needs direct access to the model to meassure and regulate the temperature of the particles.
+    friend class Thermostat;
+
 private:
     FileHandler fileHandler;
     FileHandler::inputFormat inputFormat;
@@ -66,7 +69,7 @@ public:
      * @param iteration Current iteration.
      * @param baseName Base name of the output file.
      */
-    void plot(int iteration, std::string& baseName);
+    void plot(int iteration, std::string &baseName);
 
     /**
      * @brief Add a cuboid structure to this model.

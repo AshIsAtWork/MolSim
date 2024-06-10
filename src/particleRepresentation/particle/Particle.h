@@ -56,7 +56,17 @@ public:
         std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
         int type = 0);
 
+    /**
+     * @brief Set force to oldForce and set force to 0.
+     */
     void resetForce();
+
+    /**
+     * @brief Calculate the current kinetic energy of the particle.
+     *
+     * @return kinetic energy of the particle.
+     */
+    double calculateEKin() const;
 
     virtual ~Particle();
 

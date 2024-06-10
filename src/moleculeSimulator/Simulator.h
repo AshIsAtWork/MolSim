@@ -24,10 +24,14 @@
 
 class Simulator {
 private:
+    //simulation dependent
     std::unique_ptr<Force> force;
     std::unique_ptr<Model> model;
     double deltaT;
     double endT;
+    int nThermostat;
+
+    //output
     int outputFrequency;
     std::string outputFileBaseName;
 
@@ -35,7 +39,8 @@ public:
     Simulator() = delete;
 
 
-    Simulator(SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+    Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,
+              FileHandler::outputFormat outputFormat);
 
     /**
      * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
