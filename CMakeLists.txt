@@ -46,15 +46,32 @@ target_compile_options(MolSim
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
 )
 
+find_package(XercesC REQUIRED)
+target_link_libraries(MolSim
+        PUBLIC
+        message ("Found XercesC: ${XercesC_LIBRARIES}")
+        XercesC::XercesC
+)
+
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
         boost_program_options
-        xerces-c
+        #        TODO: Remove this line
+        #        xerces-c
         spdlog::spdlog
         gtest_main
         gmock_main
 )
+
+#TODO: DELETE NEXT 3 LINES
+if (PROFILING)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+endif ()
+
+
 include(doxygen)
 
 include(spdlog)
