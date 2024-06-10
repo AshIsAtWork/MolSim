@@ -12,3 +12,6 @@ module load boost/1.75.0-gcc11
 
 # Load the xerces-c module
 module load xerces-c/3.2.1
+
+# Lists all the modules
+module list

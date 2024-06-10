@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # define project name, version
-project(PSEMolDyn_GroupA VERSION 0.0.2)
+project(PSEMolDyn_GroupA VERSION 0.0.4)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
@@ -46,25 +46,20 @@ target_compile_options(MolSim
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
 )
 
-find_package(XercesC REQUIRED)
-target_link_libraries(MolSim
-        PUBLIC
-        message ("Found XercesC: ${XercesC_LIBRARIES}")
-        XercesC::XercesC
-)
+find_package(XercesC 3.2.1 REQUIRED)
+find_package(Boost 1.75.0 COMPONENTS program_options REQUIRED)
 
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
-        boost_program_options
-        #        TODO: Remove this line
-        #        xerces-c
+        Boost::program_options
+        XercesC::XercesC
         spdlog::spdlog
         gtest_main
         gmock_main
 )
 
-#TODO: DELETE NEXT 3 LINES
+#TODO: ADD TO REPORT
 if (PROFILING)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
