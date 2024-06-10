@@ -46,8 +46,8 @@ target_compile_options(MolSim
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
 )
 
-find_package(XercesC 3.2.1 REQUIRED)
-find_package(Boost 1.75.0 COMPONENTS program_options REQUIRED)
+find_package(XercesC REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
 
 target_link_libraries(MolSim
         # stuff that is used in headers and source files

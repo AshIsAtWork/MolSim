@@ -16,7 +16,6 @@ RUN /opt/venv/bin/pip install --upgrade pip && \
 # Add the virtual environment's bin directory to the PATH
 ENV PATH="/opt/venv/bin:$PATH"
 
-
 RUN apt install -y graphviz
 RUN apt install -y doxygen
 RUN apt install -y libxerces-c-dev
