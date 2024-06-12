@@ -11,6 +11,8 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
                                              particles(domainSize, rCutOff),
                                              boundarySettings{boundarySettings} {
     threshold = pow(2.0, 1.0 / 6.0) * sigma;
+    gravityOn = true;
+    g = -12.44;
 }
 
 void LinkedCells::processBoundaries() {
@@ -30,6 +32,10 @@ void LinkedCells::processBoundaries() {
                 }, setting.first, threshold);
             }
             break;
+            case BoundaryCondition::periodic: {
+                //Add forces from particles out of adjecent boundary cells from the opposite side.
+                //Update positions
+            }
             case BoundaryCondition::invalid: {
                 spdlog::error("Invalid boundary condition was selected. Terminating program!");
                 exit(-1);
@@ -38,8 +44,19 @@ void LinkedCells::processBoundaries() {
     }
 }
 
+void LinkedCells::applyGravity() {
+    particles.applyToEachParticleInDomain([this](Particle &p) {
+        auto force = p.getF();
+        force[1] += p.getM() * g;
+        p.setF(force);
+    });
+}
+
 void LinkedCells::step() {
     updateForces();
+    if(gravityOn) {
+        applyGravity();
+    }
     processBoundaries();
     updateVelocities();
     updatePositions();

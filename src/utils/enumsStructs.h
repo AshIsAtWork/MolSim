@@ -32,7 +32,16 @@ namespace enumsStructs {
      * Enum to distinguish between different boundary conditions for each side.
      */
     enum class BoundaryCondition {
-        outflow, reflective, invalid
+        outflow, reflective, periodic, invalid
+    };
+
+    /**
+     * Struct for specifying the leonard jones parameters for a type.
+     */
+
+    struct LJParameters {
+        double sigma;
+        double epsilon;
     };
 
     /**

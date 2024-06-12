@@ -11,7 +11,7 @@
 
 class ThermostatTest : public testing::Test {
 protected:
-    LeonardJonesForce lJF{5, 1};
+    LeonardJonesForce lJF;
     DirectSum dS = {lJF, 0.1, FileHandler::outputFormat::vtk};
 
     void SetUp() override {

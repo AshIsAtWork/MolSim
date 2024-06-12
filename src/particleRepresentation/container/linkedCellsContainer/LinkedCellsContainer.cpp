@@ -352,6 +352,29 @@ size_t LinkedCellsContainer::size() {
     return currentSize;
 }
 
+std::array<double,3> LinkedCellsContainer::fromLowToHigh(std::array<double, 3>& position, int dimension) {
+    if(1 <= dimension && dimension <=3 ) {
+        auto newPosition = position;
+        newPosition[dimension - 1] += domainSize[dimension - 1];
+        return newPosition;
+    }
+    else {
+        throw std::invalid_argument("The dimension should be 1, 2 or 3");
+    }
+}
+
+std::array<double,3> LinkedCellsContainer::fromHighToLow(std::array<double, 3> &position, int dimension) {
+    if(1 <= dimension && dimension <=3 ) {
+        auto newPosition = position;
+        newPosition[dimension - 1] -= domainSize[dimension - 1];
+        return newPosition;
+    }
+    else {
+        throw std::invalid_argument("The dimension should be 1, 2 or 3");
+    }
+}
+
+
 void LinkedCellsContainer::clearHaloCells(Side side) {
     for (auto cell: haloCells[static_cast<int>(side)]) {
         currentSize -= cells[cell].size();

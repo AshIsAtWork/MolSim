@@ -45,6 +45,17 @@ private:
      */
     int type;
 
+    /**
+     * Lennard-Jones-Parameter epsilon
+     */
+    double epsilon;
+
+    /**
+     * Lennard-Jones-Parameter sigma
+     */
+
+    double sigma;
+
 public:
     explicit Particle(int type = 0);
 
@@ -53,8 +64,7 @@ public:
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
-        int type = 0);
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type = 0, double epsilon_arg = 5, double sigma_arg = 1);
 
     /**
      * @brief Set force to oldForce and set force to 0.
@@ -81,6 +91,10 @@ public:
     [[nodiscard]] double getM() const;
 
     [[nodiscard]] int getType() const;
+
+    [[nodiscard]] double getEpsilon() const;
+
+    [[nodiscard]] double getSigma() const;
 
     void setOldF(const std::array<double, 3> &oldF);
 

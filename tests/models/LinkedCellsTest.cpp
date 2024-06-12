@@ -38,7 +38,7 @@ bool noExplosion(Particle &p) {
  */
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
-    LeonardJonesForce lJF(5, 1);
+    LeonardJonesForce lJF;
     std::pair<Side, enumsStructs::BoundaryCondition> front = {Side::front, enumsStructs::BoundaryCondition::reflective};
     std::pair<Side, enumsStructs::BoundaryCondition> right = {Side::right, enumsStructs::BoundaryCondition::reflective};
     std::pair<Side, enumsStructs::BoundaryCondition> back = {Side::back, enumsStructs::BoundaryCondition::reflective};
@@ -87,7 +87,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
  */
 
 TEST(LinkedCellsTest, Outflow) {
-    LeonardJonesForce lJF(5, 1);
+    LeonardJonesForce lJF;
     std::pair<Side, enumsStructs::BoundaryCondition> front = {Side::front, enumsStructs::BoundaryCondition::outflow};
     std::pair<Side, enumsStructs::BoundaryCondition> right = {Side::right, enumsStructs::BoundaryCondition::outflow};
     std::pair<Side, enumsStructs::BoundaryCondition> back = {Side::back, enumsStructs::BoundaryCondition::outflow};

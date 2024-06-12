@@ -30,10 +30,16 @@ private:
      */
     double threshold;
 
+    double g;
+
+    bool gravityOn;
+
     /**
      * @brief Helper method that handles the boundary conditions
      */
     void processBoundaries();
+
+    void applyGravity();
 
 public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,

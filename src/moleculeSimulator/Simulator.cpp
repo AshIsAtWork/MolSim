@@ -22,8 +22,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                 }
                 break;
                 case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersDirectSum.epsilon,
-                                                                simulationSettings.parametersDirectSum.sigma);
+                    force = std::make_unique<LeonardJonesForce>();
                 }
                 break;
                 default: {
@@ -43,8 +42,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                 }
                 break;
                 case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersLinkedCells.epsilon,
-                                                                simulationSettings.parametersLinkedCells.sigma);
+                    force = std::make_unique<LeonardJonesForce>();
                 }
                 break;
                 default: {
@@ -118,7 +116,7 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
         }
         break;
         case TypeOfForce::leonardJonesForce: {
-            force = std::make_unique<LeonardJonesForce>(parameters.epsilon, parameters.sigma);
+            force = std::make_unique<LeonardJonesForce>();
         }
         break;
         default: {

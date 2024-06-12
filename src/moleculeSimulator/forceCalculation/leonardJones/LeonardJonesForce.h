@@ -6,19 +6,10 @@
 #include "../Force.h"
 
 class LeonardJonesForce : public Force {
-private:
-
-    const double epsilon;
-    const double sigma;
 
 public:
-    /**
-     * @brief Initialize leonardJonesForce calculation with required constants.
-     *
-     * @param epsilon Constant epsilon.
-     * @param sigma Constant sigma.
-     */
-    LeonardJonesForce(double epsilon, double sigma);
+
+    LeonardJonesForce();
 
     /**
     * @brief Actual computation of the Leonard-Jones force occurring.

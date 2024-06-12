@@ -230,6 +230,10 @@ public:
      * Getter and setters. Especially the setters should only by used for testing purposes.
      */
 
+    std::array<double,3> fromLowToHigh(std::array<double,3>& position, int dimension);
+
+    std::array<double,3> fromHighToLow(std::array<double,3>& position, int dimension);
+
     std::vector<std::vector<Particle>>& getCells(){
         return cells;
     }
