@@ -79,6 +79,7 @@ rm -f cluster_start.cmd
 
 # Write the content to the cluster_start.cmd file
 cat <<EOL > cluster_start.cmd
+#!/bin/bash
 #SBATCH -J MolSimGroupA
 #SBATCH -o ./%x.%j.%N.out
 #SBATCH -D build/
