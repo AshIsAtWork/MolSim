@@ -91,6 +91,8 @@ cat <<EOL > cluster_start.cmd
 #SBATCH --cpus-per-task=$5
 #SBATCH --export=NONE
 #SBATCH --time=$6
+
+./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk
 EOL
 
 echo "cluster_start.cmd has been created with the provided parameters. To submit the job, run the following command:"
