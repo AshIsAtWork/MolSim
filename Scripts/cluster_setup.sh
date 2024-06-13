@@ -62,7 +62,7 @@ module list
 
 
 #Set up the build directory
-cd .. && mkdir build
+cd .. && rm -rf build/ && mkdir build/
 
 # Print the parameters
 echo "Made Cluster_start.cmd file with the following parameters:"
