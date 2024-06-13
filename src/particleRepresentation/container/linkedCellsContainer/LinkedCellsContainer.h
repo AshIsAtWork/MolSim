@@ -9,6 +9,7 @@
 #include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 #include "utils/enumsStructs.h"
+#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
 
 using namespace enumsStructs;
 
@@ -75,6 +76,12 @@ private:
 
     outputWriter::VTKWriter vtk_writer;
 
+    LeonardJonesForce lJF;
+
+    BoundarySet boundarieSet;
+
+
+
     /**
      * Helper methods for index calculation and boundary conditions.
      */
@@ -114,6 +121,16 @@ private:
      * @return Position of the ghost particle.
      */
     std::array<double, 3> calcGhostParticle(Particle& p, Side side);
+
+    void teleportParticlesToOppositeSideHelper(Side sideStart, int dimension, int modus);
+
+    void applyForceToOppositeCellsHelper(Side side, std::array<int,3> cellToProcess);
+
+    void applyForceToOppositeEgdeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell,std::array<double,3> offsetPosition ,int dim);
+
+    bool isCellInDomain(std::array<int,3> cell) const;
+
+    void applyForcesBetweenTwoCells(int cellTarget, int cellSource, std::array<double, 3> offsetSource);
 
 public:
     /**
@@ -230,9 +247,13 @@ public:
      * Getter and setters. Especially the setters should only by used for testing purposes.
      */
 
-    std::array<double,3> fromLowToHigh(std::array<double,3>& position, int dimension);
+    std::array<double,3> fromLowToHigh(const std::array<double,3>& position, int dimension);
 
-    std::array<double,3> fromHighToLow(std::array<double,3>& position, int dimension);
+    std::array<double,3> fromHighToLow(const std::array<double,3>& position, int dimension);
+
+    void teleportParticlesToOppositeSide(Side sideStart);
+
+    void applyForcesFromOppositeSide(Side side);
 
     std::vector<std::vector<Particle>>& getCells(){
         return cells;

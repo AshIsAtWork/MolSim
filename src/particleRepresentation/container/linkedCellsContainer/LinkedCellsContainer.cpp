@@ -41,9 +41,9 @@ void LinkedCellsContainer::calculateHaloCellIndizes() {
 void LinkedCellsContainer::calculateBoundaryCellIndizes() {
     //constants to handle 2D edge case
     int Z1 = !twoD;
-    int Z2 = twoD ? 0 : nZ - 2;
+    int Z2 = twoD ? 1 : nZ - 1;
 
-    for (int z = Z1; z <= Z2; z++) {
+    for (int z = Z1; z < Z2; z++) {
         //boundary front
         for (int x = 1; x < nX - 1; x++) {
             boundaries[0].push_back(threeDToOneD(x, 1, z));
@@ -220,6 +220,188 @@ std::array<double, 3> LinkedCellsContainer::calcGhostParticle(Particle &p, Side 
     return position;
 }
 
+void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart, int dimension, int modus) {
+    for (auto cell: haloCells[static_cast<int>(sideStart)]) {
+        for (auto& p : cells[cell]) {
+            //Update position
+            if (modus == 0) {
+                p.setX(fromLowToHigh(p.getX(), dimension));
+            } else {
+                p.setX(fromHighToLow(p.getX(), dimension));
+            }
+
+            //Update cell
+            cells[calcCellIndex(p.getX())].push_back(p);
+        }
+        //Clear halo cell
+        cells[cell].clear();
+    }
+}
+
+void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array<int, 3> cellToProcess) {
+    std::array<int, 3> origin = cellToProcess;
+    switch (side) {
+        case Side::front: {
+            //Go to cell of opposite boundary back
+            origin[0] -= 1;
+            origin[1] = nY - 2;
+            origin[2] -= 1;
+
+            for (int x = 0; x < 2; x++) {
+                for (int z = 0; z < 2; z++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {0, -domainSize[1], 0});
+                    }
+                    origin[2]++;
+                }
+                origin[0]++;
+            }
+        }
+        break;
+        case Side::right: {
+            //Go to cell of opposite boundary left
+            origin[0] = 1;
+            origin[1] -= 1;
+            origin[2] -= 1;
+
+            for (int y = 0; y < 2; y++) {
+                for (int z = 0; z < 2; z++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {domainSize[0], 0, 0});
+                    }
+                    origin[2]++;
+                }
+                origin[1]++;
+            }
+        }
+        break;
+        case Side::back: {
+            //Go to cell of opposite boundary front
+            origin[0] -= 1;
+            origin[1] = 1;
+            origin[2] -= 1;
+
+            for (int x = 0; x < 2; x++) {
+                for (int z = 0; z < 2; z++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {0, domainSize[1], 0});
+                    }
+                    origin[2]++;
+                }
+                origin[0]++;
+            }
+        }
+        break;
+        case Side::left: {
+            //Go to cell of opposite boundary right
+            origin[0] = nX - 2;
+            origin[1] -= 1;
+            origin[2] -= 1;
+
+            for (int y = 0; y < 2; y++) {
+                for (int z = 0; z < 2; z++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {-domainSize[0], 0, 0});
+                    }
+                    origin[2]++;
+                }
+                origin[1]++;
+            }
+        }
+        break;
+        case Side::top: {
+            //Go to cell of opposite boundary bottom
+            origin[0] -= 1;
+            origin[1] -= 1;
+            origin[2] = 1;
+
+            for (int x = 0; x < 2; x++) {
+                for (int y = 0; y < 2; y++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {0, 0, domainSize[2]});
+                    }
+                    origin[1]++;
+                }
+                origin[0]++;
+            }
+        }
+        break;
+        case Side::bottom: {
+            //Go to cell of opposite boundary top
+            origin[0] -= 1;
+            origin[1] -= 1;
+            origin[2] = nZ - 2;
+
+            for (int x = 0; x < 2; x++) {
+                for (int y = 0; y < 2; y++) {
+                    if (isCellInDomain(origin)) {
+                        applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                                   threeDToOneD(origin[0], origin[1], origin[2]),
+                                                   {0, 0, -domainSize[2]});
+                    }
+                    origin[1]++;
+                }
+                origin[0]++;
+            }
+        }
+        break;
+    }
+}
+
+void LinkedCellsContainer::applyForceToOppositeEgdeHelper(std::array<int, 3> cellToProcess,
+                                                          std::array<int, 3> offsetCell,
+                                                          std::array<double, 3> offsetPosition, int dim) {
+    auto origin = cellToProcess + offsetCell;
+    origin[dim] -=1;
+    for(int d = 0; d <= 2; d++) {
+        if(isCellInDomain(origin)) {
+            applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
+                                   threeDToOneD(origin[0], origin[1], origin[2]), offsetPosition);
+        }
+        origin[dim]++;
+    }
+}
+
+bool LinkedCellsContainer::isCellInDomain(std::array<int, 3> cell) const {
+    //constants to handle 2D edge case
+    int Z1 = !twoD;
+    int Z2 = twoD ? 0 : nZ - 2;
+
+    if (1 <= cell[0] and cell[0] <= nX - 2) {
+        if (1 <= cell[1] and cell[1] <= nY - 2) {
+            if (Z1 <= cell[2] and cell[2] <= Z2) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSource,
+                                                      std::array<double, 3> offsetSource) {
+    for (auto &target: cells[cellTarget]) {
+        for (auto &source: cells[cellSource]) {
+            //Offset particle
+            source.setX(source.getX() + offsetSource);
+            if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
+                target.setF(target.getF() + lJF.compute(target, source));
+            }
+            //Reset offset
+            source.setX(source.getX() - offsetSource);
+        }
+    }
+}
+
 LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : currentSize{0},
     rCutOff{rCutOff},
     domainSize{domainSize} {
@@ -228,7 +410,7 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
         exit(-1);
     }
 
-    if(rCutOff <= 0) {
+    if (rCutOff <= 0) {
         spdlog::error("Cut-off radius is invalid! It should be greater than 0!");
         exit(-1);
     }
@@ -352,28 +534,236 @@ size_t LinkedCellsContainer::size() {
     return currentSize;
 }
 
-std::array<double,3> LinkedCellsContainer::fromLowToHigh(std::array<double, 3>& position, int dimension) {
-    if(1 <= dimension && dimension <=3 ) {
+std::array<double, 3> LinkedCellsContainer::fromLowToHigh(const std::array<double, 3> &position, int dimension) {
+    if (1 <= dimension && dimension <= 3) {
         auto newPosition = position;
         newPosition[dimension - 1] += domainSize[dimension - 1];
         return newPosition;
-    }
-    else {
+    } else {
         throw std::invalid_argument("The dimension should be 1, 2 or 3");
     }
 }
 
-std::array<double,3> LinkedCellsContainer::fromHighToLow(std::array<double, 3> &position, int dimension) {
-    if(1 <= dimension && dimension <=3 ) {
+std::array<double, 3> LinkedCellsContainer::fromHighToLow(const std::array<double, 3> &position, int dimension) {
+    if (1 <= dimension && dimension <= 3) {
         auto newPosition = position;
         newPosition[dimension - 1] -= domainSize[dimension - 1];
         return newPosition;
-    }
-    else {
+    } else {
         throw std::invalid_argument("The dimension should be 1, 2 or 3");
     }
 }
 
+void LinkedCellsContainer::teleportParticlesToOppositeSide(Side sideStart) {
+    switch (sideStart) {
+        case Side::front: {
+            teleportParticlesToOppositeSideHelper(sideStart, 2, 0);
+        }
+        case Side::right: {
+            teleportParticlesToOppositeSideHelper(sideStart, 1, 1);
+        }
+        case Side::back: {
+            teleportParticlesToOppositeSideHelper(sideStart, 2, 1);
+        }
+        case Side::left: {
+            teleportParticlesToOppositeSideHelper(sideStart, 1, 0);
+        }
+        case Side::top: {
+            if(!twoD) {
+                teleportParticlesToOppositeSideHelper(sideStart, 3, 1);
+            }
+
+        }
+        case Side::bottom: {
+            if(!twoD) {
+                teleportParticlesToOppositeSideHelper(sideStart, 3, 0);
+            }
+        }
+    }
+}
+
+void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
+    int Z1 = !twoD;
+    int Z2 = twoD ? 1 : nZ - 1;
+    int NZ = twoD ? 2 : nZ;
+    switch (side) {
+        case Side::front: {
+            //Calculate forces from opposite side without edges and corners
+            for (int z = Z1; z < Z2; z++) {
+                for (int x = 1; x < nX - 1; x++) {
+                    applyForceToOppositeCellsHelper(side, {x, 1, z});
+                }
+            }
+
+
+            //Calculate forces of edges (only relevant for 3D)
+            if(!twoD) {
+                if (boundarieSet.bottom == BoundaryCondition::periodic) {
+                    for (int x = 1; x < nX - 1; x++) {
+                        applyForceToOppositeEgdeHelper({x, 1, 1},{0,nY - 3,nZ - 3},{0, -domainSize[1], -domainSize[2]},0);
+                    }
+                }
+
+                if (boundarieSet.right == BoundaryCondition::periodic) {
+                    for (int z = 1; z < nZ - 1; z++) {
+                        applyForceToOppositeEgdeHelper({nX - 2, 1, z},{-(nX - 3),nY - 3,0},{domainSize[0], -domainSize[1], 0},2);
+                    }
+                }
+
+                if (boundarieSet.top == BoundaryCondition::periodic) {
+                    for (int x = 1; x < nX - 1; x++) {
+                        applyForceToOppositeEgdeHelper({x, 1, nZ - 2},{0,nY - 3,-(nZ - 3)},{0, -domainSize[1], domainSize[2]},0);
+                    }
+                }
+
+                if (boundarieSet.left == BoundaryCondition::periodic) {
+                    for (int z = 1; z < nZ - 1; z++) {
+                        applyForceToOppositeEgdeHelper({1, 1, z},{nX - 3,nY - 3,0},{-domainSize[0], -domainSize[1], 0},2);
+                    }
+                }
+            }
+            //Calculate forces of corners
+            if(boundarieSet.left == BoundaryCondition::periodic and boundarieSet.bottom == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1,1,Z1), threeDToOneD(nX - 2, nY - 2, NZ - 2), {-domainSize[0], -domainSize[1], -domainSize[2]});
+            }
+
+            if(boundarieSet.right == BoundaryCondition::periodic and boundarieSet.bottom == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 1,1,Z1), threeDToOneD(1, nY - 2, NZ - 2), {domainSize[0], -domainSize[1], -domainSize[2]});
+            }
+            if(!twoD) {
+                if(boundarieSet.left == BoundaryCondition::periodic and boundarieSet.top == BoundaryCondition::periodic) {
+                    applyForcesBetweenTwoCells(threeDToOneD(1,1,nZ - 2), threeDToOneD(nX - 2, nY - 2, 1), {-domainSize[0], -domainSize[1], domainSize[2]});
+                }
+                if(boundarieSet.right == BoundaryCondition::periodic and boundarieSet.top == BoundaryCondition::periodic) {
+                    applyForcesBetweenTwoCells(threeDToOneD(nX - 1,1,nZ - 2), threeDToOneD(1, nY - 2, 1), {domainSize[0], -domainSize[1], domainSize[2]});
+                }
+            }
+        }
+        break;
+        case Side::right: {
+            //Calculate forces from opposite side without edges and corners
+            for (int z = Z1; z < Z2; z++) {
+                for (int y = 1; y < nY - 1; y++) {
+                    applyForceToOppositeCellsHelper(side, {nX - 2, y, z});
+                }
+            }
+
+            //Calculate forces of edges
+            if(!twoD) {
+                if(boundarieSet.top == BoundaryCondition::periodic) {
+                    for (int y = 1; y < nY - 1; y++) {
+                        applyForceToOppositeEgdeHelper({nX - 2, y, nZ - 2},{-(nX - 3),0,-(nZ - 3)},{domainSize[0], 0, domainSize[2]},1);
+                    }
+                }
+                if(boundarieSet.bottom == BoundaryCondition::periodic) {
+                    for (int y = 1; y < nY - 1; y++) {
+                        applyForceToOppositeEgdeHelper({nX - 2, y, 1},{-(nX - 3),0,nZ - 3},{domainSize[0], 0, -domainSize[2]},1);
+                    }
+                }
+                if(boundarieSet.back == BoundaryCondition::periodic) {
+                    for (int z = 1; z < nZ - 1; z++) {
+                        applyForceToOppositeEgdeHelper({nX - 2, nY - 2, 1},{-(nX - 3),-(nY - 3),0},{domainSize[0], domainSize[1], 0},2);
+                    }
+                }
+            }
+
+            //Calculate forces of corner
+            if(boundarieSet.bottom == BoundaryCondition::periodic and boundarieSet.back == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 2,nY - 2,Z1), threeDToOneD(1, 1, NZ - 2), {domainSize[0], domainSize[1], -domainSize[2]});
+            }
+            if(!twoD and boundarieSet.top == BoundaryCondition::periodic and boundarieSet.back == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 2,nY - 2,nZ - 2), threeDToOneD(1, 1, 1), {domainSize[0], domainSize[1], domainSize[2]});
+            }
+        }
+        break;
+        case Side::back: {
+            for (int z = Z1; z < Z2; z++) {
+                for (int x = 1; x < nY - 1; x++) {
+                    applyForceToOppositeCellsHelper(side, {x, nY - 2, z});
+                }
+            }
+
+            //Calculate forces of edges
+
+            if(!twoD) {
+                if(boundarieSet.top == BoundaryCondition::periodic) {
+                    for (int x = 1; x < nX - 1; x++) {
+                        applyForceToOppositeEgdeHelper({x, nY - 2, nZ - 2},{0,-(nY - 3),-(nZ - 3)},{0, domainSize[1], domainSize[2]},0);
+                    }
+                }
+                if(boundarieSet.bottom == BoundaryCondition::periodic) {
+                    for (int x = 1; x < nX - 1; x++) {
+                        applyForceToOppositeEgdeHelper({x, nY - 2, 1},{0,-(nY - 3), nZ - 3},{0, domainSize[1], -domainSize[2]},0);
+                    }
+                }
+                if(boundarieSet.left == BoundaryCondition::periodic) {
+                    for (int z = 1; z < nZ - 1; z++) {
+                        applyForceToOppositeEgdeHelper({1, nY - 2, z},{nX - 3,-(nY - 3),0},{-domainSize[0], domainSize[1], 0},2);
+                    }
+                }
+            }
+
+            //Calculate forces of corner
+            if(boundarieSet.bottom == BoundaryCondition::periodic && boundarieSet.left == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1,nY - 2, Z1), threeDToOneD(nX - 2, 1, NZ - 2), {-domainSize[0], domainSize[1], -domainSize[2]});
+            }
+            if(!twoD and boundarieSet.top == BoundaryCondition::periodic && boundarieSet.left == BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1,nY - 2, nZ - 2), threeDToOneD(nX - 2, 1, 1), {-domainSize[0], domainSize[1], domainSize[2]});
+            }
+        }
+        break;
+        case Side::left: {
+            for (int z = Z1; z < Z2; z++) {
+                for (int y = 1; y < nY - 1; y++) {
+                    applyForceToOppositeCellsHelper(side, {1, y, z});
+                }
+            }
+
+            //Calculate forces of edges
+
+            if(!twoD) {
+                if(boundarieSet.top == BoundaryCondition::periodic) {
+                    for (int y = 1; y < nY - 1; y++) {
+                        applyForceToOppositeEgdeHelper({1, y, nZ - 2},{nX - 3,0,-(nZ - 3)},{-domainSize[0], 0, domainSize[2]},1);
+                    }
+                }
+                if(boundarieSet.bottom == BoundaryCondition::periodic) {
+                    for (int y = 1; y < nY - 1; y++) {
+                        applyForceToOppositeEgdeHelper({1, y, 1},{nX - 3,0, nZ - 3},{-domainSize[0], 0, -domainSize[2]},1);
+                    }
+                }
+            }
+
+            //All corners are already covered
+        }
+        break;
+        case Side::top: {
+            //Calculate forces from opposite side without edges and corners
+            for (int x = 1; x < nX - 1; x++) {
+                for (int y = 1; y < nY - 1; y++) {
+                    applyForceToOppositeCellsHelper(side, {x, y, nZ - 2});
+                }
+            }
+
+            //All edges are already covered
+
+            //All corners are already covered
+        }
+        break;
+        case Side::bottom: {
+            //Calculate forces from opposite side without edges and corners
+            for (int x = 1; x < nX - 1; x++) {
+                for (int y = 1; y < nY - 1; y++) {
+                    applyForceToOppositeCellsHelper(side, {x, y, 1});
+                }
+            }
+
+            //All edges are already covered
+
+            //All corners are already covered
+        }
+    }
+}
 
 void LinkedCellsContainer::clearHaloCells(Side side) {
     for (auto cell: haloCells[static_cast<int>(side)]) {

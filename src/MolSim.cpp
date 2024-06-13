@@ -121,7 +121,10 @@ int main(int argc, char *argsv[]) {
     if(inputFormat == FileHandler::inputFormat::xml) {
         SimulationSettings simulationSettings;
         const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
-        ThermostatParameters thermostatParameters = {true, false, false, 10, 100, 0.01, 1000,2};
+        for(auto &bc : simulationSettings.parametersLinkedCells.boundarySettings) {
+            bc.second = enumsStructs::BoundaryCondition::periodic;
+        }
+        ThermostatParameters thermostatParameters = {false, false, false, 10, 100, 0.01, 1000,2};
         simulationSettings.thermostatParameters = thermostatParameters;
         if(returnedErrorHandlingInt != 0) {
             spdlog::error("Error while reading the XML file. Please check the file and try again. Exiting...");

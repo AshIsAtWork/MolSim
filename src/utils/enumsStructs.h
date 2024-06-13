@@ -35,6 +35,15 @@ namespace enumsStructs {
         outflow, reflective, periodic, invalid
     };
 
+    struct BoundarySet {
+        BoundaryCondition front = BoundaryCondition::invalid;
+        BoundaryCondition right = BoundaryCondition::invalid;
+        BoundaryCondition back = BoundaryCondition::invalid;
+        BoundaryCondition left = BoundaryCondition::invalid;
+        BoundaryCondition top = BoundaryCondition::invalid;
+        BoundaryCondition bottom = BoundaryCondition::invalid;
+    };
+
     /**
      * Struct for specifying the leonard jones parameters for a type.
      */
@@ -224,7 +233,8 @@ namespace enumsStructs {
     inline BoundaryCondition setBoundaryCondition(const std::string &selectedBoundaryCondition) {
         static const std::unordered_map<std::string, BoundaryCondition> formatMap = {
                 {"Reflective", BoundaryCondition::reflective},
-                {"Outflow",    BoundaryCondition::outflow}
+                {"Outflow",    BoundaryCondition::outflow},
+                {"Periodic", BoundaryCondition::periodic}
         };
         auto it = formatMap.find(selectedBoundaryCondition);
         return (it != formatMap.end()) ? it->second : BoundaryCondition::invalid;
@@ -240,7 +250,8 @@ namespace enumsStructs {
     inline std::string getBoundaryCondition(BoundaryCondition &boundaryCondition) {
         static const std::unordered_map<BoundaryCondition, std::string> formatMap = {
                 {BoundaryCondition::reflective, "Reflective"},
-                {BoundaryCondition::outflow,    "Outflow"}
+                {BoundaryCondition::outflow,    "Outflow"},
+                {BoundaryCondition::periodic, "Periodic"}
         };
         auto it = formatMap.find(boundaryCondition);
         return (it != formatMap.end()) ? it->second : "Invalid";
