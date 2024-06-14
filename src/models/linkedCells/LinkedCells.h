@@ -39,6 +39,10 @@ private:
      */
     void processBoundaries();
 
+    void processBoundaryForces();
+
+    void processHaloCells();
+
     void applyGravity();
 
 public:

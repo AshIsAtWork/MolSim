@@ -221,21 +221,41 @@ std::array<double, 3> LinkedCellsContainer::calcGhostParticle(Particle &p, Side 
 }
 
 void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart, int dimension, int modus) {
-    for (auto cell: haloCells[static_cast<int>(sideStart)]) {
-        for (auto& p : cells[cell]) {
+    for (auto &cell: haloCells[static_cast<int>(sideStart)]) {
+        for (auto p = cells[cell].begin(); p != cells[cell].end();) {
             //Update position
             if (modus == 0) {
-                p.setX(fromLowToHigh(p.getX(), dimension));
+                p->setX(fromLowToHigh(p->getX(), dimension));
             } else {
-                p.setX(fromHighToLow(p.getX(), dimension));
+                p->setX(fromHighToLow(p->getX(), dimension));
             }
-
-            //Update cell
-            cells[calcCellIndex(p.getX())].push_back(p);
+            //Update cell if particle is back in domain
+            if (isParticleInDomain(p->getX())) {
+                cells[calcCellIndex(p->getX())].push_back(*p);
+                p = cells[cell].erase(p);
+            } else {
+                ++p;
+            }
         }
-        //Clear halo cell
-        cells[cell].clear();
     }
+    // for (auto cell: haloCells[static_cast<int>(sideStart)]) {
+    //     for (auto& p : cells[cell]) {
+    //         //Update position
+    //         if (modus == 0) {
+    //             p.setX(fromLowToHigh(p.getX(), dimension));
+    //         } else {
+    //             p.setX(fromHighToLow(p.getX(), dimension));
+    //         }
+    //
+    //         //Update cell if particle is back in domain
+    //         if(isParticleInDomain(p.getX())) {
+    //             cells[calcCellIndex(p.getX())].push_back(p);
+    //         }
+    //
+    //     }
+    //     //Clear halo cell
+    //     cells[cell].clear();
+    // }
 }
 
 void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array<int, 3> cellToProcess) {
@@ -385,6 +405,12 @@ bool LinkedCellsContainer::isCellInDomain(std::array<int, 3> cell) const {
         }
     }
     return false;
+}
+
+bool LinkedCellsContainer::isParticleInDomain(const std::array<double, 3>& position) const {
+    return 0 <= position[0] and position[0] < domainSize[0]
+    and    0 <= position[1] and position[1] < domainSize[1]
+    and    (twoD or (0 <= position[2] and  position[2] < domainSize[2]));
 }
 
 void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSource,

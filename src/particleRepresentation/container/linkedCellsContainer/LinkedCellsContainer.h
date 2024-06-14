@@ -128,9 +128,12 @@ private:
 
     void applyForceToOppositeEgdeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell,std::array<double,3> offsetPosition ,int dim);
 
-    bool isCellInDomain(std::array<int,3> cell) const;
+    [[nodiscard]] bool isCellInDomain(std::array<int,3> cell) const;
+
+    [[nodiscard]] bool isParticleInDomain(const std::array<double, 3>& position) const;
 
     void applyForcesBetweenTwoCells(int cellTarget, int cellSource, std::array<double, 3> offsetSource);
+
 
 public:
     /**

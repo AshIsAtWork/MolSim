@@ -47,6 +47,58 @@ void LinkedCells::processBoundaries() {
     }
 }
 
+void LinkedCells::processBoundaryForces() {
+    //Periodic and reflective boundaries apply forces on the particles
+    for (auto setting: boundarySettings) {
+        switch (setting.second) {
+            case BoundaryCondition::outflow: //Outflow boundaries do not apply forces
+            break;
+            case BoundaryCondition::reflective: {
+                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
+                    //Add force from an imaginary ghost particle to particle p
+                    Particle ghostParticle = p;
+                    ghostParticle.setX(ghostPosition);
+                    std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
+                    p.setF(p.getF() + ghostForce);
+                }, setting.first, threshold);
+            }break;
+            case BoundaryCondition::periodic: {
+                //Add forces from particles of adjacent boundary cells from the opposite side.
+                particles.applyForcesFromOppositeSide(setting.first);
+            }break;
+            case BoundaryCondition::invalid: {
+                spdlog::error("Invalid boundary condition was selected. Terminating program!");
+                exit(-1);
+            };
+        }
+    }
+}
+
+void LinkedCells::processHaloCells() {
+
+    for (auto setting: boundarySettings) {
+        switch (setting.second) {
+            case BoundaryCondition::outflow: {
+                //Delete particles from outflow halo cells.
+                particles.clearHaloCells(setting.first);
+            }
+
+            case BoundaryCondition::reflective:
+            case BoundaryCondition::periodic: {
+                //For reflective boundaries and  periodic, particles will be teleported to the other side.
+                //(We include here reflective boundaries to handle edges and corners corretly, when both conditions are mixed)
+                particles.teleportParticlesToOppositeSide(setting.first);
+            }break;
+            case BoundaryCondition::invalid: {
+                spdlog::error("Invalid boundary condition was selected. Terminating program!");
+                exit(-1);
+            };
+        }
+    }
+
+
+}
+
 void LinkedCells::applyGravity() {
     particles.applyToEachParticleInDomain([this](Particle &p) {
         auto force = p.getF();
@@ -60,8 +112,9 @@ void LinkedCells::step() {
     if(gravityOn) {
         applyGravity();
     }
-    processBoundaries();
+    processBoundaryForces();
     updateVelocities();
     updatePositions();
     particles.updateCells();
+    processHaloCells();
 }
