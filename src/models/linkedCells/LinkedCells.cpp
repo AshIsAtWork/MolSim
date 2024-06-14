@@ -6,44 +6,23 @@
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, double sigma, FileHandler::outputFormat outputFormat,
-                         std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &
-                         boundarySettings) : Model(particles, force, deltaT, outputFormat),
-                                             particles(domainSize, rCutOff),
-                                             boundarySettings{boundarySettings} {
-    threshold = pow(2.0, 1.0 / 6.0) * sigma;
+                         BoundarySet boundaryConditions) : Model(particles, force, deltaT, outputFormat),
+                                             particles(domainSize, rCutOff, boundaryConditions){
     gravityOn = false;
     g = -12.44;
-}
-
-void LinkedCells::processBoundaries() {
-    for (auto setting: boundarySettings) {
-        switch (setting.second) {
-            case BoundaryCondition::outflow: {
-                particles.clearHaloCells(setting.first);
-            }
-            break;
-            case BoundaryCondition::reflective: {
-                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
-                    //Add force from an imaginary ghost particle to particle p
-                    Particle ghostParticle = p;
-                    ghostParticle.setX(ghostPosition);
-                    std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
-                    p.setF(p.getF() + ghostForce);
-                }, setting.first, threshold);
-            }
-            break;
-            case BoundaryCondition::periodic: {
-
-                //Particles that have left the domain will be inserted at the opposite side
-                particles.teleportParticlesToOppositeSide(setting.first);
-                //Add forces from particles of adjacent boundary cells from the opposite side.
-                particles.applyForcesFromOppositeSide(setting.first);
-            }break;
-            case BoundaryCondition::invalid: {
-                spdlog::error("Invalid boundary condition was selected. Terminating program!");
-                exit(-1);
-            };
-        }
+    std::pair<Side, BoundaryCondition> cFront{Side::front, boundaryConditions.front};
+    boundarySettings.push_back(cFront);
+    std::pair<Side, BoundaryCondition> cRight{Side::right, boundaryConditions.right};
+    boundarySettings.push_back(cRight);
+    std::pair<Side, BoundaryCondition> cBack{Side::back, boundaryConditions.back};
+    boundarySettings.push_back(cBack);
+    std::pair<Side, BoundaryCondition> cLeft{Side::left, boundaryConditions.left};
+    boundarySettings.push_back(cLeft);
+    if(!particles.isTwoD()) {
+        std::pair<Side, BoundaryCondition> cTop{Side::top, boundaryConditions.top};
+        boundarySettings.push_back(cTop);
+        std::pair<Side, BoundaryCondition> cBottom{Side::bottom, boundaryConditions.bottom};
+        boundarySettings.push_back(cBottom);
     }
 }
 
@@ -60,7 +39,7 @@ void LinkedCells::processBoundaryForces() {
                     ghostParticle.setX(ghostPosition);
                     std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
                     p.setF(p.getF() + ghostForce);
-                }, setting.first, threshold);
+                }, setting.first);
             }break;
             case BoundaryCondition::periodic: {
                 //Add forces from particles of adjacent boundary cells from the opposite side.

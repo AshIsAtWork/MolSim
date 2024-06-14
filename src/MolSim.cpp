@@ -12,8 +12,6 @@ int main(int argc, char *argsv[]) {
     //Parameters for simulation
     double endT;
     double deltaT;
-    double epsilon = 5;
-    double sigma = 1;
     std::string inputFilePath;
     std::string inputFileFormatString;
     std::string outputFileFormatString;
@@ -121,9 +119,6 @@ int main(int argc, char *argsv[]) {
     if(inputFormat == FileHandler::inputFormat::xml) {
         SimulationSettings simulationSettings;
         const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
-        for(auto &bc : simulationSettings.parametersLinkedCells.boundarySettings) {
-            bc.second = enumsStructs::BoundaryCondition::periodic;
-        }
         ThermostatParameters thermostatParameters = {false, false, false, 10, 100, 0.01, 1000,2};
         simulationSettings.thermostatParameters = thermostatParameters;
         if(returnedErrorHandlingInt != 0) {
@@ -143,7 +138,7 @@ int main(int argc, char *argsv[]) {
             std::cout << desc << "\n";
             return -1;
         }
-        DirectSumSimulationParameters parameters = {deltaT, endT, epsilon, sigma, force};
+        DirectSumSimulationParameters parameters = {deltaT, endT,5, 1, force};
         simulator = std::make_unique<Simulator>(parameters, inputFilePath, outputFormat, outputFrequency, outputFileName);
     }
 

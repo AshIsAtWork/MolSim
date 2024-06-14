@@ -68,6 +68,7 @@ namespace enumsStructs {
      * Struct for passing parameters of the linked cells model.
      */
     struct LinkedCellsSimulationParameters {
+
         double deltaT;
         double endT;
         double epsilon;
@@ -75,7 +76,7 @@ namespace enumsStructs {
         TypeOfForce force;
         double rCutOff;
         std::array<double, 3> domainSize;
-        std::array<std::pair<Side, BoundaryCondition>, 6> boundarySettings;
+        BoundarySet boundaryConditions;
     };
 
     /**
@@ -166,8 +167,8 @@ namespace enumsStructs {
      */
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
-                {"Gravity",           TypeOfForce::gravity},
-                {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
+            {"Gravity", TypeOfForce::gravity},
+            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
@@ -183,8 +184,8 @@ namespace enumsStructs {
      */
     inline std::string getForce(TypeOfForce &force) {
         static const std::unordered_map<TypeOfForce, std::string> formatMap = {
-                {TypeOfForce::gravity,           "Gravity"},
-                {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
+            {TypeOfForce::gravity, "Gravity"},
+            {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
         };
         auto it = formatMap.find(force);
         return (it != formatMap.end()) ? it->second : "Invalid";
@@ -199,8 +200,8 @@ namespace enumsStructs {
      */
     inline TypeOfModel setModel(const std::string &selectedModel) {
         static const std::unordered_map<std::string, TypeOfModel> formatMap = {
-                {"DirectSum",   TypeOfModel::directSum},
-                {"LinkedCells", TypeOfModel::linkedCells}
+            {"DirectSum", TypeOfModel::directSum},
+            {"LinkedCells", TypeOfModel::linkedCells}
         };
 
         auto it = formatMap.find(selectedModel);
@@ -216,8 +217,8 @@ namespace enumsStructs {
      */
     inline std::string getModel(TypeOfModel &model) {
         static const std::unordered_map<TypeOfModel, std::string> formatMap = {
-                {TypeOfModel::directSum,   "DirectSum"},
-                {TypeOfModel::linkedCells, "LinkedCells"}
+            {TypeOfModel::directSum, "DirectSum"},
+            {TypeOfModel::linkedCells, "LinkedCells"}
         };
         auto it = formatMap.find(model);
         return (it != formatMap.end()) ? it->second : "Invalid";
@@ -232,9 +233,9 @@ namespace enumsStructs {
      */
     inline BoundaryCondition setBoundaryCondition(const std::string &selectedBoundaryCondition) {
         static const std::unordered_map<std::string, BoundaryCondition> formatMap = {
-                {"Reflective", BoundaryCondition::reflective},
-                {"Outflow",    BoundaryCondition::outflow},
-                {"Periodic", BoundaryCondition::periodic}
+            {"Reflective", BoundaryCondition::reflective},
+            {"Outflow", BoundaryCondition::outflow},
+            {"Periodic", BoundaryCondition::periodic}
         };
         auto it = formatMap.find(selectedBoundaryCondition);
         return (it != formatMap.end()) ? it->second : BoundaryCondition::invalid;
@@ -249,13 +250,11 @@ namespace enumsStructs {
      */
     inline std::string getBoundaryCondition(BoundaryCondition &boundaryCondition) {
         static const std::unordered_map<BoundaryCondition, std::string> formatMap = {
-                {BoundaryCondition::reflective, "Reflective"},
-                {BoundaryCondition::outflow,    "Outflow"},
-                {BoundaryCondition::periodic, "Periodic"}
+            {BoundaryCondition::reflective, "Reflective"},
+            {BoundaryCondition::outflow, "Outflow"},
+            {BoundaryCondition::periodic, "Periodic"}
         };
         auto it = formatMap.find(boundaryCondition);
         return (it != formatMap.end()) ? it->second : "Invalid";
     }
-
-
 }

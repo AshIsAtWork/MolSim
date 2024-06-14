@@ -153,41 +153,18 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
 
                     if (molecules.model().BoundaryCondition().present()) {
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cFront{
-                                enumsStructs::Side::front,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Front())
-                        };
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cRight{
-                                enumsStructs::Side::right,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Right())
-                        };
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBack{
-                                enumsStructs::Side::back,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Back())
-                        };
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cLeft{
-                                enumsStructs::Side::left,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Left())
-                        };
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cTop{
-                                enumsStructs::Side::top,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Top())
-                        };
-                        std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition> cBottom{
-                                enumsStructs::Side::bottom,
-                                enumsStructs::setBoundaryCondition(
-                                        molecules.model().BoundaryCondition().get().boundaries().Bottom())
-                        };
-
-                        simulationSettings.parametersLinkedCells.boundarySettings = {
-                                cFront, cRight, cBack, cLeft, cTop,
-                                cBottom
-                        };
+                        simulationSettings.parametersLinkedCells.boundaryConditions.front =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Front());
+                        simulationSettings.parametersLinkedCells.boundaryConditions.right =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Right());
+                        simulationSettings.parametersLinkedCells.boundaryConditions.back =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Back());
+                        simulationSettings.parametersLinkedCells.boundaryConditions.left =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Left());
+                        simulationSettings.parametersLinkedCells.boundaryConditions.top =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Top());
+                        simulationSettings.parametersLinkedCells.boundaryConditions.bottom =  enumsStructs::setBoundaryCondition(
+                                        molecules.model().BoundaryCondition().get().boundaries().Bottom());
 
                         spdlog::debug(
                                 "BoundaryCondition: Front: {}, Back: {}, Left: {}, Right: {}, Top: {}, Bottom: {}",

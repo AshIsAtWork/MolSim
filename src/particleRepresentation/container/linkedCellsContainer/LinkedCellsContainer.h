@@ -147,7 +147,7 @@ public:
      * @param rCutOff The cut-off radius
      */
 
-    LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff);
+    LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff, BoundarySet boundarySet);
 
     /**
      * @brief Calculate the index of the cell to which a particle decided by its position belongs.
@@ -231,13 +231,12 @@ public:
      *
      * @param function Lambda function that is applied to each particle fulfilling the requirements.
      * @param boundary Side to which the boundary cells belong.
-     * @param threshold Maximal distance to the side.
      *
      * Additionally, the position of the corresponding ghost particle of each particle is calculated
      *        and passed in the lambda function as second input. This information makes the implementation
      *        of reflective boundaries a lot easier.
      */
-    void applyToAllBoundaryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary, double threshold);
+    void applyToAllBoundaryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary);
 
     /**
      * @brief Get the number of particles stored in this container.

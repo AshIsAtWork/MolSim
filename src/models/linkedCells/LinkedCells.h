@@ -23,21 +23,11 @@ private:
     /**
      * Definition of the boundary condition for each side.
      */
-    std::array<std::pair<Side,enumsStructs::BoundaryCondition>, 6> boundarySettings;
-
-    /**
-     * Threshold for the distance that specifies, when ghost particles are spawned.
-     */
-    double threshold;
+    std::vector<std::pair<Side,enumsStructs::BoundaryCondition>> boundarySettings;
 
     double g;
 
     bool gravityOn;
-
-    /**
-     * @brief Helper method that handles the boundary conditions
-     */
-    void processBoundaries();
 
     void processBoundaryForces();
 
@@ -47,8 +37,7 @@ private:
 
 public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,
-                FileHandler::outputFormat outputFormat,
-                std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> &boundarySettings);
+                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions);
 
     /**
      * @brief Perform one time step in the linked cells model.

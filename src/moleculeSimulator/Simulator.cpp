@@ -57,7 +57,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                                                   simulationSettings.parametersLinkedCells.rCutOff,
                                                   simulationSettings.parametersLinkedCells.sigma,
                                                   outputFormat,
-                                                  simulationSettings.parametersLinkedCells.boundarySettings);
+                                                  simulationSettings.parametersLinkedCells.boundaryConditions);
         }
         break;
         default: {

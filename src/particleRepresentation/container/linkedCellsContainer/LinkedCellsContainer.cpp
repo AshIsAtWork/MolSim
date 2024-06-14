@@ -238,24 +238,6 @@ void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart,
             }
         }
     }
-    // for (auto cell: haloCells[static_cast<int>(sideStart)]) {
-    //     for (auto& p : cells[cell]) {
-    //         //Update position
-    //         if (modus == 0) {
-    //             p.setX(fromLowToHigh(p.getX(), dimension));
-    //         } else {
-    //             p.setX(fromHighToLow(p.getX(), dimension));
-    //         }
-    //
-    //         //Update cell if particle is back in domain
-    //         if(isParticleInDomain(p.getX())) {
-    //             cells[calcCellIndex(p.getX())].push_back(p);
-    //         }
-    //
-    //     }
-    //     //Clear halo cell
-    //     cells[cell].clear();
-    // }
 }
 
 void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array<int, 3> cellToProcess) {
@@ -428,9 +410,8 @@ void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSo
     }
 }
 
-LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff) : currentSize{0},
-    rCutOff{rCutOff},
-    domainSize{domainSize} {
+LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff, BoundarySet boundarySet) : currentSize{0},
+    rCutOff{rCutOff}, domainSize{domainSize}, boundarieSet{boundarySet} {
     if (domainSize[0] <= 0 || domainSize[1] <= 0 || domainSize[2] < 0) {
         spdlog::error("Domain size is invalid!");
         exit(-1);
@@ -840,11 +821,11 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 }
 
 void LinkedCellsContainer::applyToAllBoundaryParticles(
-    const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary,
-    double threshold) {
+    const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
         for (Particle &p: cells[cell]) {
             double distanceFromBoundry = calcDistanceFromBoundary(p, boundary);
+            double threshold = pow(2.0, 1.0 / 6.0) * p.getSigma();
             if (0 < distanceFromBoundry && distanceFromBoundry <= threshold) {
                 auto ghostPosition = calcGhostParticle(p, boundary);
                 function(p, ghostPosition);
