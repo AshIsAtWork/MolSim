@@ -129,7 +129,7 @@ cat <<EOL > cluster_start.cmd
 #!/bin/sh
 #SBATCH -J ${1}
 #SBATCH -o ./%x.%j.%N.out
-#SBATCH -D build/
+#SBATCH -D ../build/
 #SBATCH --get-user-env
 #SBATCH --clusters=${2}
 #SBATCH --partition=${3}
