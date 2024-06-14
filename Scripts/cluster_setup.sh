@@ -7,26 +7,33 @@
 # $4 - MAIL_USER The email address to send the notifications IMPORTANT: mail cannot be gmail, so use your university email
 # $5 - CPUS_PER_TASK The number of CPUs per task
 # $6 - TIME The time limit for the job in format "HH:MM:SS"
+# $7 - INPUT_FILE_PATH The path to the input file
+# $8 - INPUT_FILE_FORMAT The format of the input file
+# $9 - OUTPUT_FILE_FORMAT The format of the output file
+
 
 # Define color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Function to display help message
 function display_help() {
     echo "Usage: $0 CLUSTER PARTITION MAIL_TYPE MAIL_USER CPUS_PER_TASK TIME"
     echo
     echo "Parameters:"
-    echo "  CLUSTER        Possible values: serial or inter"
-    echo "  PARTITION      Possible values: serial_std, serial_long or teramem_inter"
-    echo "  MAIL_TYPE      Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
-    echo "  MAIL_USER      The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
-    echo "  CPUS_PER_TASK  The number of CPUs per task"
-    echo "  TIME           The time limit for the job in format \"HH:MM:SS\""
+    echo "  CLUSTER               Possible values: serial or inter"
+    echo "  PARTITION             Possible values: serial_std, serial_long or teramem_inter"
+    echo "  MAIL_TYPE             Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
+    echo "  MAIL_USER             The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
+    echo "  CPUS_PER_TASK         The number of CPUs per task"
+    echo "  TIME                  The time limit for the job in format \"HH:MM:SS\""
+    echo "  INPUT_FILE_PATH       The path to the input file"
+    echo "  INPUT_FILE_FORMAT     The format of the input file"
+    echo "  OUTPUT_FILE_FORMAT    The format of the output file"
     echo
     echo "Example:"
-    echo "  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00"
+    echo "  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk"
     echo
 }
 
@@ -37,8 +44,8 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # Check if the number of parameters is correct
-if [ "$#" -ne 6 ]; then
-    echo -e "${RED}Error: You need to provide exactly 6 parameters.${NC}"
+if [ "$#" -ne 9 ]; then
+    echo -e "${RED}Error: You need to provide exactly 9 parameters.${NC}"
     echo -e "${RED}Run the script with -h or --help to see the usage.${NC}"
     exit 1
 fi
@@ -73,6 +80,18 @@ if ! [[ "$6" =~ ^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]$ ]]; then
     exit 1
 fi
 
+# Check if the eighth parameter is a valid file format
+if [ "$8" != "xml" ] && [ "$8" != "txt" ]; then
+    echo -e "${RED}Error: The eighth parameter must be either 'xml' or 'txt'.${NC}"
+    exit 1
+fi
+
+# Check if the ninth parameter is a valid file format
+if [ "$9" != "xml" ] && [ "$9" != "vtk" ]; then
+    echo -e "${RED}Error: The ninth parameter must be either 'xml' or 'vtk'.${NC}"
+    exit 1
+fi
+
 # Load the necessary modules
 module load slurm_setup
 module load cmake/3.21.4
@@ -94,6 +113,9 @@ echo -e "${GREEN}MAIL_TYPE: $3${NC}"
 echo -e "${GREEN}MAIL_USER: $4${NC}"
 echo -e "${GREEN}CPUS_PER_TASK: $5${NC}"
 echo -e "${GREEN}TIME: $6${NC}"
+echo -e "${GREEN}INPUT_FILE_PATH: $7${NC}"
+echo -e "${GREEN}INPUT_FILE_FORMAT: $8${NC}"
+echo -e "${GREEN}OUTPUT_FILE_FORMAT: $9${NC}"
 
 # Remove any existing cluster_start.cmd file
 rm -f cluster_start.cmd
@@ -114,8 +136,16 @@ cat <<EOL > cluster_start.cmd
 #SBATCH --export=NONE
 #SBATCH --time=$6
 
-./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk
+./MolSim -f $7 -i $8 -o $9
 EOL
 
+echo -e "${GREEN}----------------------------------------${NC}"
 echo -e "${GREEN}cluster_start.cmd has been created with the provided parameters. To submit the job, run the following command:${NC}"
-echo -e "${GREEN}sbatch cluster_start.cmd${NC}"
+echo -e "${GREEN}sbatch ../cluster_start.cmd${NC}"
+echo -e "${GREEN}----------------------------------------${NC}"
+echo -e "${GREEN}To see the status of the job, run the following command:${NC}"
+echo -e "${GREEN}squeue --cluster $1 --me${NC}"
+echo -e "${GREEN}----------------------------------------${NC}"
+echo -e "${GREEN}To cancel the job, run the following command:${NC}"
+echo -e "${GREEN}scancel -M $1 --me${NC}"
+echo -e "${GREEN}----------------------------------------${NC}"
