@@ -34,7 +34,7 @@ function display_help() {
     echo -e "${YELLOW}OUTPUT_FILE_FORMAT${NC} The format of the output file"
     echo
     echo "Example:"
-    echo -e "${YELLOW}  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid.xml xml vtk${NC}"
+    echo -e "${YELLOW}  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk${NC}"
     echo
 }
 
