@@ -15,25 +15,26 @@
 # Define color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
 
 # Function to display help message
 function display_help() {
-    echo "Usage: $0 CLUSTER PARTITION MAIL_TYPE MAIL_USER CPUS_PER_TASK TIME"
+    echo -e "${YELLOW}Usage: $0 CLUSTER PARTITION MAIL_TYPE MAIL_USER CPUS_PER_TASK TIME${NC}"
     echo
     echo "Parameters:"
-    echo "  CLUSTER               Possible values: serial or inter"
-    echo "  PARTITION             Possible values: serial_std, serial_long or teramem_inter"
-    echo "  MAIL_TYPE             Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
-    echo "  MAIL_USER             The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
-    echo "  CPUS_PER_TASK         The number of CPUs per task"
-    echo "  TIME                  The time limit for the job in format \"HH:MM:SS\""
-    echo "  INPUT_FILE_PATH       The path to the input file"
-    echo "  INPUT_FILE_FORMAT     The format of the input file"
-    echo "  OUTPUT_FILE_FORMAT    The format of the output file"
+    echo -e "${YELLOW}CLUSTER${NC}            Possible values: serial or inter"
+    echo -e "${YELLOW}PARTITION${NC}          Possible values: serial_std, serial_long or teramem_inter"
+    echo -e "${YELLOW}MAIL_TYPE${NC}          Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
+    echo -e "${YELLOW}MAIL_USER${NC}          The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
+    echo -e "${YELLOW}CPUS_PER_TASK${NC}      The number of CPUs per task"
+    echo -e "${YELLOW}TIME${NC}               The time limit for the job in format \"HH:MM:SS\""
+    echo -e "${YELLOW}INPUT_FILE_PATH${NC}    The path to the input file"
+    echo -e "${YELLOW}INPUT_FILE_FORMAT${NC}  The format of the input file"
+    echo -e "${YELLOW}OUTPUT_FILE_FORMAT${NC} The format of the output file"
     echo
     echo "Example:"
-    echo "  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk"
+    echo -e "${YELLOW}  $0 serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid.xml xml vtk${NC}"
     echo
 }
 
@@ -103,22 +104,23 @@ module load xerces-c/3.2.1
 module list
 
 # Set up the build directory
-cd .. && rm -rf build/ && mkdir build/
+cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. && make
 
 # Print the parameters
-echo -e "${GREEN}Made Cluster_start.cmd file with the following parameters:${NC}"
-echo -e "${GREEN}CLUSTER: $1${NC}"
-echo -e "${GREEN}PARTITION: $2${NC}"
-echo -e "${GREEN}MAIL_TYPE: $3${NC}"
-echo -e "${GREEN}MAIL_USER: $4${NC}"
-echo -e "${GREEN}CPUS_PER_TASK: $5${NC}"
-echo -e "${GREEN}TIME: $6${NC}"
-echo -e "${GREEN}INPUT_FILE_PATH: $7${NC}"
-echo -e "${GREEN}INPUT_FILE_FORMAT: $8${NC}"
-echo -e "${GREEN}OUTPUT_FILE_FORMAT: $9${NC}"
+echo -e
+echo -e "${GREEN}Making Cluster_start.cmd with the following parameters:${NC}"
+echo -e "${GREEN}CLUSTER: ${YELLOW}$1${NC}"
+echo -e "${GREEN}PARTITION: ${YELLOW}$2${NC}"
+echo -e "${GREEN}MAIL_TYPE: ${YELLOW}$3${NC}"
+echo -e "${GREEN}MAIL_USER: ${YELLOW}$4${NC}"
+echo -e "${GREEN}CPUS_PER_TASK: ${YELLOW}$5${NC}"
+echo -e "${GREEN}TIME: ${YELLOW}$6${NC}"
+echo -e "${GREEN}INPUT_FILE_PATH: ${YELLOW}$7${NC}"
+echo -e "${GREEN}INPUT_FILE_FORMAT: ${YELLOW}$8${NC}"
+echo -e "${GREEN}OUTPUT_FILE_FORMAT: ${YELLOW}$9${NC}"
 
 # Remove any existing cluster_start.cmd file
-rm -f cluster_start.cmd
+cd .. && rm -f cluster_start.cmd
 
 # Write the content to the cluster_start.cmd file
 cat <<EOL > cluster_start.cmd
@@ -139,13 +141,17 @@ cat <<EOL > cluster_start.cmd
 ./MolSim -f $7 -i $8 -o $9
 EOL
 
+echo -e "${GREEN}Success: ${NC}cluster_start.cmd has been created with the provided parameters.${NC}"
+echo -e
+
+echo -e "${GREEN}The following commands do not need to be adapted, you can copy and paste them as they are.${NC}"
 echo -e "${GREEN}----------------------------------------${NC}"
-echo -e "${GREEN}cluster_start.cmd has been created with the provided parameters. To submit the job, run the following command:${NC}"
-echo -e "${GREEN}sbatch ../cluster_start.cmd${NC}"
+echo -e "${GREEN}To submit the job, run the following command:${NC}"
+echo -e "${YELLOW}sbatch ../cluster_start.cmd${NC}"
 echo -e "${GREEN}----------------------------------------${NC}"
 echo -e "${GREEN}To see the status of the job, run the following command:${NC}"
-echo -e "${GREEN}squeue --cluster $1 --me${NC}"
+echo -e "${YELLOW}squeue --cluster $1 --me${NC}"
 echo -e "${GREEN}----------------------------------------${NC}"
 echo -e "${GREEN}To cancel the job, run the following command:${NC}"
-echo -e "${GREEN}scancel -M $1 --me${NC}"
+echo -e "${YELLOW}scancel -M $1 --me${NC}"
 echo -e "${GREEN}----------------------------------------${NC}"
