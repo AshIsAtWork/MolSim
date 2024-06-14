@@ -138,7 +138,7 @@ int main(int argc, char *argsv[]) {
             std::cout << desc << "\n";
             return -1;
         }
-        DirectSumSimulationParameters parameters = {deltaT, endT,5, 1, force};
+        DirectSumSimulationParameters parameters = {deltaT, endT,force};
         simulator = std::make_unique<Simulator>(parameters, inputFilePath, outputFormat, outputFrequency, outputFileName);
     }
 

@@ -45,22 +45,11 @@ namespace enumsStructs {
     };
 
     /**
-     * Struct for specifying the leonard jones parameters for a type.
-     */
-
-    struct LJParameters {
-        double sigma;
-        double epsilon;
-    };
-
-    /**
      * Struct for passing parameters of the direct sum model.
      */
     struct DirectSumSimulationParameters {
         double deltaT;
         double endT;
-        double epsilon;
-        double sigma;
         TypeOfForce force;
     };
 
@@ -68,11 +57,8 @@ namespace enumsStructs {
      * Struct for passing parameters of the linked cells model.
      */
     struct LinkedCellsSimulationParameters {
-
         double deltaT;
         double endT;
-        double epsilon;
-        double sigma;
         TypeOfForce force;
         double rCutOff;
         std::array<double, 3> domainSize;
@@ -90,6 +76,8 @@ namespace enumsStructs {
         std::array<double, 3> initVelocity;
         int dimensionsBrownianMotion;
         double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
     };
 
     /**
@@ -103,6 +91,20 @@ namespace enumsStructs {
         double mass;
         int dimensionsBrownianMotion;
         double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
+    };
+
+    struct Sphere {
+        std::array<double, 3> center;
+        std::array<double, 3> initVelocity;
+        int N;
+        double h;
+        double mass;
+        int dimensionsBrownianMotion;
+        double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
     };
 
     /**
@@ -112,6 +114,8 @@ namespace enumsStructs {
         std::array<double, 3> x;
         std::array<double, 3> v;
         double m;
+        double epsilon;
+        double sigma;
     };
 
     /**
@@ -131,7 +135,6 @@ namespace enumsStructs {
         int dimensions;
     };
 
-
     /**
      * Struct for storing all simulation parameters.
      */
@@ -139,6 +142,8 @@ namespace enumsStructs {
         //general
         std::string outputFileName;
         int outputFrequency;
+        bool gravityOn;
+        double gravityFactor;
 
         //thermostat
         ThermostatParameters thermostatParameters;
@@ -156,6 +161,7 @@ namespace enumsStructs {
         std::vector<Cuboid> cuboids;
         std::vector<Disc> discs;
         std::vector<ParticleType> particles;
+        std::vector<Sphere> spheres;
     };
 
     /**
