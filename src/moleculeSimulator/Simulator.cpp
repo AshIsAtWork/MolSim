@@ -55,7 +55,6 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
             model = std::make_unique<LinkedCells>(*force, simulationSettings.parametersLinkedCells.deltaT,
                                                   simulationSettings.parametersLinkedCells.domainSize,
                                                   simulationSettings.parametersLinkedCells.rCutOff,
-                                                  simulationSettings.parametersLinkedCells.sigma,
                                                   outputFormat,
                                                   simulationSettings.parametersLinkedCells.boundaryConditions);
         }
@@ -129,6 +128,7 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
 
     //Thermostat is not used
     useThermostat = false;
+    //TODO: FIX
     thermostat = nullptr;
     applyScalingGradually = false;
     nThermostat = INT32_MAX;

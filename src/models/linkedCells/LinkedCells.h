@@ -36,7 +36,7 @@ private:
     void applyGravity();
 
 public:
-    LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff, double sigma,
+    LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff,
                 FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions);
 
     /**

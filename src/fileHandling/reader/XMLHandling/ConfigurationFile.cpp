@@ -91,6 +91,66 @@ OutputFrequency (::std::unique_ptr< OutputFrequency_type > x)
   this->OutputFrequency_.set (std::move (x));
 }
 
+const Molecules::ThermostatConfig_optional& Molecules::
+ThermostatConfig () const
+{
+  return this->ThermostatConfig_;
+}
+
+Molecules::ThermostatConfig_optional& Molecules::
+ThermostatConfig ()
+{
+  return this->ThermostatConfig_;
+}
+
+void Molecules::
+ThermostatConfig (const ThermostatConfig_type& x)
+{
+  this->ThermostatConfig_.set (x);
+}
+
+void Molecules::
+ThermostatConfig (const ThermostatConfig_optional& x)
+{
+  this->ThermostatConfig_ = x;
+}
+
+void Molecules::
+ThermostatConfig (::std::unique_ptr< ThermostatConfig_type > x)
+{
+  this->ThermostatConfig_.set (std::move (x));
+}
+
+const Molecules::GravityConfig_optional& Molecules::
+GravityConfig () const
+{
+  return this->GravityConfig_;
+}
+
+Molecules::GravityConfig_optional& Molecules::
+GravityConfig ()
+{
+  return this->GravityConfig_;
+}
+
+void Molecules::
+GravityConfig (const GravityConfig_type& x)
+{
+  this->GravityConfig_.set (x);
+}
+
+void Molecules::
+GravityConfig (const GravityConfig_optional& x)
+{
+  this->GravityConfig_ = x;
+}
+
+void Molecules::
+GravityConfig (::std::unique_ptr< GravityConfig_type > x)
+{
+  this->GravityConfig_.set (std::move (x));
+}
+
 const Molecules::model_type& Molecules::
 model () const
 {
@@ -205,6 +265,36 @@ Discs (::std::unique_ptr< Discs_type > x)
   this->Discs_.set (std::move (x));
 }
 
+const Molecules::Spheres_optional& Molecules::
+Spheres () const
+{
+  return this->Spheres_;
+}
+
+Molecules::Spheres_optional& Molecules::
+Spheres ()
+{
+  return this->Spheres_;
+}
+
+void Molecules::
+Spheres (const Spheres_type& x)
+{
+  this->Spheres_.set (x);
+}
+
+void Molecules::
+Spheres (const Spheres_optional& x)
+{
+  this->Spheres_ = x;
+}
+
+void Molecules::
+Spheres (::std::unique_ptr< Spheres_type > x)
+{
+  this->Spheres_.set (std::move (x));
+}
+
 
 // OutputFileName
 // 
@@ -212,6 +302,194 @@ Discs (::std::unique_ptr< Discs_type > x)
 
 // OutputFrequency
 // 
+
+
+// ThermostatConfig
+// 
+
+const ThermostatConfig::InitialTemperature_type& ThermostatConfig::
+InitialTemperature () const
+{
+  return this->InitialTemperature_.get ();
+}
+
+ThermostatConfig::InitialTemperature_type& ThermostatConfig::
+InitialTemperature ()
+{
+  return this->InitialTemperature_.get ();
+}
+
+void ThermostatConfig::
+InitialTemperature (const InitialTemperature_type& x)
+{
+  this->InitialTemperature_.set (x);
+}
+
+void ThermostatConfig::
+InitialTemperature (::std::unique_ptr< InitialTemperature_type > x)
+{
+  this->InitialTemperature_.set (std::move (x));
+}
+
+const ThermostatConfig::TargetTemperature_type& ThermostatConfig::
+TargetTemperature () const
+{
+  return this->TargetTemperature_.get ();
+}
+
+ThermostatConfig::TargetTemperature_type& ThermostatConfig::
+TargetTemperature ()
+{
+  return this->TargetTemperature_.get ();
+}
+
+void ThermostatConfig::
+TargetTemperature (const TargetTemperature_type& x)
+{
+  this->TargetTemperature_.set (x);
+}
+
+void ThermostatConfig::
+TargetTemperature (::std::unique_ptr< TargetTemperature_type > x)
+{
+  this->TargetTemperature_.set (std::move (x));
+}
+
+const ThermostatConfig::InitialBrownian_type& ThermostatConfig::
+InitialBrownian () const
+{
+  return this->InitialBrownian_.get ();
+}
+
+ThermostatConfig::InitialBrownian_type& ThermostatConfig::
+InitialBrownian ()
+{
+  return this->InitialBrownian_.get ();
+}
+
+void ThermostatConfig::
+InitialBrownian (const InitialBrownian_type& x)
+{
+  this->InitialBrownian_.set (x);
+}
+
+const ThermostatConfig::ScalingGradually_type& ThermostatConfig::
+ScalingGradually () const
+{
+  return this->ScalingGradually_.get ();
+}
+
+ThermostatConfig::ScalingGradually_type& ThermostatConfig::
+ScalingGradually ()
+{
+  return this->ScalingGradually_.get ();
+}
+
+void ThermostatConfig::
+ScalingGradually (const ScalingGradually_type& x)
+{
+  this->ScalingGradually_.set (x);
+}
+
+const ThermostatConfig::MaximumTemperatureChange_type& ThermostatConfig::
+MaximumTemperatureChange () const
+{
+  return this->MaximumTemperatureChange_.get ();
+}
+
+ThermostatConfig::MaximumTemperatureChange_type& ThermostatConfig::
+MaximumTemperatureChange ()
+{
+  return this->MaximumTemperatureChange_.get ();
+}
+
+void ThermostatConfig::
+MaximumTemperatureChange (const MaximumTemperatureChange_type& x)
+{
+  this->MaximumTemperatureChange_.set (x);
+}
+
+void ThermostatConfig::
+MaximumTemperatureChange (::std::unique_ptr< MaximumTemperatureChange_type > x)
+{
+  this->MaximumTemperatureChange_.set (std::move (x));
+}
+
+const ThermostatConfig::ApplyAfterHowManySteps_type& ThermostatConfig::
+ApplyAfterHowManySteps () const
+{
+  return this->ApplyAfterHowManySteps_.get ();
+}
+
+ThermostatConfig::ApplyAfterHowManySteps_type& ThermostatConfig::
+ApplyAfterHowManySteps ()
+{
+  return this->ApplyAfterHowManySteps_.get ();
+}
+
+void ThermostatConfig::
+ApplyAfterHowManySteps (const ApplyAfterHowManySteps_type& x)
+{
+  this->ApplyAfterHowManySteps_.set (x);
+}
+
+void ThermostatConfig::
+ApplyAfterHowManySteps (::std::unique_ptr< ApplyAfterHowManySteps_type > x)
+{
+  this->ApplyAfterHowManySteps_.set (std::move (x));
+}
+
+const ThermostatConfig::Dimension_type& ThermostatConfig::
+Dimension () const
+{
+  return this->Dimension_.get ();
+}
+
+ThermostatConfig::Dimension_type& ThermostatConfig::
+Dimension ()
+{
+  return this->Dimension_.get ();
+}
+
+void ThermostatConfig::
+Dimension (const Dimension_type& x)
+{
+  this->Dimension_.set (x);
+}
+
+void ThermostatConfig::
+Dimension (::std::unique_ptr< Dimension_type > x)
+{
+  this->Dimension_.set (std::move (x));
+}
+
+
+// GravityConfig
+// 
+
+const GravityConfig::GravitationFactor_type& GravityConfig::
+GravitationFactor () const
+{
+  return this->GravitationFactor_.get ();
+}
+
+GravityConfig::GravitationFactor_type& GravityConfig::
+GravitationFactor ()
+{
+  return this->GravitationFactor_.get ();
+}
+
+void GravityConfig::
+GravitationFactor (const GravitationFactor_type& x)
+{
+  this->GravitationFactor_.set (x);
+}
+
+void GravityConfig::
+GravitationFactor (::std::unique_ptr< GravitationFactor_type > x)
+{
+  this->GravitationFactor_.set (std::move (x));
+}
 
 
 // model
@@ -311,54 +589,6 @@ void model::
 force (::std::unique_ptr< force_type > x)
 {
   this->force_.set (std::move (x));
-}
-
-const model::Sigma_type& model::
-Sigma () const
-{
-  return this->Sigma_.get ();
-}
-
-model::Sigma_type& model::
-Sigma ()
-{
-  return this->Sigma_.get ();
-}
-
-void model::
-Sigma (const Sigma_type& x)
-{
-  this->Sigma_.set (x);
-}
-
-void model::
-Sigma (::std::unique_ptr< Sigma_type > x)
-{
-  this->Sigma_.set (std::move (x));
-}
-
-const model::Epsilon_type& model::
-Epsilon () const
-{
-  return this->Epsilon_.get ();
-}
-
-model::Epsilon_type& model::
-Epsilon ()
-{
-  return this->Epsilon_.get ();
-}
-
-void model::
-Epsilon (const Epsilon_type& x)
-{
-  this->Epsilon_.set (x);
-}
-
-void model::
-Epsilon (::std::unique_ptr< Epsilon_type > x)
-{
-  this->Epsilon_.set (std::move (x));
 }
 
 const model::DomainSize_optional& model::
@@ -590,6 +820,76 @@ Disc (const Disc_sequence& s)
 }
 
 
+// Spheres
+// 
+
+const Spheres::Size_type& Spheres::
+Size () const
+{
+  return this->Size_.get ();
+}
+
+Spheres::Size_type& Spheres::
+Size ()
+{
+  return this->Size_.get ();
+}
+
+void Spheres::
+Size (const Size_type& x)
+{
+  this->Size_.set (x);
+}
+
+void Spheres::
+Size (::std::unique_ptr< Size_type > x)
+{
+  this->Size_.set (std::move (x));
+}
+
+const Spheres::Sphere_sequence& Spheres::
+Sphere () const
+{
+  return this->Sphere_;
+}
+
+Spheres::Sphere_sequence& Spheres::
+Sphere ()
+{
+  return this->Sphere_;
+}
+
+void Spheres::
+Sphere (const Sphere_sequence& s)
+{
+  this->Sphere_ = s;
+}
+
+
+// InitialTemperature
+// 
+
+
+// TargetTemperature
+// 
+
+
+// MaximumTemperatureChange
+// 
+
+
+// ApplyAfterHowManySteps
+// 
+
+
+// Dimension
+// 
+
+
+// GravitationFactor
+// 
+
+
 // Name
 // 
 
@@ -686,14 +986,6 @@ operator= (value v)
 
   return *this;
 }
-
-
-// Sigma
-// 
-
-
-// Epsilon
-// 
 
 
 // DomainSize
@@ -881,6 +1173,66 @@ void SingleParticle::
 Mass (::std::unique_ptr< Mass_type > x)
 {
   this->Mass_.set (std::move (x));
+}
+
+const SingleParticle::Sigma_optional& SingleParticle::
+Sigma () const
+{
+  return this->Sigma_;
+}
+
+SingleParticle::Sigma_optional& SingleParticle::
+Sigma ()
+{
+  return this->Sigma_;
+}
+
+void SingleParticle::
+Sigma (const Sigma_type& x)
+{
+  this->Sigma_.set (x);
+}
+
+void SingleParticle::
+Sigma (const Sigma_optional& x)
+{
+  this->Sigma_ = x;
+}
+
+void SingleParticle::
+Sigma (::std::unique_ptr< Sigma_type > x)
+{
+  this->Sigma_.set (std::move (x));
+}
+
+const SingleParticle::Epsilon_optional& SingleParticle::
+Epsilon () const
+{
+  return this->Epsilon_;
+}
+
+SingleParticle::Epsilon_optional& SingleParticle::
+Epsilon ()
+{
+  return this->Epsilon_;
+}
+
+void SingleParticle::
+Epsilon (const Epsilon_type& x)
+{
+  this->Epsilon_.set (x);
+}
+
+void SingleParticle::
+Epsilon (const Epsilon_optional& x)
+{
+  this->Epsilon_ = x;
+}
+
+void SingleParticle::
+Epsilon (::std::unique_ptr< Epsilon_type > x)
+{
+  this->Epsilon_.set (std::move (x));
 }
 
 
@@ -1103,6 +1455,66 @@ DimensionBrownian (::std::unique_ptr< DimensionBrownian_type > x)
   this->DimensionBrownian_.set (std::move (x));
 }
 
+const Cuboid::Sigma_optional& Cuboid::
+Sigma () const
+{
+  return this->Sigma_;
+}
+
+Cuboid::Sigma_optional& Cuboid::
+Sigma ()
+{
+  return this->Sigma_;
+}
+
+void Cuboid::
+Sigma (const Sigma_type& x)
+{
+  this->Sigma_.set (x);
+}
+
+void Cuboid::
+Sigma (const Sigma_optional& x)
+{
+  this->Sigma_ = x;
+}
+
+void Cuboid::
+Sigma (::std::unique_ptr< Sigma_type > x)
+{
+  this->Sigma_.set (std::move (x));
+}
+
+const Cuboid::Epsilon_optional& Cuboid::
+Epsilon () const
+{
+  return this->Epsilon_;
+}
+
+Cuboid::Epsilon_optional& Cuboid::
+Epsilon ()
+{
+  return this->Epsilon_;
+}
+
+void Cuboid::
+Epsilon (const Epsilon_type& x)
+{
+  this->Epsilon_.set (x);
+}
+
+void Cuboid::
+Epsilon (const Epsilon_optional& x)
+{
+  this->Epsilon_ = x;
+}
+
+void Cuboid::
+Epsilon (::std::unique_ptr< Epsilon_type > x)
+{
+  this->Epsilon_.set (std::move (x));
+}
+
 
 // Disc
 // 
@@ -1255,6 +1667,280 @@ void Disc::
 DimensionBrownian (const DimensionBrownian_type& x)
 {
   this->DimensionBrownian_.set (x);
+}
+
+const Disc::Sigma_optional& Disc::
+Sigma () const
+{
+  return this->Sigma_;
+}
+
+Disc::Sigma_optional& Disc::
+Sigma ()
+{
+  return this->Sigma_;
+}
+
+void Disc::
+Sigma (const Sigma_type& x)
+{
+  this->Sigma_.set (x);
+}
+
+void Disc::
+Sigma (const Sigma_optional& x)
+{
+  this->Sigma_ = x;
+}
+
+void Disc::
+Sigma (::std::unique_ptr< Sigma_type > x)
+{
+  this->Sigma_.set (std::move (x));
+}
+
+const Disc::Epsilon_optional& Disc::
+Epsilon () const
+{
+  return this->Epsilon_;
+}
+
+Disc::Epsilon_optional& Disc::
+Epsilon ()
+{
+  return this->Epsilon_;
+}
+
+void Disc::
+Epsilon (const Epsilon_type& x)
+{
+  this->Epsilon_.set (x);
+}
+
+void Disc::
+Epsilon (const Epsilon_optional& x)
+{
+  this->Epsilon_ = x;
+}
+
+void Disc::
+Epsilon (::std::unique_ptr< Epsilon_type > x)
+{
+  this->Epsilon_.set (std::move (x));
+}
+
+
+// Sphere
+// 
+
+const Sphere::Center_type& Sphere::
+Center () const
+{
+  return this->Center_.get ();
+}
+
+Sphere::Center_type& Sphere::
+Center ()
+{
+  return this->Center_.get ();
+}
+
+void Sphere::
+Center (const Center_type& x)
+{
+  this->Center_.set (x);
+}
+
+void Sphere::
+Center (::std::unique_ptr< Center_type > x)
+{
+  this->Center_.set (std::move (x));
+}
+
+const Sphere::Mass_type& Sphere::
+Mass () const
+{
+  return this->Mass_.get ();
+}
+
+Sphere::Mass_type& Sphere::
+Mass ()
+{
+  return this->Mass_.get ();
+}
+
+void Sphere::
+Mass (const Mass_type& x)
+{
+  this->Mass_.set (x);
+}
+
+void Sphere::
+Mass (::std::unique_ptr< Mass_type > x)
+{
+  this->Mass_.set (std::move (x));
+}
+
+const Sphere::InterParticleDistance_type& Sphere::
+InterParticleDistance () const
+{
+  return this->InterParticleDistance_.get ();
+}
+
+Sphere::InterParticleDistance_type& Sphere::
+InterParticleDistance ()
+{
+  return this->InterParticleDistance_.get ();
+}
+
+void Sphere::
+InterParticleDistance (const InterParticleDistance_type& x)
+{
+  this->InterParticleDistance_.set (x);
+}
+
+void Sphere::
+InterParticleDistance (::std::unique_ptr< InterParticleDistance_type > x)
+{
+  this->InterParticleDistance_.set (std::move (x));
+}
+
+const Sphere::Velocity_type& Sphere::
+Velocity () const
+{
+  return this->Velocity_.get ();
+}
+
+Sphere::Velocity_type& Sphere::
+Velocity ()
+{
+  return this->Velocity_.get ();
+}
+
+void Sphere::
+Velocity (const Velocity_type& x)
+{
+  this->Velocity_.set (x);
+}
+
+void Sphere::
+Velocity (::std::unique_ptr< Velocity_type > x)
+{
+  this->Velocity_.set (std::move (x));
+}
+
+const Sphere::Radius_type& Sphere::
+Radius () const
+{
+  return this->Radius_.get ();
+}
+
+Sphere::Radius_type& Sphere::
+Radius ()
+{
+  return this->Radius_.get ();
+}
+
+void Sphere::
+Radius (const Radius_type& x)
+{
+  this->Radius_.set (x);
+}
+
+const Sphere::Brownian_type& Sphere::
+Brownian () const
+{
+  return this->Brownian_.get ();
+}
+
+Sphere::Brownian_type& Sphere::
+Brownian ()
+{
+  return this->Brownian_.get ();
+}
+
+void Sphere::
+Brownian (const Brownian_type& x)
+{
+  this->Brownian_.set (x);
+}
+
+const Sphere::DimensionBrownian_type& Sphere::
+DimensionBrownian () const
+{
+  return this->DimensionBrownian_.get ();
+}
+
+Sphere::DimensionBrownian_type& Sphere::
+DimensionBrownian ()
+{
+  return this->DimensionBrownian_.get ();
+}
+
+void Sphere::
+DimensionBrownian (const DimensionBrownian_type& x)
+{
+  this->DimensionBrownian_.set (x);
+}
+
+const Sphere::Sigma_optional& Sphere::
+Sigma () const
+{
+  return this->Sigma_;
+}
+
+Sphere::Sigma_optional& Sphere::
+Sigma ()
+{
+  return this->Sigma_;
+}
+
+void Sphere::
+Sigma (const Sigma_type& x)
+{
+  this->Sigma_.set (x);
+}
+
+void Sphere::
+Sigma (const Sigma_optional& x)
+{
+  this->Sigma_ = x;
+}
+
+void Sphere::
+Sigma (::std::unique_ptr< Sigma_type > x)
+{
+  this->Sigma_.set (std::move (x));
+}
+
+const Sphere::Epsilon_optional& Sphere::
+Epsilon () const
+{
+  return this->Epsilon_;
+}
+
+Sphere::Epsilon_optional& Sphere::
+Epsilon ()
+{
+  return this->Epsilon_;
+}
+
+void Sphere::
+Epsilon (const Epsilon_type& x)
+{
+  this->Epsilon_.set (x);
+}
+
+void Sphere::
+Epsilon (const Epsilon_optional& x)
+{
+  this->Epsilon_ = x;
+}
+
+void Sphere::
+Epsilon (::std::unique_ptr< Epsilon_type > x)
+{
+  this->Epsilon_.set (std::move (x));
 }
 
 
@@ -1535,6 +2221,14 @@ Z (const Z_type& x)
 
 
 // Mass
+// 
+
+
+// Sigma
+// 
+
+
+// Epsilon
 // 
 
 
@@ -1906,10 +2600,13 @@ Molecules (const OutputFileName_type& OutputFileName,
 : ::xml_schema::type (),
   OutputFileName_ (OutputFileName, this),
   OutputFrequency_ (OutputFrequency, this),
+  ThermostatConfig_ (this),
+  GravityConfig_ (this),
   model_ (model, this),
   SingleParticles_ (this),
   Cuboids_ (this),
-  Discs_ (this)
+  Discs_ (this),
+  Spheres_ (this)
 {
 }
 
@@ -1920,10 +2617,13 @@ Molecules (const OutputFileName_type& OutputFileName,
 : ::xml_schema::type (),
   OutputFileName_ (OutputFileName, this),
   OutputFrequency_ (OutputFrequency, this),
+  ThermostatConfig_ (this),
+  GravityConfig_ (this),
   model_ (std::move (model), this),
   SingleParticles_ (this),
   Cuboids_ (this),
-  Discs_ (this)
+  Discs_ (this),
+  Spheres_ (this)
 {
 }
 
@@ -1934,10 +2634,13 @@ Molecules (const Molecules& x,
 : ::xml_schema::type (x, f, c),
   OutputFileName_ (x.OutputFileName_, f, this),
   OutputFrequency_ (x.OutputFrequency_, f, this),
+  ThermostatConfig_ (x.ThermostatConfig_, f, this),
+  GravityConfig_ (x.GravityConfig_, f, this),
   model_ (x.model_, f, this),
   SingleParticles_ (x.SingleParticles_, f, this),
   Cuboids_ (x.Cuboids_, f, this),
-  Discs_ (x.Discs_, f, this)
+  Discs_ (x.Discs_, f, this),
+  Spheres_ (x.Spheres_, f, this)
 {
 }
 
@@ -1948,10 +2651,13 @@ Molecules (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   OutputFileName_ (this),
   OutputFrequency_ (this),
+  ThermostatConfig_ (this),
+  GravityConfig_ (this),
   model_ (this),
   SingleParticles_ (this),
   Cuboids_ (this),
-  Discs_ (this)
+  Discs_ (this),
+  Spheres_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -1994,6 +2700,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!OutputFrequency_.present ())
       {
         this->OutputFrequency_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // ThermostatConfig
+    //
+    if (n.name () == "ThermostatConfig" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< ThermostatConfig_type > r (
+        ThermostatConfig_traits::create (i, f, this));
+
+      if (!this->ThermostatConfig_)
+      {
+        this->ThermostatConfig_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // GravityConfig
+    //
+    if (n.name () == "GravityConfig" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< GravityConfig_type > r (
+        GravityConfig_traits::create (i, f, this));
+
+      if (!this->GravityConfig_)
+      {
+        this->GravityConfig_.set (::std::move (r));
         continue;
       }
     }
@@ -2054,6 +2788,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Spheres
+    //
+    if (n.name () == "Spheres" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Spheres_type > r (
+        Spheres_traits::create (i, f, this));
+
+      if (!this->Spheres_)
+      {
+        this->Spheres_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -2094,10 +2842,13 @@ operator= (const Molecules& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->OutputFileName_ = x.OutputFileName_;
     this->OutputFrequency_ = x.OutputFrequency_;
+    this->ThermostatConfig_ = x.ThermostatConfig_;
+    this->GravityConfig_ = x.GravityConfig_;
     this->model_ = x.model_;
     this->SingleParticles_ = x.SingleParticles_;
     this->Cuboids_ = x.Cuboids_;
     this->Discs_ = x.Discs_;
+    this->Spheres_ = x.Spheres_;
   }
 
   return *this;
@@ -2234,6 +2985,340 @@ OutputFrequency::
 {
 }
 
+// ThermostatConfig
+//
+
+ThermostatConfig::
+ThermostatConfig (const InitialTemperature_type& InitialTemperature,
+                  const TargetTemperature_type& TargetTemperature,
+                  const InitialBrownian_type& InitialBrownian,
+                  const ScalingGradually_type& ScalingGradually,
+                  const MaximumTemperatureChange_type& MaximumTemperatureChange,
+                  const ApplyAfterHowManySteps_type& ApplyAfterHowManySteps,
+                  const Dimension_type& Dimension)
+: ::xml_schema::type (),
+  InitialTemperature_ (InitialTemperature, this),
+  TargetTemperature_ (TargetTemperature, this),
+  InitialBrownian_ (InitialBrownian, this),
+  ScalingGradually_ (ScalingGradually, this),
+  MaximumTemperatureChange_ (MaximumTemperatureChange, this),
+  ApplyAfterHowManySteps_ (ApplyAfterHowManySteps, this),
+  Dimension_ (Dimension, this)
+{
+}
+
+ThermostatConfig::
+ThermostatConfig (const ThermostatConfig& x,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  InitialTemperature_ (x.InitialTemperature_, f, this),
+  TargetTemperature_ (x.TargetTemperature_, f, this),
+  InitialBrownian_ (x.InitialBrownian_, f, this),
+  ScalingGradually_ (x.ScalingGradually_, f, this),
+  MaximumTemperatureChange_ (x.MaximumTemperatureChange_, f, this),
+  ApplyAfterHowManySteps_ (x.ApplyAfterHowManySteps_, f, this),
+  Dimension_ (x.Dimension_, f, this)
+{
+}
+
+ThermostatConfig::
+ThermostatConfig (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  InitialTemperature_ (this),
+  TargetTemperature_ (this),
+  InitialBrownian_ (this),
+  ScalingGradually_ (this),
+  MaximumTemperatureChange_ (this),
+  ApplyAfterHowManySteps_ (this),
+  Dimension_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void ThermostatConfig::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // InitialTemperature
+    //
+    if (n.name () == "InitialTemperature" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< InitialTemperature_type > r (
+        InitialTemperature_traits::create (i, f, this));
+
+      if (!InitialTemperature_.present ())
+      {
+        this->InitialTemperature_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // TargetTemperature
+    //
+    if (n.name () == "TargetTemperature" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< TargetTemperature_type > r (
+        TargetTemperature_traits::create (i, f, this));
+
+      if (!TargetTemperature_.present ())
+      {
+        this->TargetTemperature_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // InitialBrownian
+    //
+    if (n.name () == "InitialBrownian" && n.namespace_ ().empty ())
+    {
+      if (!InitialBrownian_.present ())
+      {
+        this->InitialBrownian_.set (InitialBrownian_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // ScalingGradually
+    //
+    if (n.name () == "ScalingGradually" && n.namespace_ ().empty ())
+    {
+      if (!ScalingGradually_.present ())
+      {
+        this->ScalingGradually_.set (ScalingGradually_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // MaximumTemperatureChange
+    //
+    if (n.name () == "MaximumTemperatureChange" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< MaximumTemperatureChange_type > r (
+        MaximumTemperatureChange_traits::create (i, f, this));
+
+      if (!MaximumTemperatureChange_.present ())
+      {
+        this->MaximumTemperatureChange_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // ApplyAfterHowManySteps
+    //
+    if (n.name () == "ApplyAfterHowManySteps" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< ApplyAfterHowManySteps_type > r (
+        ApplyAfterHowManySteps_traits::create (i, f, this));
+
+      if (!ApplyAfterHowManySteps_.present ())
+      {
+        this->ApplyAfterHowManySteps_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Dimension
+    //
+    if (n.name () == "Dimension" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Dimension_type > r (
+        Dimension_traits::create (i, f, this));
+
+      if (!Dimension_.present ())
+      {
+        this->Dimension_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!InitialTemperature_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "InitialTemperature",
+      "");
+  }
+
+  if (!TargetTemperature_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "TargetTemperature",
+      "");
+  }
+
+  if (!InitialBrownian_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "InitialBrownian",
+      "");
+  }
+
+  if (!ScalingGradually_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "ScalingGradually",
+      "");
+  }
+
+  if (!MaximumTemperatureChange_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "MaximumTemperatureChange",
+      "");
+  }
+
+  if (!ApplyAfterHowManySteps_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "ApplyAfterHowManySteps",
+      "");
+  }
+
+  if (!Dimension_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Dimension",
+      "");
+  }
+}
+
+ThermostatConfig* ThermostatConfig::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ThermostatConfig (*this, f, c);
+}
+
+ThermostatConfig& ThermostatConfig::
+operator= (const ThermostatConfig& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->InitialTemperature_ = x.InitialTemperature_;
+    this->TargetTemperature_ = x.TargetTemperature_;
+    this->InitialBrownian_ = x.InitialBrownian_;
+    this->ScalingGradually_ = x.ScalingGradually_;
+    this->MaximumTemperatureChange_ = x.MaximumTemperatureChange_;
+    this->ApplyAfterHowManySteps_ = x.ApplyAfterHowManySteps_;
+    this->Dimension_ = x.Dimension_;
+  }
+
+  return *this;
+}
+
+ThermostatConfig::
+~ThermostatConfig ()
+{
+}
+
+// GravityConfig
+//
+
+GravityConfig::
+GravityConfig (const GravitationFactor_type& GravitationFactor)
+: ::xml_schema::type (),
+  GravitationFactor_ (GravitationFactor, this)
+{
+}
+
+GravityConfig::
+GravityConfig (const GravityConfig& x,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  GravitationFactor_ (x.GravitationFactor_, f, this)
+{
+}
+
+GravityConfig::
+GravityConfig (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  GravitationFactor_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void GravityConfig::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // GravitationFactor
+    //
+    if (n.name () == "GravitationFactor" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< GravitationFactor_type > r (
+        GravitationFactor_traits::create (i, f, this));
+
+      if (!GravitationFactor_.present ())
+      {
+        this->GravitationFactor_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!GravitationFactor_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "GravitationFactor",
+      "");
+  }
+}
+
+GravityConfig* GravityConfig::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GravityConfig (*this, f, c);
+}
+
+GravityConfig& GravityConfig::
+operator= (const GravityConfig& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->GravitationFactor_ = x.GravitationFactor_;
+  }
+
+  return *this;
+}
+
+GravityConfig::
+~GravityConfig ()
+{
+}
+
 // model
 //
 
@@ -2241,16 +3326,12 @@ model::
 model (const Name_type& Name,
        const t_end_type& t_end,
        const delta_t_type& delta_t,
-       const force_type& force,
-       const Sigma_type& Sigma,
-       const Epsilon_type& Epsilon)
+       const force_type& force)
 : ::xml_schema::type (),
   Name_ (Name, this),
   t_end_ (t_end, this),
   delta_t_ (delta_t, this),
   force_ (force, this),
-  Sigma_ (Sigma, this),
-  Epsilon_ (Epsilon, this),
   DomainSize_ (this),
   rCutOff_ (this),
   BoundaryCondition_ (this)
@@ -2266,8 +3347,6 @@ model (const model& x,
   t_end_ (x.t_end_, f, this),
   delta_t_ (x.delta_t_, f, this),
   force_ (x.force_, f, this),
-  Sigma_ (x.Sigma_, f, this),
-  Epsilon_ (x.Epsilon_, f, this),
   DomainSize_ (x.DomainSize_, f, this),
   rCutOff_ (x.rCutOff_, f, this),
   BoundaryCondition_ (x.BoundaryCondition_, f, this)
@@ -2283,8 +3362,6 @@ model (const ::xercesc::DOMElement& e,
   t_end_ (this),
   delta_t_ (this),
   force_ (this),
-  Sigma_ (this),
-  Epsilon_ (this),
   DomainSize_ (this),
   rCutOff_ (this),
   BoundaryCondition_ (this)
@@ -2362,34 +3439,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // Sigma
-    //
-    if (n.name () == "Sigma" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< Sigma_type > r (
-        Sigma_traits::create (i, f, this));
-
-      if (!Sigma_.present ())
-      {
-        this->Sigma_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // Epsilon
-    //
-    if (n.name () == "Epsilon" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< Epsilon_type > r (
-        Epsilon_traits::create (i, f, this));
-
-      if (!Epsilon_.present ())
-      {
-        this->Epsilon_.set (::std::move (r));
-        continue;
-      }
-    }
-
     // DomainSize
     //
     if (n.name () == "DomainSize" && n.namespace_ ().empty ())
@@ -2462,20 +3511,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "force",
       "");
   }
-
-  if (!Sigma_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "Sigma",
-      "");
-  }
-
-  if (!Epsilon_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "Epsilon",
-      "");
-  }
 }
 
 model* model::
@@ -2495,8 +3530,6 @@ operator= (const model& x)
     this->t_end_ = x.t_end_;
     this->delta_t_ = x.delta_t_;
     this->force_ = x.force_;
-    this->Sigma_ = x.Sigma_;
-    this->Epsilon_ = x.Epsilon_;
     this->DomainSize_ = x.DomainSize_;
     this->rCutOff_ = x.rCutOff_;
     this->BoundaryCondition_ = x.BoundaryCondition_;
@@ -2831,6 +3864,437 @@ Discs::
 {
 }
 
+// Spheres
+//
+
+Spheres::
+Spheres (const Size_type& Size)
+: ::xml_schema::type (),
+  Size_ (Size, this),
+  Sphere_ (this)
+{
+}
+
+Spheres::
+Spheres (const Spheres& x,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Size_ (x.Size_, f, this),
+  Sphere_ (x.Sphere_, f, this)
+{
+}
+
+Spheres::
+Spheres (const ::xercesc::DOMElement& e,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Size_ (this),
+  Sphere_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void Spheres::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Size
+    //
+    if (n.name () == "Size" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Size_type > r (
+        Size_traits::create (i, f, this));
+
+      if (!Size_.present ())
+      {
+        this->Size_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Sphere
+    //
+    if (n.name () == "Sphere" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Sphere_type > r (
+        Sphere_traits::create (i, f, this));
+
+      this->Sphere_.push_back (::std::move (r));
+      continue;
+    }
+
+    break;
+  }
+
+  if (!Size_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Size",
+      "");
+  }
+}
+
+Spheres* Spheres::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class Spheres (*this, f, c);
+}
+
+Spheres& Spheres::
+operator= (const Spheres& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->Size_ = x.Size_;
+    this->Sphere_ = x.Sphere_;
+  }
+
+  return *this;
+}
+
+Spheres::
+~Spheres ()
+{
+}
+
+// InitialTemperature
+//
+
+InitialTemperature::
+InitialTemperature (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+InitialTemperature::
+InitialTemperature (const InitialTemperature& x,
+                    ::xml_schema::flags f,
+                    ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+InitialTemperature::
+InitialTemperature (const ::xercesc::DOMElement& e,
+                    ::xml_schema::flags f,
+                    ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+InitialTemperature::
+InitialTemperature (const ::xercesc::DOMAttr& a,
+                    ::xml_schema::flags f,
+                    ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+InitialTemperature::
+InitialTemperature (const ::std::string& s,
+                    const ::xercesc::DOMElement* e,
+                    ::xml_schema::flags f,
+                    ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+InitialTemperature* InitialTemperature::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class InitialTemperature (*this, f, c);
+}
+
+InitialTemperature::
+~InitialTemperature ()
+{
+}
+
+// TargetTemperature
+//
+
+TargetTemperature::
+TargetTemperature (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+TargetTemperature::
+TargetTemperature (const TargetTemperature& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+TargetTemperature::
+TargetTemperature (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+TargetTemperature::
+TargetTemperature (const ::xercesc::DOMAttr& a,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+TargetTemperature::
+TargetTemperature (const ::std::string& s,
+                   const ::xercesc::DOMElement* e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+TargetTemperature* TargetTemperature::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class TargetTemperature (*this, f, c);
+}
+
+TargetTemperature::
+~TargetTemperature ()
+{
+}
+
+// MaximumTemperatureChange
+//
+
+MaximumTemperatureChange::
+MaximumTemperatureChange (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+MaximumTemperatureChange::
+MaximumTemperatureChange (const MaximumTemperatureChange& x,
+                          ::xml_schema::flags f,
+                          ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+MaximumTemperatureChange::
+MaximumTemperatureChange (const ::xercesc::DOMElement& e,
+                          ::xml_schema::flags f,
+                          ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+MaximumTemperatureChange::
+MaximumTemperatureChange (const ::xercesc::DOMAttr& a,
+                          ::xml_schema::flags f,
+                          ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+MaximumTemperatureChange::
+MaximumTemperatureChange (const ::std::string& s,
+                          const ::xercesc::DOMElement* e,
+                          ::xml_schema::flags f,
+                          ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+MaximumTemperatureChange* MaximumTemperatureChange::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class MaximumTemperatureChange (*this, f, c);
+}
+
+MaximumTemperatureChange::
+~MaximumTemperatureChange ()
+{
+}
+
+// ApplyAfterHowManySteps
+//
+
+ApplyAfterHowManySteps::
+ApplyAfterHowManySteps (const ::xml_schema::integer& _xsd_integer_base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (_xsd_integer_base)
+{
+}
+
+ApplyAfterHowManySteps::
+ApplyAfterHowManySteps (const ApplyAfterHowManySteps& x,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (x, f, c)
+{
+}
+
+ApplyAfterHowManySteps::
+ApplyAfterHowManySteps (const ::xercesc::DOMElement& e,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (e, f, c)
+{
+}
+
+ApplyAfterHowManySteps::
+ApplyAfterHowManySteps (const ::xercesc::DOMAttr& a,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (a, f, c)
+{
+}
+
+ApplyAfterHowManySteps::
+ApplyAfterHowManySteps (const ::std::string& s,
+                        const ::xercesc::DOMElement* e,
+                        ::xml_schema::flags f,
+                        ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (s, e, f, c)
+{
+}
+
+ApplyAfterHowManySteps* ApplyAfterHowManySteps::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ApplyAfterHowManySteps (*this, f, c);
+}
+
+ApplyAfterHowManySteps::
+~ApplyAfterHowManySteps ()
+{
+}
+
+// Dimension
+//
+
+Dimension::
+Dimension (const ::xml_schema::integer& _xsd_integer_base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (_xsd_integer_base)
+{
+}
+
+Dimension::
+Dimension (const Dimension& x,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (x, f, c)
+{
+}
+
+Dimension::
+Dimension (const ::xercesc::DOMElement& e,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (e, f, c)
+{
+}
+
+Dimension::
+Dimension (const ::xercesc::DOMAttr& a,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (a, f, c)
+{
+}
+
+Dimension::
+Dimension (const ::std::string& s,
+           const ::xercesc::DOMElement* e,
+           ::xml_schema::flags f,
+           ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type > (s, e, f, c)
+{
+}
+
+Dimension* Dimension::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class Dimension (*this, f, c);
+}
+
+Dimension::
+~Dimension ()
+{
+}
+
+// GravitationFactor
+//
+
+GravitationFactor::
+GravitationFactor (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+GravitationFactor::
+GravitationFactor (const GravitationFactor& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+GravitationFactor::
+GravitationFactor (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+GravitationFactor::
+GravitationFactor (const ::xercesc::DOMAttr& a,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+GravitationFactor::
+GravitationFactor (const ::std::string& s,
+                   const ::xercesc::DOMElement* e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+GravitationFactor* GravitationFactor::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GravitationFactor (*this, f, c);
+}
+
+GravitationFactor::
+~GravitationFactor ()
+{
+}
+
 // Name
 //
 
@@ -3078,114 +4542,6 @@ _xsd_force_indexes_[2] =
   ::force::Gravity,
   ::force::LeonardJonesForce
 };
-
-// Sigma
-//
-
-Sigma::
-Sigma (const ::xml_schema::double_& _xsd_double__base)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
-{
-}
-
-Sigma::
-Sigma (const Sigma& x,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
-{
-}
-
-Sigma::
-Sigma (const ::xercesc::DOMElement& e,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
-{
-}
-
-Sigma::
-Sigma (const ::xercesc::DOMAttr& a,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
-{
-}
-
-Sigma::
-Sigma (const ::std::string& s,
-       const ::xercesc::DOMElement* e,
-       ::xml_schema::flags f,
-       ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
-{
-}
-
-Sigma* Sigma::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class Sigma (*this, f, c);
-}
-
-Sigma::
-~Sigma ()
-{
-}
-
-// Epsilon
-//
-
-Epsilon::
-Epsilon (const ::xml_schema::double_& _xsd_double__base)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
-{
-}
-
-Epsilon::
-Epsilon (const Epsilon& x,
-         ::xml_schema::flags f,
-         ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
-{
-}
-
-Epsilon::
-Epsilon (const ::xercesc::DOMElement& e,
-         ::xml_schema::flags f,
-         ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
-{
-}
-
-Epsilon::
-Epsilon (const ::xercesc::DOMAttr& a,
-         ::xml_schema::flags f,
-         ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
-{
-}
-
-Epsilon::
-Epsilon (const ::std::string& s,
-         const ::xercesc::DOMElement* e,
-         ::xml_schema::flags f,
-         ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
-{
-}
-
-Epsilon* Epsilon::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class Epsilon (*this, f, c);
-}
-
-Epsilon::
-~Epsilon ()
-{
-}
 
 // DomainSize
 //
@@ -3548,7 +4904,9 @@ SingleParticle (const Position_type& Position,
 : ::xml_schema::type (),
   Position_ (Position, this),
   Velocity_ (Velocity, this),
-  Mass_ (Mass, this)
+  Mass_ (Mass, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -3559,7 +4917,9 @@ SingleParticle (::std::unique_ptr< Position_type > Position,
 : ::xml_schema::type (),
   Position_ (std::move (Position), this),
   Velocity_ (std::move (Velocity), this),
-  Mass_ (Mass, this)
+  Mass_ (Mass, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -3570,7 +4930,9 @@ SingleParticle (const SingleParticle& x,
 : ::xml_schema::type (x, f, c),
   Position_ (x.Position_, f, this),
   Velocity_ (x.Velocity_, f, this),
-  Mass_ (x.Mass_, f, this)
+  Mass_ (x.Mass_, f, this),
+  Sigma_ (x.Sigma_, f, this),
+  Epsilon_ (x.Epsilon_, f, this)
 {
 }
 
@@ -3581,7 +4943,9 @@ SingleParticle (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   Position_ (this),
   Velocity_ (this),
-  Mass_ (this)
+  Mass_ (this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -3642,6 +5006,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Sigma
+    //
+    if (n.name () == "Sigma" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Sigma_type > r (
+        Sigma_traits::create (i, f, this));
+
+      if (!this->Sigma_)
+      {
+        this->Sigma_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Epsilon
+    //
+    if (n.name () == "Epsilon" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Epsilon_type > r (
+        Epsilon_traits::create (i, f, this));
+
+      if (!this->Epsilon_)
+      {
+        this->Epsilon_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -3683,6 +5075,8 @@ operator= (const SingleParticle& x)
     this->Position_ = x.Position_;
     this->Velocity_ = x.Velocity_;
     this->Mass_ = x.Mass_;
+    this->Sigma_ = x.Sigma_;
+    this->Epsilon_ = x.Epsilon_;
   }
 
   return *this;
@@ -3715,7 +5109,9 @@ Cuboid (const Position_type& Position,
   Distance_ (Distance, this),
   Mass_ (Mass, this),
   Brownian_ (Brownian, this),
-  DimensionBrownian_ (DimensionBrownian, this)
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -3738,7 +5134,9 @@ Cuboid (::std::unique_ptr< Position_type > Position,
   Distance_ (Distance, this),
   Mass_ (Mass, this),
   Brownian_ (Brownian, this),
-  DimensionBrownian_ (DimensionBrownian, this)
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -3755,7 +5153,9 @@ Cuboid (const Cuboid& x,
   Distance_ (x.Distance_, f, this),
   Mass_ (x.Mass_, f, this),
   Brownian_ (x.Brownian_, f, this),
-  DimensionBrownian_ (x.DimensionBrownian_, f, this)
+  DimensionBrownian_ (x.DimensionBrownian_, f, this),
+  Sigma_ (x.Sigma_, f, this),
+  Epsilon_ (x.Epsilon_, f, this)
 {
 }
 
@@ -3772,7 +5172,9 @@ Cuboid (const ::xercesc::DOMElement& e,
   Distance_ (this),
   Mass_ (this),
   Brownian_ (this),
-  DimensionBrownian_ (this)
+  DimensionBrownian_ (this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -3917,6 +5319,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Sigma
+    //
+    if (n.name () == "Sigma" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Sigma_type > r (
+        Sigma_traits::create (i, f, this));
+
+      if (!this->Sigma_)
+      {
+        this->Sigma_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Epsilon
+    //
+    if (n.name () == "Epsilon" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Epsilon_type > r (
+        Epsilon_traits::create (i, f, this));
+
+      if (!this->Epsilon_)
+      {
+        this->Epsilon_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -4006,6 +5436,8 @@ operator= (const Cuboid& x)
     this->Mass_ = x.Mass_;
     this->Brownian_ = x.Brownian_;
     this->DimensionBrownian_ = x.DimensionBrownian_;
+    this->Sigma_ = x.Sigma_;
+    this->Epsilon_ = x.Epsilon_;
   }
 
   return *this;
@@ -4034,7 +5466,9 @@ Disc (const Center_type& Center,
   Velocity_ (Velocity, this),
   Radius_ (Radius, this),
   Brownian_ (Brownian, this),
-  DimensionBrownian_ (DimensionBrownian, this)
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -4053,7 +5487,9 @@ Disc (::std::unique_ptr< Center_type > Center,
   Velocity_ (std::move (Velocity), this),
   Radius_ (Radius, this),
   Brownian_ (Brownian, this),
-  DimensionBrownian_ (DimensionBrownian, this)
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
 }
 
@@ -4068,7 +5504,9 @@ Disc (const Disc& x,
   Velocity_ (x.Velocity_, f, this),
   Radius_ (x.Radius_, f, this),
   Brownian_ (x.Brownian_, f, this),
-  DimensionBrownian_ (x.DimensionBrownian_, f, this)
+  DimensionBrownian_ (x.DimensionBrownian_, f, this),
+  Sigma_ (x.Sigma_, f, this),
+  Epsilon_ (x.Epsilon_, f, this)
 {
 }
 
@@ -4083,7 +5521,9 @@ Disc (const ::xercesc::DOMElement& e,
   Velocity_ (this),
   Radius_ (this),
   Brownian_ (this),
-  DimensionBrownian_ (this)
+  DimensionBrownian_ (this),
+  Sigma_ (this),
+  Epsilon_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -4191,6 +5631,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Sigma
+    //
+    if (n.name () == "Sigma" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Sigma_type > r (
+        Sigma_traits::create (i, f, this));
+
+      if (!this->Sigma_)
+      {
+        this->Sigma_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Epsilon
+    //
+    if (n.name () == "Epsilon" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Epsilon_type > r (
+        Epsilon_traits::create (i, f, this));
+
+      if (!this->Epsilon_)
+      {
+        this->Epsilon_.set (::std::move (r));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -4264,6 +5732,8 @@ operator= (const Disc& x)
     this->Radius_ = x.Radius_;
     this->Brownian_ = x.Brownian_;
     this->DimensionBrownian_ = x.DimensionBrownian_;
+    this->Sigma_ = x.Sigma_;
+    this->Epsilon_ = x.Epsilon_;
   }
 
   return *this;
@@ -4271,6 +5741,302 @@ operator= (const Disc& x)
 
 Disc::
 ~Disc ()
+{
+}
+
+// Sphere
+//
+
+Sphere::
+Sphere (const Center_type& Center,
+        const Mass_type& Mass,
+        const InterParticleDistance_type& InterParticleDistance,
+        const Velocity_type& Velocity,
+        const Radius_type& Radius,
+        const Brownian_type& Brownian,
+        const DimensionBrownian_type& DimensionBrownian)
+: ::xml_schema::type (),
+  Center_ (Center, this),
+  Mass_ (Mass, this),
+  InterParticleDistance_ (InterParticleDistance, this),
+  Velocity_ (Velocity, this),
+  Radius_ (Radius, this),
+  Brownian_ (Brownian, this),
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
+{
+}
+
+Sphere::
+Sphere (::std::unique_ptr< Center_type > Center,
+        const Mass_type& Mass,
+        const InterParticleDistance_type& InterParticleDistance,
+        ::std::unique_ptr< Velocity_type > Velocity,
+        const Radius_type& Radius,
+        const Brownian_type& Brownian,
+        const DimensionBrownian_type& DimensionBrownian)
+: ::xml_schema::type (),
+  Center_ (std::move (Center), this),
+  Mass_ (Mass, this),
+  InterParticleDistance_ (InterParticleDistance, this),
+  Velocity_ (std::move (Velocity), this),
+  Radius_ (Radius, this),
+  Brownian_ (Brownian, this),
+  DimensionBrownian_ (DimensionBrownian, this),
+  Sigma_ (this),
+  Epsilon_ (this)
+{
+}
+
+Sphere::
+Sphere (const Sphere& x,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Center_ (x.Center_, f, this),
+  Mass_ (x.Mass_, f, this),
+  InterParticleDistance_ (x.InterParticleDistance_, f, this),
+  Velocity_ (x.Velocity_, f, this),
+  Radius_ (x.Radius_, f, this),
+  Brownian_ (x.Brownian_, f, this),
+  DimensionBrownian_ (x.DimensionBrownian_, f, this),
+  Sigma_ (x.Sigma_, f, this),
+  Epsilon_ (x.Epsilon_, f, this)
+{
+}
+
+Sphere::
+Sphere (const ::xercesc::DOMElement& e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Center_ (this),
+  Mass_ (this),
+  InterParticleDistance_ (this),
+  Velocity_ (this),
+  Radius_ (this),
+  Brownian_ (this),
+  DimensionBrownian_ (this),
+  Sigma_ (this),
+  Epsilon_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void Sphere::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Center
+    //
+    if (n.name () == "Center" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Center_type > r (
+        Center_traits::create (i, f, this));
+
+      if (!Center_.present ())
+      {
+        this->Center_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Mass
+    //
+    if (n.name () == "Mass" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Mass_type > r (
+        Mass_traits::create (i, f, this));
+
+      if (!Mass_.present ())
+      {
+        this->Mass_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // InterParticleDistance
+    //
+    if (n.name () == "InterParticleDistance" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< InterParticleDistance_type > r (
+        InterParticleDistance_traits::create (i, f, this));
+
+      if (!InterParticleDistance_.present ())
+      {
+        this->InterParticleDistance_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Velocity
+    //
+    if (n.name () == "Velocity" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Velocity_type > r (
+        Velocity_traits::create (i, f, this));
+
+      if (!Velocity_.present ())
+      {
+        this->Velocity_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Radius
+    //
+    if (n.name () == "Radius" && n.namespace_ ().empty ())
+    {
+      if (!Radius_.present ())
+      {
+        this->Radius_.set (Radius_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Brownian
+    //
+    if (n.name () == "Brownian" && n.namespace_ ().empty ())
+    {
+      if (!Brownian_.present ())
+      {
+        this->Brownian_.set (Brownian_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // DimensionBrownian
+    //
+    if (n.name () == "DimensionBrownian" && n.namespace_ ().empty ())
+    {
+      if (!DimensionBrownian_.present ())
+      {
+        this->DimensionBrownian_.set (DimensionBrownian_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Sigma
+    //
+    if (n.name () == "Sigma" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Sigma_type > r (
+        Sigma_traits::create (i, f, this));
+
+      if (!this->Sigma_)
+      {
+        this->Sigma_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Epsilon
+    //
+    if (n.name () == "Epsilon" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Epsilon_type > r (
+        Epsilon_traits::create (i, f, this));
+
+      if (!this->Epsilon_)
+      {
+        this->Epsilon_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!Center_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Center",
+      "");
+  }
+
+  if (!Mass_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Mass",
+      "");
+  }
+
+  if (!InterParticleDistance_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "InterParticleDistance",
+      "");
+  }
+
+  if (!Velocity_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Velocity",
+      "");
+  }
+
+  if (!Radius_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Radius",
+      "");
+  }
+
+  if (!Brownian_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Brownian",
+      "");
+  }
+
+  if (!DimensionBrownian_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "DimensionBrownian",
+      "");
+  }
+}
+
+Sphere* Sphere::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class Sphere (*this, f, c);
+}
+
+Sphere& Sphere::
+operator= (const Sphere& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->Center_ = x.Center_;
+    this->Mass_ = x.Mass_;
+    this->InterParticleDistance_ = x.InterParticleDistance_;
+    this->Velocity_ = x.Velocity_;
+    this->Radius_ = x.Radius_;
+    this->Brownian_ = x.Brownian_;
+    this->DimensionBrownian_ = x.DimensionBrownian_;
+    this->Sigma_ = x.Sigma_;
+    this->Epsilon_ = x.Epsilon_;
+  }
+
+  return *this;
+}
+
+Sphere::
+~Sphere ()
 {
 }
 
@@ -4979,6 +6745,114 @@ _clone (::xml_schema::flags f,
 
 Mass::
 ~Mass ()
+{
+}
+
+// Sigma
+//
+
+Sigma::
+Sigma (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+Sigma::
+Sigma (const Sigma& x,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+Sigma::
+Sigma (const ::xercesc::DOMElement& e,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+Sigma::
+Sigma (const ::xercesc::DOMAttr& a,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+Sigma::
+Sigma (const ::std::string& s,
+       const ::xercesc::DOMElement* e,
+       ::xml_schema::flags f,
+       ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+Sigma* Sigma::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class Sigma (*this, f, c);
+}
+
+Sigma::
+~Sigma ()
+{
+}
+
+// Epsilon
+//
+
+Epsilon::
+Epsilon (const ::xml_schema::double_& _xsd_double__base)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
+{
+}
+
+Epsilon::
+Epsilon (const Epsilon& x,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
+{
+}
+
+Epsilon::
+Epsilon (const ::xercesc::DOMElement& e,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
+{
+}
+
+Epsilon::
+Epsilon (const ::xercesc::DOMAttr& a,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
+{
+}
+
+Epsilon::
+Epsilon (const ::std::string& s,
+         const ::xercesc::DOMElement* e,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
+{
+}
+
+Epsilon* Epsilon::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class Epsilon (*this, f, c);
+}
+
+Epsilon::
+~Epsilon ()
 {
 }
 
@@ -6364,6 +8238,30 @@ operator<< (::xercesc::DOMElement& e, const Molecules& i)
     s << i.OutputFrequency ();
   }
 
+  // ThermostatConfig
+  //
+  if (i.ThermostatConfig ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "ThermostatConfig",
+        e));
+
+    s << *i.ThermostatConfig ();
+  }
+
+  // GravityConfig
+  //
+  if (i.GravityConfig ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "GravityConfig",
+        e));
+
+    s << *i.GravityConfig ();
+  }
+
   // model
   //
   {
@@ -6410,6 +8308,18 @@ operator<< (::xercesc::DOMElement& e, const Molecules& i)
 
     s << *i.Discs ();
   }
+
+  // Spheres
+  //
+  if (i.Spheres ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Spheres",
+        e));
+
+    s << *i.Spheres ();
+  }
 }
 
 void
@@ -6448,6 +8358,106 @@ operator<< (::xml_schema::list_stream& l,
             const OutputFrequency& i)
 {
   l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const ThermostatConfig& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // InitialTemperature
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "InitialTemperature",
+        e));
+
+    s << i.InitialTemperature ();
+  }
+
+  // TargetTemperature
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "TargetTemperature",
+        e));
+
+    s << i.TargetTemperature ();
+  }
+
+  // InitialBrownian
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "InitialBrownian",
+        e));
+
+    s << i.InitialBrownian ();
+  }
+
+  // ScalingGradually
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "ScalingGradually",
+        e));
+
+    s << i.ScalingGradually ();
+  }
+
+  // MaximumTemperatureChange
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "MaximumTemperatureChange",
+        e));
+
+    s << i.MaximumTemperatureChange ();
+  }
+
+  // ApplyAfterHowManySteps
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "ApplyAfterHowManySteps",
+        e));
+
+    s << i.ApplyAfterHowManySteps ();
+  }
+
+  // Dimension
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Dimension",
+        e));
+
+    s << i.Dimension ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const GravityConfig& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // GravitationFactor
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "GravitationFactor",
+        e));
+
+    s << i.GravitationFactor ();
+  }
 }
 
 void
@@ -6497,28 +8507,6 @@ operator<< (::xercesc::DOMElement& e, const model& i)
         e));
 
     s << i.force ();
-  }
-
-  // Sigma
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "Sigma",
-        e));
-
-    s << i.Sigma ();
-  }
-
-  // Epsilon
-  //
-  {
-    ::xercesc::DOMElement& s (
-      ::xsd::cxx::xml::dom::create_element (
-        "Epsilon",
-        e));
-
-    s << i.Epsilon ();
   }
 
   // DomainSize
@@ -6652,6 +8640,151 @@ operator<< (::xercesc::DOMElement& e, const Discs& i)
 }
 
 void
+operator<< (::xercesc::DOMElement& e, const Spheres& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Size
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Size",
+        e));
+
+    s << i.Size ();
+  }
+
+  // Sphere
+  //
+  for (Spheres::Sphere_const_iterator
+       b (i.Sphere ().begin ()), n (i.Sphere ().end ());
+       b != n; ++b)
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Sphere",
+        e));
+
+    s << *b;
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const InitialTemperature& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const InitialTemperature& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const InitialTemperature& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const TargetTemperature& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const TargetTemperature& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const TargetTemperature& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const MaximumTemperatureChange& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const MaximumTemperatureChange& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const MaximumTemperatureChange& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const ApplyAfterHowManySteps& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const ApplyAfterHowManySteps& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const ApplyAfterHowManySteps& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const Dimension& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const Dimension& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const Dimension& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const GravitationFactor& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const GravitationFactor& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const GravitationFactor& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
 operator<< (::xercesc::DOMElement& e, const Name& i)
 {
   e << static_cast< const ::xml_schema::string& > (i);
@@ -6725,44 +8858,6 @@ operator<< (::xml_schema::list_stream& l,
             const force& i)
 {
   l << static_cast< const ::xml_schema::string& > (i);
-}
-
-void
-operator<< (::xercesc::DOMElement& e, const Sigma& i)
-{
-  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xercesc::DOMAttr& a, const Sigma& i)
-{
-  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xml_schema::list_stream& l,
-            const Sigma& i)
-{
-  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xercesc::DOMElement& e, const Epsilon& i)
-{
-  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xercesc::DOMAttr& a, const Epsilon& i)
-{
-  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xml_schema::list_stream& l,
-            const Epsilon& i)
-{
-  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
 }
 
 void
@@ -6896,6 +8991,30 @@ operator<< (::xercesc::DOMElement& e, const SingleParticle& i)
 
     s << i.Mass ();
   }
+
+  // Sigma
+  //
+  if (i.Sigma ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Sigma",
+        e));
+
+    s << *i.Sigma ();
+  }
+
+  // Epsilon
+  //
+  if (i.Epsilon ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Epsilon",
+        e));
+
+    s << *i.Epsilon ();
+  }
 }
 
 void
@@ -7001,6 +9120,30 @@ operator<< (::xercesc::DOMElement& e, const Cuboid& i)
 
     s << i.DimensionBrownian ();
   }
+
+  // Sigma
+  //
+  if (i.Sigma ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Sigma",
+        e));
+
+    s << *i.Sigma ();
+  }
+
+  // Epsilon
+  //
+  if (i.Epsilon ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Epsilon",
+        e));
+
+    s << *i.Epsilon ();
+  }
 }
 
 void
@@ -7083,6 +9226,137 @@ operator<< (::xercesc::DOMElement& e, const Disc& i)
         e));
 
     s << i.DimensionBrownian ();
+  }
+
+  // Sigma
+  //
+  if (i.Sigma ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Sigma",
+        e));
+
+    s << *i.Sigma ();
+  }
+
+  // Epsilon
+  //
+  if (i.Epsilon ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Epsilon",
+        e));
+
+    s << *i.Epsilon ();
+  }
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const Sphere& i)
+{
+  e << static_cast< const ::xml_schema::type& > (i);
+
+  // Center
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Center",
+        e));
+
+    s << i.Center ();
+  }
+
+  // Mass
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Mass",
+        e));
+
+    s << i.Mass ();
+  }
+
+  // InterParticleDistance
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "InterParticleDistance",
+        e));
+
+    s << i.InterParticleDistance ();
+  }
+
+  // Velocity
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Velocity",
+        e));
+
+    s << i.Velocity ();
+  }
+
+  // Radius
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Radius",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Radius ());
+  }
+
+  // Brownian
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Brownian",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Brownian ());
+  }
+
+  // DimensionBrownian
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "DimensionBrownian",
+        e));
+
+    s << i.DimensionBrownian ();
+  }
+
+  // Sigma
+  //
+  if (i.Sigma ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Sigma",
+        e));
+
+    s << *i.Sigma ();
+  }
+
+  // Epsilon
+  //
+  if (i.Epsilon ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Epsilon",
+        e));
+
+    s << *i.Epsilon ();
   }
 }
 
@@ -7308,6 +9582,44 @@ operator<< (::xercesc::DOMAttr& a, const Mass& i)
 void
 operator<< (::xml_schema::list_stream& l,
             const Mass& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const Sigma& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const Sigma& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const Sigma& i)
+{
+  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const Epsilon& i)
+{
+  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const Epsilon& i)
+{
+  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const Epsilon& i)
 {
   l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
 }

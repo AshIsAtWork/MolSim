@@ -5,7 +5,7 @@
 #include "LinkedCells.h"
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
-                         double rCutOff, double sigma, FileHandler::outputFormat outputFormat,
+                         double rCutOff, FileHandler::outputFormat outputFormat,
                          BoundarySet boundaryConditions) : Model(particles, force, deltaT, outputFormat),
                                              particles(domainSize, rCutOff, boundaryConditions){
     gravityOn = false;
