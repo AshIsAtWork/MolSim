@@ -57,7 +57,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 }
 
                 if (molecules.ThermostatConfig().present()) {
-
+                    spdlog::debug("Thermostat is used");
                     simulationSettings.thermostatParameters.useThermostat = true;
                     if (static_cast<double>(molecules.ThermostatConfig().get().InitialTemperature()) < 0) {
                         spdlog::error("Initial Temperature is less than 0");
@@ -121,19 +121,13 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
                 } else {
                     simulationSettings.thermostatParameters.useThermostat = false;
-                    spdlog::debug("Thermostat was set to true");
+                    spdlog::debug("Thermostat was set to false");
                 }
 
                 if (molecules.GravityConfig().present()) {
-                    if (static_cast<double>(molecules.GravityConfig().get().GravitationFactor()) < 0) {
-                        spdlog::error("Gravity is less than 0");
-                        return 1;
-                    } else {
                         simulationSettings.gravityOn = true;
                         simulationSettings.gravityFactor = static_cast<double>(molecules.GravityConfig().get().GravitationFactor());
-                        spdlog::debug("Gravity: {}",
-                                      static_cast<double>(molecules.GravityConfig().get().GravitationFactor()));
-                    }
+                        spdlog::debug("Gravity: {}",static_cast<double>(molecules.GravityConfig().get().GravitationFactor()));
                 } else {
                     simulationSettings.gravityOn = false;
                     spdlog::debug("Gravity was set to false");

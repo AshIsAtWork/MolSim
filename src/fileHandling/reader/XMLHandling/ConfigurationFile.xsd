@@ -80,13 +80,7 @@
                 <xs:element minOccurs="0" maxOccurs="1" name="GravityConfig">
                     <xs:complexType mixed="true">
                         <xs:sequence>
-                            <xs:element minOccurs="1" maxOccurs="1" name="GravitationFactor">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:double">
-                                        <xs:minInclusive value="0"/>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:element>
+                            <xs:element minOccurs="1" maxOccurs="1" name="GravitationFactor" type="xs:decimal"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

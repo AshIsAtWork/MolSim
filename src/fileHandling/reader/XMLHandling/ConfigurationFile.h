@@ -631,7 +631,6 @@ class TargetTemperature;
 class MaximumTemperatureChange;
 class ApplyAfterHowManySteps;
 class Dimension;
-class GravitationFactor;
 class Name;
 class t_end;
 class delta_t;
@@ -2143,12 +2142,12 @@ class GravityConfig: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::GravitationFactor GravitationFactor_type;
+  typedef ::xml_schema::decimal GravitationFactor_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< GravitationFactor_type, char > GravitationFactor_traits;
+  typedef ::xsd::cxx::tree::traits< GravitationFactor_type, char, ::xsd::cxx::tree::schema_type::decimal > GravitationFactor_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
@@ -2176,17 +2175,6 @@ class GravityConfig: public ::xml_schema::type
    */
   void
   GravitationFactor (const GravitationFactor_type& x);
-
-  /**
-   * @brief Set the element value without copying.
-   *
-   * @param p A new value to use.
-   *
-   * This function will try to use the passed value directly
-   * instead of making a copy.
-   */
-  void
-  GravitationFactor (::std::unique_ptr< GravitationFactor_type > p);
 
   //@}
 
@@ -4175,100 +4163,6 @@ class Dimension: public ::xsd::cxx::tree::fundamental_base< ::xml_schema::intege
    */
   virtual 
   ~Dimension ();
-};
-
-/**
- * @brief Class corresponding to the %GravitationFactor schema type.
- *
- * @nosubgrouping
- */
-class GravitationFactor: public ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >
-{
-  public:
-  /**
-   * @name Constructors
-   */
-  //@{
-
-  /**
-   * @brief Create an instance from the ultimate base and
-   * initializers for required elements and attributes.
-   */
-  GravitationFactor (const ::xml_schema::double_&);
-
-  /**
-   * @brief Create an instance from a DOM element.
-   *
-   * @param e A DOM element to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GravitationFactor (const ::xercesc::DOMElement& e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Create an instance from a DOM attribute.
-   *
-   * @param a A DOM attribute to extract the data from.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GravitationFactor (const ::xercesc::DOMAttr& a,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Create an instance from a string fragment.
-   *
-   * @param s A string fragment to extract the data from.
-   * @param e A pointer to DOM element containing the string fragment.
-   * @param f Flags to create the new instance with.
-   * @param c A pointer to the object that will contain the new
-   * instance.
-   */
-  GravitationFactor (const ::std::string& s,
-                     const ::xercesc::DOMElement* e,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy constructor.
-   *
-   * @param x An instance to make a copy of.
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   *
-   * For polymorphic object models use the @c _clone function instead.
-   */
-  GravitationFactor (const GravitationFactor& x,
-                     ::xml_schema::flags f = 0,
-                     ::xml_schema::container* c = 0);
-
-  /**
-   * @brief Copy the instance polymorphically.
-   *
-   * @param f Flags to create the copy with.
-   * @param c A pointer to the object that will contain the copy.
-   * @return A pointer to the dynamically allocated copy.
-   *
-   * This function ensures that the dynamic type of the instance is
-   * used for copying and should be used for polymorphic object
-   * models instead of the copy constructor.
-   */
-  virtual GravitationFactor*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  //@}
-
-  /**
-   * @brief Destructor.
-   */
-  virtual 
-  ~GravitationFactor ();
 };
 
 /**
@@ -10316,7 +10210,8 @@ class Front: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -10441,8 +10336,8 @@ class Front: public ::xml_schema::string
   _xsd_Front_convert () const;
 
   public:
-  static const char* const _xsd_Front_literals_[2];
-  static const value _xsd_Front_indexes_[2];
+  static const char* const _xsd_Front_literals_[3];
+  static const value _xsd_Front_indexes_[3];
 
   //@endcond
 };
@@ -10461,7 +10356,8 @@ class Back: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -10586,8 +10482,8 @@ class Back: public ::xml_schema::string
   _xsd_Back_convert () const;
 
   public:
-  static const char* const _xsd_Back_literals_[2];
-  static const value _xsd_Back_indexes_[2];
+  static const char* const _xsd_Back_literals_[3];
+  static const value _xsd_Back_indexes_[3];
 
   //@endcond
 };
@@ -10606,7 +10502,8 @@ class Left: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -10731,8 +10628,8 @@ class Left: public ::xml_schema::string
   _xsd_Left_convert () const;
 
   public:
-  static const char* const _xsd_Left_literals_[2];
-  static const value _xsd_Left_indexes_[2];
+  static const char* const _xsd_Left_literals_[3];
+  static const value _xsd_Left_indexes_[3];
 
   //@endcond
 };
@@ -10751,7 +10648,8 @@ class Right: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -10876,8 +10774,8 @@ class Right: public ::xml_schema::string
   _xsd_Right_convert () const;
 
   public:
-  static const char* const _xsd_Right_literals_[2];
-  static const value _xsd_Right_indexes_[2];
+  static const char* const _xsd_Right_literals_[3];
+  static const value _xsd_Right_indexes_[3];
 
   //@endcond
 };
@@ -10896,7 +10794,8 @@ class Top: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -11021,8 +10920,8 @@ class Top: public ::xml_schema::string
   _xsd_Top_convert () const;
 
   public:
-  static const char* const _xsd_Top_literals_[2];
-  static const value _xsd_Top_indexes_[2];
+  static const char* const _xsd_Top_literals_[3];
+  static const value _xsd_Top_indexes_[3];
 
   //@endcond
 };
@@ -11041,7 +10940,8 @@ class Bottom: public ::xml_schema::string
   enum value
   {
     Reflective,
-    Outflow
+    Outflow,
+    Periodic
   };
 
   /**
@@ -11166,8 +11066,8 @@ class Bottom: public ::xml_schema::string
   _xsd_Bottom_convert () const;
 
   public:
-  static const char* const _xsd_Bottom_literals_[2];
-  static const value _xsd_Bottom_indexes_[2];
+  static const char* const _xsd_Bottom_literals_[3];
+  static const value _xsd_Bottom_indexes_[3];
 
   //@endcond
 };
@@ -11691,16 +11591,6 @@ operator<< (::xercesc::DOMAttr&, const Dimension&);
 void
 operator<< (::xml_schema::list_stream&,
             const Dimension&);
-
-void
-operator<< (::xercesc::DOMElement&, const GravitationFactor&);
-
-void
-operator<< (::xercesc::DOMAttr&, const GravitationFactor&);
-
-void
-operator<< (::xml_schema::list_stream&,
-            const GravitationFactor&);
 
 void
 operator<< (::xercesc::DOMElement&, const Name&);

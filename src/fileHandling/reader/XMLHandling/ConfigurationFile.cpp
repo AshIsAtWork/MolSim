@@ -485,12 +485,6 @@ GravitationFactor (const GravitationFactor_type& x)
   this->GravitationFactor_.set (x);
 }
 
-void GravityConfig::
-GravitationFactor (::std::unique_ptr< GravitationFactor_type > x)
-{
-  this->GravitationFactor_.set (std::move (x));
-}
-
 
 // model
 // 
@@ -883,10 +877,6 @@ Sphere (const Sphere_sequence& s)
 
 
 // Dimension
-// 
-
-
-// GravitationFactor
 // 
 
 
@@ -3274,12 +3264,9 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "GravitationFactor" && n.namespace_ ().empty ())
     {
-      ::std::unique_ptr< GravitationFactor_type > r (
-        GravitationFactor_traits::create (i, f, this));
-
       if (!GravitationFactor_.present ())
       {
-        this->GravitationFactor_.set (::std::move (r));
+        this->GravitationFactor_.set (GravitationFactor_traits::create (i, f, this));
         continue;
       }
     }
@@ -4238,60 +4225,6 @@ _clone (::xml_schema::flags f,
 
 Dimension::
 ~Dimension ()
-{
-}
-
-// GravitationFactor
-//
-
-GravitationFactor::
-GravitationFactor (const ::xml_schema::double_& _xsd_double__base)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (_xsd_double__base)
-{
-}
-
-GravitationFactor::
-GravitationFactor (const GravitationFactor& x,
-                   ::xml_schema::flags f,
-                   ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (x, f, c)
-{
-}
-
-GravitationFactor::
-GravitationFactor (const ::xercesc::DOMElement& e,
-                   ::xml_schema::flags f,
-                   ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (e, f, c)
-{
-}
-
-GravitationFactor::
-GravitationFactor (const ::xercesc::DOMAttr& a,
-                   ::xml_schema::flags f,
-                   ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (a, f, c)
-{
-}
-
-GravitationFactor::
-GravitationFactor (const ::std::string& s,
-                   const ::xercesc::DOMElement* e,
-                   ::xml_schema::flags f,
-                   ::xml_schema::container* c)
-: ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ > (s, e, f, c)
-{
-}
-
-GravitationFactor* GravitationFactor::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class GravitationFactor (*this, f, c);
-}
-
-GravitationFactor::
-~GravitationFactor ()
 {
 }
 
@@ -7413,11 +7346,11 @@ _xsd_Front_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Front_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Front_indexes_,
-                    _xsd_Front_indexes_ + 2,
+                    _xsd_Front_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Front_indexes_ + 2 || _xsd_Front_literals_[*i] != *this)
+  if (i == _xsd_Front_indexes_ + 3 || _xsd_Front_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7426,16 +7359,18 @@ _xsd_Front_convert () const
 }
 
 const char* const Front::
-_xsd_Front_literals_[2] =
+_xsd_Front_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Front::value Front::
-_xsd_Front_indexes_[2] =
+_xsd_Front_indexes_[3] =
 {
   ::Front::Outflow,
+  ::Front::Periodic,
   ::Front::Reflective
 };
 
@@ -7483,11 +7418,11 @@ _xsd_Back_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Back_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Back_indexes_,
-                    _xsd_Back_indexes_ + 2,
+                    _xsd_Back_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Back_indexes_ + 2 || _xsd_Back_literals_[*i] != *this)
+  if (i == _xsd_Back_indexes_ + 3 || _xsd_Back_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7496,16 +7431,18 @@ _xsd_Back_convert () const
 }
 
 const char* const Back::
-_xsd_Back_literals_[2] =
+_xsd_Back_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Back::value Back::
-_xsd_Back_indexes_[2] =
+_xsd_Back_indexes_[3] =
 {
   ::Back::Outflow,
+  ::Back::Periodic,
   ::Back::Reflective
 };
 
@@ -7553,11 +7490,11 @@ _xsd_Left_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Left_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Left_indexes_,
-                    _xsd_Left_indexes_ + 2,
+                    _xsd_Left_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Left_indexes_ + 2 || _xsd_Left_literals_[*i] != *this)
+  if (i == _xsd_Left_indexes_ + 3 || _xsd_Left_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7566,16 +7503,18 @@ _xsd_Left_convert () const
 }
 
 const char* const Left::
-_xsd_Left_literals_[2] =
+_xsd_Left_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Left::value Left::
-_xsd_Left_indexes_[2] =
+_xsd_Left_indexes_[3] =
 {
   ::Left::Outflow,
+  ::Left::Periodic,
   ::Left::Reflective
 };
 
@@ -7623,11 +7562,11 @@ _xsd_Right_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Right_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Right_indexes_,
-                    _xsd_Right_indexes_ + 2,
+                    _xsd_Right_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Right_indexes_ + 2 || _xsd_Right_literals_[*i] != *this)
+  if (i == _xsd_Right_indexes_ + 3 || _xsd_Right_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7636,16 +7575,18 @@ _xsd_Right_convert () const
 }
 
 const char* const Right::
-_xsd_Right_literals_[2] =
+_xsd_Right_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Right::value Right::
-_xsd_Right_indexes_[2] =
+_xsd_Right_indexes_[3] =
 {
   ::Right::Outflow,
+  ::Right::Periodic,
   ::Right::Reflective
 };
 
@@ -7693,11 +7634,11 @@ _xsd_Top_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Top_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Top_indexes_,
-                    _xsd_Top_indexes_ + 2,
+                    _xsd_Top_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Top_indexes_ + 2 || _xsd_Top_literals_[*i] != *this)
+  if (i == _xsd_Top_indexes_ + 3 || _xsd_Top_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7706,16 +7647,18 @@ _xsd_Top_convert () const
 }
 
 const char* const Top::
-_xsd_Top_literals_[2] =
+_xsd_Top_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Top::value Top::
-_xsd_Top_indexes_[2] =
+_xsd_Top_indexes_[3] =
 {
   ::Top::Outflow,
+  ::Top::Periodic,
   ::Top::Reflective
 };
 
@@ -7763,11 +7706,11 @@ _xsd_Bottom_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_Bottom_literals_);
   const value* i (::std::lower_bound (
                     _xsd_Bottom_indexes_,
-                    _xsd_Bottom_indexes_ + 2,
+                    _xsd_Bottom_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_Bottom_indexes_ + 2 || _xsd_Bottom_literals_[*i] != *this)
+  if (i == _xsd_Bottom_indexes_ + 3 || _xsd_Bottom_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -7776,16 +7719,18 @@ _xsd_Bottom_convert () const
 }
 
 const char* const Bottom::
-_xsd_Bottom_literals_[2] =
+_xsd_Bottom_literals_[3] =
 {
   "Reflective",
-  "Outflow"
+  "Outflow",
+  "Periodic"
 };
 
 const Bottom::value Bottom::
-_xsd_Bottom_indexes_[2] =
+_xsd_Bottom_indexes_[3] =
 {
   ::Bottom::Outflow,
+  ::Bottom::Periodic,
   ::Bottom::Reflective
 };
 
@@ -8456,7 +8401,7 @@ operator<< (::xercesc::DOMElement& e, const GravityConfig& i)
         "GravitationFactor",
         e));
 
-    s << i.GravitationFactor ();
+    s << ::xml_schema::as_decimal(i.GravitationFactor ());
   }
 }
 
@@ -8763,25 +8708,6 @@ operator<< (::xml_schema::list_stream& l,
             const Dimension& i)
 {
   l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
-}
-
-void
-operator<< (::xercesc::DOMElement& e, const GravitationFactor& i)
-{
-  e << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xercesc::DOMAttr& a, const GravitationFactor& i)
-{
-  a << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
-}
-
-void
-operator<< (::xml_schema::list_stream& l,
-            const GravitationFactor& i)
-{
-  l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::double_, char, ::xml_schema::simple_type, ::xsd::cxx::tree::schema_type::double_ >& > (i);
 }
 
 void

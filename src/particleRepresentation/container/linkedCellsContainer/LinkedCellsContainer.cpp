@@ -249,8 +249,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] = nY - 2;
             origin[2] -= 1;
 
-            for (int x = 0; x < 2; x++) {
-                for (int z = 0; z < 2; z++) {
+            for (int x = 0; x < 3; x++) {
+                for (int z = 0; z < 3; z++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -258,6 +258,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[2]++;
                 }
+                origin[2] -= 3;
                 origin[0]++;
             }
         }
@@ -268,8 +269,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] -= 1;
             origin[2] -= 1;
 
-            for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < 2; z++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 3; z++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -277,6 +278,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[2]++;
                 }
+                origin[2] -= 3;
                 origin[1]++;
             }
         }
@@ -287,8 +289,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] = 1;
             origin[2] -= 1;
 
-            for (int x = 0; x < 2; x++) {
-                for (int z = 0; z < 2; z++) {
+            for (int x = 0; x < 3; x++) {
+                for (int z = 0; z < 3; z++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -296,6 +298,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[2]++;
                 }
+                origin[2] -= 3;
                 origin[0]++;
             }
         }
@@ -306,8 +309,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] -= 1;
             origin[2] -= 1;
 
-            for (int y = 0; y < 2; y++) {
-                for (int z = 0; z < 2; z++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 3; z++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -315,6 +318,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[2]++;
                 }
+                origin[2] -= 3;
                 origin[1]++;
             }
         }
@@ -325,8 +329,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] -= 1;
             origin[2] = 1;
 
-            for (int x = 0; x < 2; x++) {
-                for (int y = 0; y < 2; y++) {
+            for (int x = 0; x < 3; x++) {
+                for (int y = 0; y < 3; y++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -334,6 +338,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[1]++;
                 }
+                origin[1] -= 3;
                 origin[0]++;
             }
         }
@@ -344,8 +349,8 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
             origin[1] -= 1;
             origin[2] = nZ - 2;
 
-            for (int x = 0; x < 2; x++) {
-                for (int y = 0; y < 2; y++) {
+            for (int x = 0; x < 3; x++) {
+                for (int y = 0; y < 3; y++) {
                     if (isCellInDomain(origin)) {
                         applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                                    threeDToOneD(origin[0], origin[1], origin[2]),
@@ -353,6 +358,7 @@ void LinkedCellsContainer::applyForceToOppositeCellsHelper(Side side, std::array
                     }
                     origin[1]++;
                 }
+                origin[1] -= 3;
                 origin[0]++;
             }
         }
@@ -365,7 +371,7 @@ void LinkedCellsContainer::applyForceToOppositeEgdeHelper(std::array<int, 3> cel
                                                           std::array<double, 3> offsetPosition, int dim) {
     auto origin = cellToProcess + offsetCell;
     origin[dim] -=1;
-    for(int d = 0; d <= 2; d++) {
+    for(int d = 0; d < 3; d++) {
         if(isCellInDomain(origin)) {
             applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
                                    threeDToOneD(origin[0], origin[1], origin[2]), offsetPosition);

@@ -9,8 +9,6 @@
         <t_end>5</t_end>
         <delta_t>0.00005</delta_t>
         <force>LeonardJonesForce</force>
-        <Sigma>1</Sigma>
-        <Epsilon>5</Epsilon>
         <DomainSize>
             <First>27</First>
             <Second>27</Second>
@@ -19,12 +17,12 @@
         <rCutOff>3</rCutOff>
         <BoundaryCondition>
             <boundaries>
-                <Front>Outflow</Front>
-                <Back>Outflow</Back>
-                <Left>Outflow</Left>
-                <Right>Outflow</Right>
-                <Top>Outflow</Top>
-                <Bottom>Outflow</Bottom>
+                <Front>Periodic</Front>
+                <Back>Periodic</Back>
+                <Left>Periodic</Left>
+                <Right>Periodic</Right>
+                <Top>Periodic</Top>
+                <Bottom>Periodic</Bottom>
             </boundaries>
         </BoundaryCondition>
     </model>
@@ -41,8 +39,8 @@
                 <Y>-10</Y>
                 <Z>0</Z>
             </Velocity>
-            <N1>3</N1>
-            <N2>3</N2>
+            <N1>6</N1>
+            <N2>6</N2>
             <N3>1</N3>
             <Distance>1.1125</Distance>
             <Mass>1</Mass>

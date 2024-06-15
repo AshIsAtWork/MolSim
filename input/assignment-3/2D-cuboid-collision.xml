@@ -17,12 +17,12 @@
         <rCutOff>3</rCutOff>
         <BoundaryCondition>
             <boundaries>
-                <Front>Reflective</Front>
-                <Back>Reflective</Back>
-                <Left>Reflective</Left>
-                <Right>Reflective</Right>
-                <Top>Reflective</Top>
-                <Bottom>Reflective</Bottom>
+                <Front>Periodic</Front>
+                <Back>Periodic</Back>
+                <Left>Periodic</Left>
+                <Right>Periodic</Right>
+                <Top>Periodic</Top>
+                <Bottom>Periodic</Bottom>
             </boundaries>
         </BoundaryCondition>
     </model>

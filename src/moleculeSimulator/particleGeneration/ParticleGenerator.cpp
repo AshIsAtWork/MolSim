@@ -46,9 +46,9 @@ void ParticleGenerator::generateCuboid(ParticleContainer &particles, const std::
                  "h: {}\n"
                  "m: {}\n"
                  "Velocity: {}\n"
-                 "Brownian Motion: {}D\n",
-                 "Epsilon: {}D\n",
-                 "Sigma {}D\n",
+                 "Brownian Motion: {}D\n"
+                 "Epsilon: {}\n"
+                 "Sigma {}\n",
                  ArrayUtils::to_string(position), N1, N2, N3, h, mass, ArrayUtils::to_string(initVelocity), dimensions,
                  epsilon, sigma
     );
@@ -92,9 +92,9 @@ void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::ar
                  "h: {}\n"
                  "m: {}\n"
                  "Velocity: {}\n"
-                 "Brownian Motion: {}D\n",
-                 "Epsilon: {}D\n",
-                 "Sigma {}D\n",
+                 "Brownian Motion: {}D\n"
+                 "Epsilon: {}\n"
+                 "Sigma {}\n",
                  ArrayUtils::to_string(center), N, h, mass, ArrayUtils::to_string(initVelocity), dimensions, epsilon,
                  sigma
     );
