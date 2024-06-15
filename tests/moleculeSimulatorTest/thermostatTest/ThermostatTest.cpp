@@ -12,7 +12,7 @@
 class ThermostatTest : public testing::Test {
 protected:
     LeonardJonesForce lJF;
-    DirectSum dS = {lJF, 0.1, FileHandler::outputFormat::vtk};
+    DirectSum dS = {lJF, 0.1, FileHandler::outputFormat::vtk, false};
 
     void SetUp() override {
         //Deactivate all console output

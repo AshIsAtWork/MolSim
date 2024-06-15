@@ -25,19 +25,13 @@ private:
      */
     std::vector<std::pair<Side,enumsStructs::BoundaryCondition>> boundarySettings;
 
-    double g;
-
-    bool gravityOn;
-
     void processBoundaryForces();
 
     void processHaloCells();
 
-    void applyGravity();
-
 public:
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff,
-                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions);
+                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions, bool gravityOn, double g);
 
     /**
      * @brief Perform one time step in the linked cells model.

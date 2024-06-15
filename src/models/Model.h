@@ -26,6 +26,8 @@ protected:
     ParticleContainer &particles;
     Force &force;
     double deltaT;
+    bool gravityOn;
+    double g;
 
     /**
      * @brief Constructor for this model. Cannot be called from any other class but classes that extend this class,
@@ -35,8 +37,11 @@ protected:
      * @param force Force to use in the simulation.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+     * @param gravityOn Toggle gravtiy on or of
+     * @param g Gravity factor
      */
-    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::outputFormat outputFormat);
+    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::outputFormat outputFormat,
+          bool gravityOn, double g = 1);
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -53,6 +58,8 @@ protected:
     */
 
     void updateVelocities() const;
+
+    void applyGravity();
 
 public:
     /**
@@ -80,9 +87,12 @@ public:
      * @param initVelocity Initial velocity of the of the particles.
      * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
      * @param brownianMotionAverageVelocity
+     * @param epsilon Leonard Jones parameter epsilon
+     * @param sigma Leonard Jones parameter sigma
      */
     void addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2, unsigned N3, double h, double mass,
-                   const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity);
+                   const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity,
+                   double epsilon = 5, double sigma = 1);
 
     /**
     * @brief Add a 2D disc structure to this model.
@@ -94,10 +104,12 @@ public:
     * @param mass Mass of one particle.
     * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
     * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+    * @param epsilon Leonard Jones parameter epsilon
+    * @param sigma Leonard Jones parameter sigma
     */
     void addDisc(const std::array<double, 3> &center,
                  const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                 double brownianMotionAverageVelocity);
+                 double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
 
     /**
      * @brief Add a single particle to this model.

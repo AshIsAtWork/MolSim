@@ -16,7 +16,7 @@
 
 TEST(SimulatorTest, EmptyFile) {
     std::string filename = "name";
-    DirectSumSimulationParameters dS = {0.0001, 0.001, 5,1,TypeOfForce::gravity};
+    DirectSumSimulationParameters dS = {0.0001, 0.001, TypeOfForce::gravity};
 
     std::string filepath = "../tests/testData/Empty.txt";
     EXPECT_DEATH(Simulator simulator(dS,filepath, FileHandler::outputFormat::vtk,10,filename), "");
@@ -28,7 +28,7 @@ TEST(SimulatorTest, EmptyFile) {
 
 TEST(SimulatorTest, FileDoesNotExist) {
     std::string filename = "name";
-    DirectSumSimulationParameters dS = {0.0001, 0.001, 5,1,TypeOfForce::gravity};
+    DirectSumSimulationParameters dS = {0.0001, 0.001, TypeOfForce::gravity};
     std::string filepath = "IDoNotExist";
     EXPECT_DEATH(Simulator simulator(dS,filepath, FileHandler::outputFormat::vtk,10,filename), "");
 }

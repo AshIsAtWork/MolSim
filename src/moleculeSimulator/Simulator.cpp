@@ -32,7 +32,8 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
             }
             deltaT = simulationSettings.parametersDirectSum.deltaT;
             endT = simulationSettings.parametersDirectSum.endT;
-            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, outputFormat);
+            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, outputFormat,
+                                                simulationSettings.gravityOn, simulationSettings.gravityFactor);
         }
         break;
         case TypeOfModel::linkedCells: {
@@ -56,7 +57,9 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                                                   simulationSettings.parametersLinkedCells.domainSize,
                                                   simulationSettings.parametersLinkedCells.rCutOff,
                                                   outputFormat,
-                                                  simulationSettings.parametersLinkedCells.boundaryConditions);
+                                                  simulationSettings.parametersLinkedCells.boundaryConditions,
+                                                  simulationSettings.gravityOn,
+                                                  simulationSettings.gravityFactor);
         }
         break;
         default: {
@@ -68,38 +71,42 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
     //Set thermostat, if it is used
     useThermostat = simulationSettings.thermostatParameters.useThermostat;
 
-    if(useThermostat) {
+    if (useThermostat) {
         applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
         nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
         initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
         thermostat = std::make_unique<Thermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
-                                              simulationSettings.thermostatParameters.targetTemperature,
-                                              simulationSettings.thermostatParameters.maxTemperatureChange,
-                                              simulationSettings.thermostatParameters.dimensions);
-    }else {
-        thermostat = nullptr;
+                                                  simulationSettings.thermostatParameters.targetTemperature,
+                                                  simulationSettings.thermostatParameters.maxTemperatureChange,
+                                                  simulationSettings.thermostatParameters.dimensions);
+    } else {
         applyScalingGradually = false;
         nThermostat = INT32_MAX;
         initialiseSystemWithBrownianMotion = false;
+    }
+
+    //Set gravity
+
+    if (simulationSettings.gravityOn) {
     }
 
     //Add particles and objects of particles
 
     //Particles
     for (auto pT: simulationSettings.particles) {
-        Particle p{pT.x, pT.v, pT.m};
+        Particle p{pT.x, pT.v, pT.m, 1,pT.epsilon, pT.sigma};
         model->addParticle(p);
     }
     //Cuboids
     for (auto cuboid: simulationSettings.cuboids) {
         model->addCuboid(cuboid.position, cuboid.dimensions[0], cuboid.dimensions[1], cuboid.dimensions[2], cuboid.h,
                          cuboid.mass, cuboid.initVelocity, cuboid.dimensionsBrownianMotion,
-                         cuboid.brownianMotionAverageVelocity);
+                         cuboid.brownianMotionAverageVelocity, cuboid.epsilon, cuboid.sigma);
     }
     //Discs
     for (auto disc: simulationSettings.discs) {
         model->addDisc(disc.center, disc.initVelocity, disc.N, disc.h, disc.mass, disc.dimensionsBrownianMotion,
-                       disc.brownianMotionAverageVelocity);
+                       disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma);
     }
 }
 
@@ -123,13 +130,11 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
             exit(-1);
         }
     }
-    model = std::make_unique<DirectSum>(*force, parameters.deltaT, outputFormat);
+    model = std::make_unique<DirectSum>(*force, parameters.deltaT, outputFormat, false);
     model->addViaFile(inputFilePath, FileHandler::inputFormat::txt);
 
     //Thermostat is not used
     useThermostat = false;
-    //TODO: FIX
-    thermostat = nullptr;
     applyScalingGradually = false;
     nThermostat = INT32_MAX;
     initialiseSystemWithBrownianMotion = false;
@@ -158,7 +163,7 @@ void Simulator::run(bool benchmark) {
         model->step();
 
         //Control temperature if thermostat is specified
-        if(useThermostat && iteration % nThermostat == 0) {
+        if (useThermostat && iteration % nThermostat == 0) {
             if (applyScalingGradually) {
                 thermostat->setTemperatureOfTheSystemViaGradualVelocityScaling();
             } else {
