@@ -68,3 +68,12 @@ void Model::addParticle(Particle &p) {
 void Model::addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat) {
     FileHandler::readFile(particles, filepath, inputFormat);
 }
+
+void Model::saveState() {
+    //Before writing the molecules to a file, we offset their types by 100 to avoid type clashes when they are loaded into a new simulation
+    //Be doing it this way you always know which particles have been loaded from another simulation and can easily distinguish them.
+    particles.applyToEachParticle([](Particle& p){p.setType(p.getType() + 100);});
+    std::string name = "Checkpoint";
+    fileHandler.writeToFile(particles,0,FileHandler::outputFormat::txt,name);
+    particles.applyToEachParticle([](Particle& p){p.setType(p.getType() - 100);});
+}

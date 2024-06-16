@@ -4,6 +4,8 @@
 
 #include "FileHandler.h"
 
+#include "outputWriter/TXTWriter/TxtWriter.h"
+
 void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, inputFormat format) {
 
     switch (format) {
@@ -25,7 +27,7 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
         case outputFormat::xyz: {
             xyzWriter.plotParticles(particles, baseName, iteration);
         }
-            break;
+        break;
         case outputFormat::vtk: {
             vtkWriter.initializeOutput(static_cast<int>(particles.size()));
             particles.applyToEachParticle([this](Particle &p) {
@@ -33,16 +35,14 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
             });
             vtkWriter.writeFile(baseName, iteration);
         }
+        break;
+        case outputFormat::txt: {
+            TxtWriter::writeToFile(particles,"checkpoint");
             break;
-        case outputFormat::xml: {
-            // TODO: Will be implemented as part of the next worksheet.
-            spdlog::error("Not implemented yet. Terminating program!");
-            exit(-1);
-            }
-            break;
-        case outputFormat::invalid:
+        default:
             spdlog::error("Invalid output format selected. Please select a valid output format.");
             spdlog::error("Code should not reach this point. Exiting program.");
             exit(-1);
+        }
     }
 }

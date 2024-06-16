@@ -127,6 +127,8 @@ public:
      */
     void addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat);
 
+    void saveState();
+
     /**
     * @brief Helper method to calculate the force between all particles.
     *
@@ -155,5 +157,5 @@ public:
      */
     [[nodiscard]] ParticleContainer &getParticles() const {
         return particles;
-    };
+    }
 };

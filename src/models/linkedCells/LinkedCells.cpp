@@ -86,5 +86,5 @@ void LinkedCells::step() {
     updateVelocities();
     updatePositions();
     particles.updateCells();
-    processHaloCells();
+    //processHaloCells();
 }

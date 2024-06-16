@@ -83,6 +83,10 @@ public:
 
     void run(bool benchmark);
 
+    void loadState(std::string& pathToMolecules);
+
+    void saveState();
+
     /**
      * Get the Particle container of this simulator
      *

@@ -15,6 +15,7 @@ int main(int argc, char *argsv[]) {
     std::string inputFilePath;
     std::string inputFileFormatString;
     std::string outputFileFormatString;
+    std::string pathToMolecules;
     FileHandler::outputFormat outputFormat;
     FileHandler::inputFormat inputFormat;
     enumsStructs::TypeOfForce force;
@@ -22,6 +23,8 @@ int main(int argc, char *argsv[]) {
     std::string selectedForce;
     std::string outputFileName = "file";
     bool benchmark = false;
+    bool saveState = false;
+    bool loadState = false;
     int outputFrequency;
 
     //Parsing of the command line arguments
@@ -47,7 +50,10 @@ int main(int argc, char *argsv[]) {
             ("force,c", po::value<std::string>(&selectedForce)->default_value("ljf"),
              "Force to use: Possible options are (gravity, ljf)")
             ("freq",po::value<int>(&outputFrequency)->default_value(50),"Output frequency.")
-            ("baseName,b",po::value<std::string>(&outputFileName)->default_value("MD_vtk_"), "Base name of the output files.");
+            ("baseName,b",po::value<std::string>(&outputFileName)->default_value("MD_vtk_"), "Base name of the output files.")
+            ("loadState", po::value<std::string>(&pathToMolecules), "Load molecules from a checkpoint into your program")
+            ("saveState","Save state of molecules to a txt file after the simulation is done");
+    ;
 
     po::variables_map vm;
 
@@ -111,6 +117,14 @@ int main(int argc, char *argsv[]) {
         benchmark = true;
     }
 
+    if (vm.count("saveState")) {
+        saveState = true;
+    }
+
+    if (vm.count("loadState")) {
+        loadState = true;
+    }
+
     spdlog::info("Hello from MolSim for PSE!");
 
     std::unique_ptr<Simulator> simulator;
@@ -140,6 +154,12 @@ int main(int argc, char *argsv[]) {
         simulator = std::make_unique<Simulator>(parameters, inputFilePath, outputFormat, outputFrequency, outputFileName);
     }
 
+    //Load state of molecules of a previous simulation if specified
+    if(loadState) {
+        spdlog::info("Loading state of molecules...");
+        simulator->loadState(pathToMolecules);
+    }
+
     //Starting simulation with or without time measurement
 
     if (benchmark) {
@@ -149,6 +169,12 @@ int main(int argc, char *argsv[]) {
     } else {
         spdlog::info("Running without time measurement...");
         simulator->run(false);
+    }
+
+    //Writing state of the molecules to a file if specified
+    if(saveState) {
+        simulator->saveState();
+        spdlog::info("Saving state of molecules...");
     }
     return 0;
 }

@@ -460,11 +460,11 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         double epsilon = 5;
                         double sigma = 1;
                         if (molecules.Discs().get().Disc().at(i).Epsilon().present()) {
-                            epsilon = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
+                            epsilon = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Epsilon().get());
                         }
                         if (molecules.Discs().get().Disc().at(i).Sigma().present()) {
-                            sigma = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
+                            sigma = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Sigma().get());
                         }
 

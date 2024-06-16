@@ -184,6 +184,16 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
+void Simulator::loadState(std::string &pathToMolecules) {
+    int particlesBefore = model->getParticles().size();
+    model->addViaFile(pathToMolecules,FileHandler::inputFormat::txt);
+    spdlog::info("Loaded {} molecules into the simulation", model->getParticles().size() - particlesBefore);
+}
+
+void Simulator::saveState() {
+    model->saveState();
+}
+
 ParticleContainer &Simulator::getParticles() {
     return model->getParticles();
 }
