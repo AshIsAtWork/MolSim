@@ -130,3 +130,26 @@ void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::ar
     //Increment id, so that all particles of the next body being generated will receive another id.
     id++;
 }
+
+void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
+                                     const std::array<double, 3> &initVelocity, int N, double h, double mass,
+                                     int dimensions, double brownianMotionAverageVelocity) {
+
+    // radius of sphere
+    double radius = h * N;
+
+    // iterate over cubic structure
+    for (double z = center[2] - radius; z <= center[2] + radius; z += h) {
+        for (double y = center[1] - radius; y <= center[1] + radius; y += h) {
+            for (double x = center[0] - radius; x <= center[0] + radius; x += h) {
+
+                std::array<double, 3> position = {x, y, z};
+                if (ArrayUtils::L2Norm(position - center) / h <= radius) {
+                    Particle p = Particle{position, initVelocity, mass, id};
+                    particles.add(p);
+                }
+            }
+        }
+    }
+    id++;
+}
