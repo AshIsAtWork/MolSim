@@ -63,7 +63,12 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
 int FileReader::readParticle(ParticleContainer &particles, std::ifstream &input_file) {
     std::array<double, 3> x{};
     std::array<double, 3> v{};
+    std::array<double, 3> f{};
+    std::array<double, 3> old_f{};
     double m;
+    int type;
+    double epsilon;
+    double sigma;
     std::string tmpString;
     int numParticles = 0;
 
@@ -75,7 +80,9 @@ int FileReader::readParticle(ParticleContainer &particles, std::ifstream &input_
 
     for (int i = 0; i < numParticles; i++) {
         tmpString.clear();
-        if (getline(input_file, tmpString).eof() && tmpString.empty()) {
+        getline(input_file, tmpString).eof();
+
+        if (tmpString.empty()) {
             spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
             return -1;
         }
@@ -88,12 +95,23 @@ int FileReader::readParticle(ParticleContainer &particles, std::ifstream &input_
         for (auto &vj: v) {
             datastream >> vj;
         }
+        for (auto &fj: f) {
+            datastream >> fj;
+        }
+        for (auto &old_fj: old_f) {
+            datastream >> old_fj;
+        }
         if (datastream.eof()) {
             spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
             return -1;
         }
         datastream >> m;
-        Particle newP{x, v, m, i};
+        datastream >> type;
+        datastream >> epsilon;
+        datastream >> sigma;
+        Particle newP{x, v, m, type, epsilon, sigma};
+        newP.setF(f);
+        newP.setOldF(old_f);
         particles.add(newP);
     }
     return 0;
