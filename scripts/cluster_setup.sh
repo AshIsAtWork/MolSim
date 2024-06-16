@@ -11,16 +11,20 @@
 # ${8} - INPUT_FILE_PATH The path to the input file
 # ${9} - INPUT_FILE_FORMAT The format of the input file
 # ${10} - OUTPUT_FILE_FORMAT The format of the output file
+# ${11} - OPTIONAL: -t for BENCHMARKING
+# ${12} - OPTIONAL: -p for PROFILING
 
 # Define color codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
+FLAG_T=""
+FLAG_P=""
 
 # Function to display help message
 function display_help() {
-    echo -e "${YELLOW}Usage: $0 CLUSTER PARTITION MAIL_TYPE MAIL_USER CPUS_PER_TASK TIME${NC}"
+    echo -e "${YELLOW}Usage: $0 CLUSTER PARTITION MAIL_TYPE MAIL_USER CPUS_PER_TASK TIME INPUT_FILE_PATH INPUT_FILE_FORMAT OUTPUT_FILE_FORMAT BENCHMARKING PROFILING${NC}"
     echo
     echo "Parameters:"
     echo -e "${YELLOW}NAME${NC}              The name of the job"
@@ -33,9 +37,11 @@ function display_help() {
     echo -e "${YELLOW}INPUT_FILE_PATH${NC}    The path to the input file"
     echo -e "${YELLOW}INPUT_FILE_FORMAT${NC}  The format of the input file"
     echo -e "${YELLOW}OUTPUT_FILE_FORMAT${NC} The format of the output file"
+    echo -e "${YELLOW}BENCHMARKING${NC}       Optional flag -t for benchmarking"
+    echo -e "${YELLOW}PROFILING${NC}          Optional flag -p for profiling"
     echo
     echo "Example:"
-    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk${NC}"
+    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p${NC}"
     echo
 }
 
@@ -46,8 +52,8 @@ if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
 fi
 
 # Check if the number of parameters is correct
-if [ "$#" -ne 10 ]; then
-    echo -e "${RED}Error: You need to provide exactly 10 parameters.${NC}"
+if [ "$#" -lt 10 ]; then
+    echo -e "${RED}Error: You need to provide at least 10 parameters.${NC}"
     echo -e "${RED}Run the script with -h or --help to see the usage.${NC}"
     exit 1
 fi
@@ -94,6 +100,24 @@ if [ "${10}" != "xml" ] && [ "${10}" != "vtk" ]; then
     exit 1
 fi
 
+# Check if the user provided the optional flags for benchmarking
+if [ "${11}" == "-t" ] || [ "${12}" == "-t" ]; then
+    echo -e "${YELLOW}BENCHMARKING flag is set${NC}"
+    FLAG_T="-t"
+else
+    echo -e "${YELLOW}BENCHMARKING flag is not set${NC}"
+    FLAG_T=""
+fi
+
+# Check if the user provided the optional flags for profiling
+if [ "${11}" == "-p" ] || [ "${12}" == "-p" ]; then
+    echo -e "${YELLOW}PROFILING flag is set${NC}"
+    FLAG_P="-p"
+else
+    echo -e "${YELLOW}PROFILING flag is not set${NC}"
+    FLAG_P=""
+fi
+
 # Load the necessary modules
 module load slurm_setup
 module load cmake/3.21.4
@@ -104,8 +128,13 @@ module load xerces-c/3.2.1
 # List all the loaded modules
 module list
 
-# Set up the build directory
-cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. && make
+if [ "${FLAG_P}" == "-p" ]; then
+    # Set up the build directory
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. -D PROFILING=ON && make -CXXFLAGS="-pg"
+else
+    # Set up the build directory
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. && make
+fi
 
 # Print the parameters
 echo -e
@@ -120,6 +149,8 @@ echo -e "${GREEN}TIME: ${YELLOW}${7}${NC}"
 echo -e "${GREEN}INPUT_FILE_PATH: ${YELLOW}${8}${NC}"
 echo -e "${GREEN}INPUT_FILE_FORMAT: ${YELLOW}${9}${NC}"
 echo -e "${GREEN}OUTPUT_FILE_FORMAT: ${YELLOW}${10}${NC}"
+echo -e "${GREEN}BENCHMARKING: ${YELLOW}${FLAG_T}${NC}"
+echo -e "${GREEN}PROFILING: ${YELLOW}${FLAG_P}${NC}"
 
 # Remove any existing cluster_start.cmd file
 cd .. && rm -f cluster_start.cmd
@@ -140,8 +171,13 @@ cat <<EOL > cluster_start.cmd
 #SBATCH --export=NONE
 #SBATCH --time=${7}
 
-./MolSim -f ${8} -i ${9} -o ${10}
+./MolSim -f ${8} -i ${9} -o ${10} ${FLAG_T}
 EOL
+
+# Add the benchmarking flag if it was provided
+if [ "${FLAG_P}" == "-p" ]; then
+    echo "gprof molsim gmon.out > analysis.txt" >> cluster_start.cmd
+fi
 
 echo -e "${GREEN}Success: ${NC}cluster_start.cmd has been created with the provided parameters.${NC}"
 echo -e
