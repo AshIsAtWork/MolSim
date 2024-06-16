@@ -133,7 +133,7 @@ void ParticleGenerator::generateDisc(ParticleContainer &particles, const std::ar
 
 void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
                                      const std::array<double, 3> &initVelocity, int N, double h, double mass,
-                                     int dimensions, double brownianMotionAverageVelocity) {
+                                     int dimensions, double brownianMotionAverageVelocity, double epsilon, double sigma) {
 
     // radius of sphere
     double radius = h * N;
@@ -145,7 +145,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::
 
                 std::array<double, 3> position = {x, y, z};
                 if (ArrayUtils::L2Norm(position - center) / h <= radius) {
-                    Particle p = Particle{position, initVelocity, mass, id};
+                    Particle p = Particle{position, initVelocity, mass, id, epsilon, sigma};
                     particles.add(p);
                 }
             }

@@ -92,8 +92,10 @@ public:
    * @param mass Mass of one particle.
    * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
    * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+   * @param epsilon Lennard Jones force parameter epsilon
+   * @param sigma Lennard Jones force parameter sigma
    */
     static void generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
                                const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                               double brownianMotionAverageVelocity);
+                               double brownianMotionAverageVelocity, double epsilon, double sigma);
 };
