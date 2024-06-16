@@ -4,8 +4,7 @@
 
 #include "TxtWriter.h"
 
-int TxtWriter::writeToFile(ParticleContainer &pc) {
-    std::string filename = "checkpoint.txt";
+int TxtWriter::writeToFile(ParticleContainer &pc, std::string filename) {
 
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {

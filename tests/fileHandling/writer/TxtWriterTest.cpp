@@ -39,9 +39,9 @@ TEST_F(TxtWriterTest, Basic_TxtWriter_test) {
         dpc.add(pNew);
     }
 
-    ASSERT_EQ(TxtWriter::writeToFile(dpc), 0);
+    std::string filename = "checkpointTest14562547.txt";
+    ASSERT_EQ(TxtWriter::writeToFile(dpc, filename), 0);
 
-    std::string filename = "checkpoint.txt";
     std::string fileContent = readFileToString(filename);
 
     // Expected file content
@@ -65,5 +65,5 @@ TEST_F(TxtWriterTest, Basic_TxtWriter_test) {
     EXPECT_EQ(expectedContent, fileContent);
 
     // Clean up the test file
-    //std::remove(filename.c_str());
+    std::remove(filename.c_str());
 }
