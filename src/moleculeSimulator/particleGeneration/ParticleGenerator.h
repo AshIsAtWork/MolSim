@@ -80,4 +80,20 @@ public:
     static void generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
                              const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
                              double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
+
+    /**
+   * @brief Generate a 3D sphere structure.
+   *
+   * @param particles Particle container to which the particle structure is added.
+   * @param center The coordinates of the center of the sphere.
+   * @param initVelocity Initial velocity of the of the particles.
+   * @param N Number of particles along the radius, including the particle in the center.
+   * @param h Distance of the particles (mesh width of the grid).
+   * @param mass Mass of one particle.
+   * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
+   * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+   */
+    static void generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
+                               const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
+                               double brownianMotionAverageVelocity);
 };

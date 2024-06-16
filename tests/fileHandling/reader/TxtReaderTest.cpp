@@ -96,9 +96,15 @@ TEST_F(FileReaderTest, ParticleFormat_OneParticle) {
     Particle p = pc.at(0);
     std::array<double, 3> pos = {1, 2, 3};
     std::array<double, 3> vel = {4, 5, 6};
+    std::array<double, 3> f = {7, 8, 9};
+    std::array<double, 3> old_f = {10, 11, 12};
     EXPECT_TRUE(p.getX() == pos);
     EXPECT_TRUE(p.getV() == vel);
+    EXPECT_TRUE(p.getF() == f);
+    EXPECT_TRUE(p.getOldF() == old_f);
     EXPECT_EQ(p.getM(), 7.0);
+    EXPECT_EQ(p.getEpsilon(), 5);
+    EXPECT_EQ(p.getSigma(), 1);
 }
 
 /**
@@ -116,12 +122,25 @@ TEST_F(FileReaderTest, ParticleFormat_MultipleParticles) {
     std::array<double, 3> pos_p1 = {100, 200, 300};
     std::array<double, 3> vel_p0 = {40, 50, 60};
     std::array<double, 3> vel_p1 = {400, 500, 600};
+    std::array<double, 3> f_p0 = {70, 80, 90};
+    std::array<double, 3> f_p1 = {700, 800, 900};
+    std::array<double, 3> old_f_p0 = {100, 110, 120};
+    std::array<double, 3> old_f_p1 = {1000, 1100, 1200};
+
     EXPECT_TRUE(p0.getX() == pos_p0);
     EXPECT_TRUE(p1.getX() == pos_p1);
     EXPECT_TRUE(p0.getV() == vel_p0);
     EXPECT_TRUE(p1.getV() == vel_p1);
+    EXPECT_TRUE(p0.getF() == f_p0);
+    EXPECT_TRUE(p1.getF() == f_p1);
+    EXPECT_TRUE(p0.getOldF() == old_f_p0);
+    EXPECT_TRUE(p1.getOldF() == old_f_p1);
     EXPECT_EQ(p0.getM(), 70.0);
     EXPECT_EQ(p1.getM(), 700.0);
+    EXPECT_EQ(p0.getEpsilon(), 5);
+    EXPECT_EQ(p1.getEpsilon(), 6);
+    EXPECT_EQ(p0.getSigma(), 1);
+    EXPECT_EQ(p1.getSigma(), 2);
 }
 
 /**
