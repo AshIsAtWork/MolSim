@@ -12,12 +12,12 @@ class TxtWriter {
 public:
 
     /**
-     * @brief Writes particles form given particle container to a .txt file
+     * @brief Writes particles from a given particle container to a .txt file.
      * @param pc Particle Container which contains the particles that should be written to the .txt file.
-     * @param filename name of the file the contents of the particle container are written to.
-     *          Important: do not call the file checkpointTest14562547.txt since it could somehow
+     * @param filename Name of the file the contents of the particle container are written to.
+     *          Important: Do not call the file checkpointTest14562547.txt since it could somehow
      *          interfere with the remove command in the TxtWriterTest.cpp
-     * @return 0, if the operation was successful, 1 otherwise
+     * @return 0, if the operation was successful, 1 otherwise.
      */
     static int writeToFile(ParticleContainer &pc, std::string filename);
 };

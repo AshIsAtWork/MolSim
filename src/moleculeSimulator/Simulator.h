@@ -83,12 +83,20 @@ public:
 
     void run(bool benchmark);
 
+    /**
+     * @brief Load the state of all molecules from a previous simulation back into this simulation.
+     *
+     * @param pathToMolecules Path pointing to the txt file which stores the state of the molecules.
+     */
     void loadState(std::string& pathToMolecules);
 
+    /**
+     * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
+     */
     void saveState();
 
     /**
-     * Get the Particle container of this simulator
+     * @brief Get the Particle container of this simulator
      *
      * @return Particle container of this simulator
      */

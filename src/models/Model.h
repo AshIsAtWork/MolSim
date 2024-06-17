@@ -59,6 +59,9 @@ protected:
 
     void updateVelocities() const;
 
+    /**
+     * @brief Add a gravitational force of g * m along the y-axis to each particle inside the simulation domain.
+     */
     void applyGravity();
 
 public:
@@ -126,6 +129,10 @@ public:
      * @param inputFormat Format of the input file (txt, xml)
      */
     void addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat);
+
+   /**
+    * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
+    */
 
     void saveState();
 
