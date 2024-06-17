@@ -105,6 +105,8 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         model->addDisc(disc.center, disc.initVelocity, disc.N, disc.h, disc.mass, disc.dimensionsBrownianMotion,
                        disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma);
     }
+
+    totalMoleculeUpdates = 0;
 }
 
 Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
@@ -134,6 +136,7 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
     applyScalingGradually = false;
     nThermostat = INT32_MAX;
     initialiseSystemWithBrownianMotion = false;
+    totalMoleculeUpdates = 0;
 }
 
 void Simulator::run(bool benchmark) {
@@ -155,6 +158,12 @@ void Simulator::run(bool benchmark) {
 
 
     while (current_time < endT) {
+
+        //Count, how much molecules will be updated in total.
+        if(benchmark) {
+            totalMoleculeUpdates += model->getParticles().size();
+        }
+
         //Do one simulation step
         model->step();
 
@@ -192,4 +201,8 @@ void Simulator::saveState() {
 
 ParticleContainer &Simulator::getParticles() {
     return model->getParticles();
+}
+
+unsigned long long Simulator::getTotalMoleculeUpdates() {
+    return totalMoleculeUpdates;
 }
