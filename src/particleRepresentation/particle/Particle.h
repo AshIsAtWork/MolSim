@@ -106,7 +106,7 @@ public:
 
     void setType(const int type);
 
-    bool operator==(Particle &other);
+    bool operator==(Particle &other) const;
 
     [[nodiscard]] std::string toString() const;
 };

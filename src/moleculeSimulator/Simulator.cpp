@@ -26,8 +26,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                 }
                 break;
                 default: {
-                    spdlog::error("Use of invalid force type! Programm will be terminated!");
-                    exit(-1);
+                    throw std::invalid_argument("Invalid force used.");
                 }
             }
             deltaT = simulationSettings.parametersDirectSum.deltaT;
@@ -47,8 +46,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                 }
                 break;
                 default: {
-                    spdlog::error("Use of invalid force type! Programm will be terminated!");
-                    exit(-1);
+                    throw std::invalid_argument("Invalid Force type is used.");
                 }
             }
             deltaT = simulationSettings.parametersLinkedCells.deltaT;
@@ -63,8 +61,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         }
         break;
         default: {
-            spdlog::error("Use of invalid model type! Programm will be terminated!");
-            exit(-1);
+            throw std::invalid_argument("Invalid Model type used");
         }
     }
 
@@ -126,8 +123,7 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
         }
         break;
         default: {
-            spdlog::error("Use of invalid force type! Programm will be terminated!");
-            exit(-1);
+            throw std::invalid_argument("Invalid Force Type");
         }
     }
     model = std::make_unique<DirectSum>(*force, parameters.deltaT, outputFormat, false);

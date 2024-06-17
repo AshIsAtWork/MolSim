@@ -8,8 +8,7 @@ int TxtWriter::writeToFile(ParticleContainer &pc, std::string filename) {
 
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {
-        spdlog::error("Unable to open file");
-        return 1;
+        throw std::runtime_error("Unable to open file");
     }
 
     outFile << "# xyz-coord, velocity, Force, Old force, mass, type, epsilon, sigma\n"

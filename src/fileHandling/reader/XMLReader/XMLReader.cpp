@@ -23,8 +23,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 xercesc::DOMElement *elementRoot = xmlDoc->getDocumentElement();
 
                 if (!elementRoot) {
-                    spdlog::error("empty document");
-                    return 1;
+                    throw std::runtime_error("Empty document at time of parsing XML");
                 }
 
                 // Initialize the XML schema flags and container
@@ -36,12 +35,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 // Accessing elements
                 if (molecules.OutputFileName().empty()) {
-                    spdlog::error("OutputFileName is empty");
-                    return 1;
+                    throw std::runtime_error("OutputFileName is empty");
                 } else if (std::any_of(molecules.OutputFileName().begin(), molecules.OutputFileName().end(),
                                        ::isdigit)) {
-                    spdlog::error("OutputFileName contains a number");
-                    return 1;
+                    throw std::runtime_error("OutputFileName contains a number");
                 } else {
                     simulationSettings.outputFileName = static_cast<std::string>(molecules.OutputFileName());
                     spdlog::debug("OutputFileName: {}", molecules.OutputFileName());
@@ -49,8 +46,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 // static_cast<int> is required because internally the value is stored as a custom type
                 if (static_cast<int>(molecules.OutputFrequency() <= 0)) {
-                    spdlog::error("OutputFrequency is less than 0");
-                    return 1;
+                    throw std::invalid_argument("OutputFrequency is less than 0");
                 } else {
                     simulationSettings.outputFrequency = static_cast<int>(molecules.OutputFrequency());
                     spdlog::debug("OutputFrequency: {}", static_cast<int>(molecules.OutputFrequency()));
@@ -60,8 +56,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     spdlog::debug("Thermostat is used");
                     simulationSettings.thermostatParameters.useThermostat = true;
                     if (static_cast<double>(molecules.ThermostatConfig().get().InitialTemperature()) < 0) {
-                        spdlog::error("Initial Temperature is less than 0");
-                        return 1;
+                        throw std::runtime_error("Initial Temperature is less than 0");
                     } else {
                         simulationSettings.thermostatParameters.initialTemperature = static_cast<double>(molecules.ThermostatConfig().get().InitialTemperature());
                         spdlog::debug("Initial Temperature: {}",
@@ -69,8 +64,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
 
                     if (static_cast<double>(molecules.ThermostatConfig().get().TargetTemperature()) < 0) {
-                        spdlog::error("Target Temperature is less than 0");
-                        return 1;
+                        throw std::runtime_error("Target Temperature is less than 0");
                     } else {
                         simulationSettings.thermostatParameters.targetTemperature = static_cast<double>(molecules.ThermostatConfig().get().TargetTemperature());
                         spdlog::debug("Target Temperature: {}",
@@ -95,8 +89,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
 
                     if (static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange()) < 0) {
-                        spdlog::error("Maximum Temperature Change is less than 0");
-                        return 1;
+                        throw std::runtime_error("Maximum Temperature Change is less than 0");
                     } else {
                         simulationSettings.thermostatParameters.maxTemperatureChange = static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange());
                         spdlog::debug("Maximum Temperature Change: {}",
@@ -104,8 +97,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
 
                     if (static_cast<double>(molecules.ThermostatConfig().get().ApplyAfterHowManySteps()) < 0) {
-                        spdlog::error("Apply After How Many Steps is less than 0");
-                        return 1;
+                        throw std::runtime_error("Apply After How Many Steps is less than 0");
                     } else {
                         simulationSettings.thermostatParameters.applyAfterHowManySteps = static_cast<int>(molecules.ThermostatConfig().get().ApplyAfterHowManySteps());
                         spdlog::debug("Apply After How Many Steps: {}",
@@ -113,8 +105,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     }
 
                     if (static_cast<double>(molecules.ThermostatConfig().get().Dimension()) < 0) {
-                        spdlog::error("Dimension is less than 0");
-                        return 1;
+                        throw std::runtime_error("Dimension is less than 0");
                     } else {
                         simulationSettings.thermostatParameters.dimensions = static_cast<int>(molecules.ThermostatConfig().get().Dimension());
                         spdlog::debug("Dimension: {}", static_cast<int>(molecules.ThermostatConfig().get().Dimension()));
@@ -136,16 +127,14 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 enumsStructs::TypeOfModel model = enumsStructs::setModel(molecules.model().Name());
                 if (model == enumsStructs::TypeOfModel::invalid) {
-                    spdlog::error("Model is invalid");
-                    return 1;
+                    throw std::runtime_error("Model is invalid");
                 } else {
                     simulationSettings.model = model;
                     spdlog::debug("Model: {}", molecules.model().Name());
                 }
 
                 if (static_cast<double>(molecules.model().t_end()) < 0) {
-                    spdlog::error("t_end is less than 0");
-                    return 1;
+                    throw std::runtime_error("t_end is less than 0");
                 } else {
                     simulationSettings.parametersDirectSum.endT = static_cast<double>(molecules.model().t_end());
                     simulationSettings.parametersLinkedCells.endT = static_cast<double>(molecules.model().t_end());
@@ -153,8 +142,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 }
 
                 if (static_cast<double>(molecules.model().delta_t()) <= 0) {
-                    spdlog::error("delta_t is less than 0");
-                    return 1;
+                    throw std::runtime_error("delta_t is less than 0");
                 } else {
                     simulationSettings.parametersDirectSum.deltaT = static_cast<double>(molecules.model().delta_t());
                     simulationSettings.parametersLinkedCells.deltaT = static_cast<double>(molecules.model().delta_t());
@@ -163,8 +151,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 enumsStructs::TypeOfForce force = enumsStructs::setForce(molecules.model().force());
                 if (force == enumsStructs::TypeOfForce::invalid) {
-                    spdlog::error("Force is invalid");
-                    return 1;
+                    throw std::runtime_error("Force is invalid");
                 } else {
                     simulationSettings.parametersDirectSum.force = force;
                     simulationSettings.parametersLinkedCells.force = force;
@@ -174,16 +161,13 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                 if (molecules.model().Name() == "LinkedCells") {
                     if (molecules.model().DomainSize().present()) {
                         if (static_cast<double>(molecules.model().DomainSize().get().First()) < 0) {
-                            spdlog::error("Domain Size First is negative");
-                            return 1;
+                            throw std::runtime_error("Domain Size First is negative");
                         }
                         if (static_cast<double>(molecules.model().DomainSize().get().Second()) < 0) {
-                            spdlog::error("Domain Size Second is negative");
-                            return 1;
+                            throw std::runtime_error("Domain Size Second is negative");
                         }
                         if (static_cast<double>(molecules.model().DomainSize().get().Third()) < 0) {
-                            spdlog::error("Domain Size Third is negative");
-                            return 1;
+                            throw std::runtime_error("Domain Size Third is negative");
                         }
                         simulationSettings.parametersLinkedCells.domainSize = {
                                 static_cast<double>(molecules.model().DomainSize().get().First()),
@@ -195,21 +179,18 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                       static_cast<double>(molecules.model().DomainSize().get().Second()),
                                       static_cast<double>(molecules.model().DomainSize().get().Third()));
                     } else {
-                        spdlog::error("DomainSize is not present");
-                        return 1;
+                        throw std::runtime_error("DomainSize is not present");
                     }
                     if (molecules.model().rCutOff().present()) {
                         if (static_cast<double>(molecules.model().rCutOff().get()) < 0) {
-                            spdlog::error("rCutOff is less than 0");
-                            return 1;
+                            throw std::runtime_error("rCutOff is less than 0");
                         } else {
                             simulationSettings.parametersLinkedCells.rCutOff = static_cast<double>(molecules.model().rCutOff().
                                     get());
                             spdlog::debug("rCutOff: {}", static_cast<double>(molecules.model().rCutOff().get()));
                         }
                     } else {
-                        spdlog::error("rCutOff is not present");
-                        return 1;
+                        throw std::runtime_error("rCutOff is not present");
                     }
 
                     if (molecules.model().BoundaryCondition().present()) {
@@ -235,8 +216,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 molecules.model().BoundaryCondition().get().boundaries().Top(),
                                 molecules.model().BoundaryCondition().get().boundaries().Bottom());
                     } else {
-                        spdlog::error("BoundaryCondition is not present");
-                        return 1;
+                        throw std::runtime_error("BoundaryCondition is not present");
                     }
                 }
 
@@ -245,13 +225,11 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                   static_cast<int>(molecules.SingleParticles().get().Size()));
                     if (static_cast<size_t>(molecules.SingleParticles().get().Size()) != static_cast<size_t>(molecules.
                             SingleParticles().get().SingleParticle().size())) {
-                        spdlog::error("Input Size and Number of SingleParticles Don't Match");
-                        return 1;
+                        throw std::runtime_error("Input Size and Number of SingleParticles Don't Match");
                     }
                     for (auto i = 0; i < molecules.SingleParticles().get().Size(); i++) {
                         if (static_cast<double>(molecules.SingleParticles().get().SingleParticle().at(i).Mass()) < 0) {
-                            spdlog::error("Mass of SingleParticle is negative");
-                            return 1;
+                            throw std::runtime_error("Mass of SingleParticle is negative");
                         }
 
                         double epsilon = 5;
@@ -315,38 +293,30 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     if (static_cast<size_t>(molecules.Cuboids().get().Size()) !=
                         static_cast<size_t>(molecules.Cuboids().get().
                                 Cuboid().size())) {
-                        spdlog::error("Input Size and Number of Cuboids Don't Match");
-                        return 1;
+                        throw std::runtime_error("Input Size and Number of Cuboids Don't Match");
                     }
                     for (auto i = 0; i < molecules.Cuboids().get().Size(); i++) {
                         if (static_cast<double >(molecules.Cuboids().get().Cuboid().at(i).Distance()) < 0) {
-                            spdlog::error("Distance of Cuboid is negative");
-                            return 1;
+                            throw std::runtime_error("Distance of Cuboid is negative");
                         }
                         if (static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Mass()) < 0) {
-                            spdlog::error("Mass of Cuboid is negative");
-                            return 1;
+                            throw std::runtime_error("Mass of Cuboid is negative");
                         }
                         if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()) < 0) {
-                            spdlog::error("DimensionBrownian is negative");
-                            return 1;
+                            throw std::runtime_error("DimensionBrownian is negative");
 
                         }
                         if (static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian()) < 0) {
-                            spdlog::error("Brownian for Cuboid is negative");
-                            return 1;
+                            throw std::invalid_argument("Brownian for Cuboid is negative");
                         }
                         if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N1()) < 0) {
-                            spdlog::error("N1 for cuboid is negative");
-                            return 1;
+                            throw std::runtime_error("N1 for cuboid is negative");
                         }
                         if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N2()) < 0) {
-                            spdlog::error("N2 for cuboid is negative");
-                            return 1;
+                            throw std::runtime_error("N2 for cuboid is negative");
                         }
                         if (static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).N3()) < 0) {
-                            spdlog::error("N3 for cuboid is negative");
-                            return 1;
+                            throw std::runtime_error("N3 for cuboid is negative");
                         }
 
                         double epsilon = 5;
@@ -432,29 +402,23 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     if (static_cast<size_t>(molecules.Discs().get().Size()) !=
                         static_cast<size_t>(molecules.Discs().get().
                                 Disc().size())) {
-                        spdlog::error("Input Size and Number of Discs Don't Match");
-                        return 1;
+                        throw std::runtime_error("Input Size and Number of Discs Don't Match");
                     }
                     for (auto i = 0; i < molecules.Discs().get().Size(); i++) {
                         if (static_cast<int>(molecules.Discs().get().Disc().at(i).Radius()) < 0) {
-                            spdlog::error("Discs Radius is negative");
-                            return 1;
+                            throw std::runtime_error("Discs Radius is negative");
                         }
                         if (static_cast<double>(molecules.Discs().get().Disc().at(i).InterParticleDistance()) < 0) {
-                            spdlog::error("Discs InterParticleDistance is negative");
-                            return 1;
+                            throw std::runtime_error("Discs InterParticleDistance is negative");
                         }
                         if (static_cast<double>(molecules.Discs().get().Disc().at(i).Mass()) < 0) {
-                            spdlog::error("Discs Mass is negative");
-                            return 1;
+                            throw std::runtime_error("Discs Mass is negative");
                         }
                         if (static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()) < 0) {
-                            spdlog::error("DimensionBrownian is negative");
-                            return 1;
+                            throw std::runtime_error("DimensionBrownian is negative");
                         }
                         if (static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian()) < 0) {
-                            spdlog::error("Brownian for Disc is negative");
-                            return 1;
+                            throw std::invalid_argument("Brownian for Disc is negative");
                         }
 
                         double epsilon = 5;
@@ -531,30 +495,24 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     if (static_cast<size_t>(molecules.Spheres().get().Size()) !=
                         static_cast<size_t>(molecules.Spheres().get().
                                 Sphere().size())) {
-                        spdlog::error("Input Size and Number of Spheres Don't Match");
-                        return 1;
+                        throw std::runtime_error("Input Size and Number of Spheres Don't Match");
                     }
                     for (auto i = 0; i < molecules.Spheres().get().Size(); i++) {
 
                         if (static_cast<double>(molecules.Spheres().get().Sphere().at(i).Mass()) < 0) {
-                            spdlog::error("Spheres Mass is negative");
-                            return 1;
+                            throw std::runtime_error("Spheres Mass is negative");
                         }
                         if (static_cast<double>(molecules.Spheres().get().Sphere().at(i).InterParticleDistance()) < 0) {
-                            spdlog::error("Spheres InterParticleDistance is negative");
-                            return 1;
+                            throw std::runtime_error("Spheres InterParticleDistance is negative");
                         }
                         if (static_cast<int>(molecules.Spheres().get().Sphere().at(i).Radius()) < 0) {
-                            spdlog::error("Spheres Radius is negative");
-                            return 1;
+                            throw std::runtime_error("Spheres Radius is negative");
                         }
                         if (static_cast<double>(molecules.Spheres().get().Sphere().at(i).Brownian()) < 0) {
-                            spdlog::error("Brownian for Sphere is negative");
-                            return 1;
+                            throw std::invalid_argument("Brownian for Sphere is negative");
                         }
                         if (static_cast<int>(molecules.Spheres().get().Sphere().at(i).DimensionBrownian()) < 0) {
-                            spdlog::error("DimensionBrownian is negative");
-                            return 1;
+                            throw std::invalid_argument("DimensionBrownian is negative");
                         }
 
                         double epsilon = 5;
@@ -629,28 +587,27 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
             } catch (const xercesc::XMLException &toCatch) {
                 char *message = xercesc::XMLString::transcode(toCatch.getMessage());
-                spdlog::error("Exception message is: \n{}", message);
+                std::string error(message);
+                spdlog::error("Exception message is: {}", message);
                 xercesc::XMLString::release(&message);
-                return 1;
+                throw std::runtime_error("Encountered Error during XML parsing: " + error);
             } catch (const xercesc::DOMException &toCatch) {
                 char *message = xercesc::XMLString::transcode(toCatch.msg);
-                spdlog::error("Exception message is: \n{}", message);
+                std::string error(message);
                 xercesc::XMLString::release(&message);
-                return 1;
+                throw std::runtime_error("Encountered Error during XML parsing: " + error);
             } catch (std::exception &e) {
-                spdlog::error("Exception message is: \n{}", e.what());
-                return 1;
+                throw std::runtime_error("Exception message is: " + std::string(e.what()));
             } catch (...) {
-                spdlog::error("Encountered an exception during parsing, Most likely missing Parameter(s).");
-                return 1;
+                throw std::runtime_error("Encountered an exception during parsing, Most likely missing Parameter(s).");
             }
         }
 
     } catch (const xercesc::XMLException &toCatch) {
         char *message = xercesc::XMLString::transcode(toCatch.getMessage());
-        spdlog::error("Error during initialization! :\n{}", message);
+        std::string error(message);
         xercesc::XMLString::release(&message);
-        return 1;
+        throw std::runtime_error("Encountered Error during XML parsing: " + error);
     }
     spdlog::info("{}: parse OK", filename);
     xercesc::XMLPlatformUtils::Terminate();

@@ -11,13 +11,12 @@ void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, 
     switch (format) {
         case inputFormat::txt: {
             if (FileReader::readFile(particles, filePath) != 0) {
-                exit(-1);
+                throw std::invalid_argument("Exception during reading the txt occurred");
             }
         }break;
+        //TODO: Move XML from MolSim.cpp to here
         default: {
-            spdlog::error("Invalid input format selected. Please select a valid input format.");
-            spdlog::error("Code should not reach this point. Exiting program.");
-            exit(-1);
+            throw std::invalid_argument("Invalid Input Format Selected");
         }
     }
 }
@@ -37,12 +36,10 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
         }
         break;
         case outputFormat::txt: {
-            TxtWriter::writeToFile(particles,"checkpoint");
+            TxtWriter::writeToFile(particles,baseName);
             break;
         default:
-            spdlog::error("Invalid output format selected. Please select a valid output format.");
-            spdlog::error("Code should not reach this point. Exiting program.");
-            exit(-1);
+            throw std::invalid_argument("Invalid Output Format Selected");
         }
     }
 }

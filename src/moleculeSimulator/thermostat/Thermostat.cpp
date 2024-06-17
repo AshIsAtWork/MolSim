@@ -31,8 +31,7 @@ double Thermostat::calculateKineticEnergy() {
 
 double Thermostat::calculateTemperature() {
     if(model.particles.size() == 0) {
-        spdlog::error("The temperature of a system with no particles is undefined!");
-        exit(-1);
+        throw std::invalid_argument("Temperature given when none expected.");
     }
     return 2 * calculateKineticEnergy() / (static_cast<double>(model.particles.size()) * dimensions);
 }
@@ -40,8 +39,7 @@ double Thermostat::calculateTemperature() {
 void Thermostat::setTemperatureOfTheSystemViaVelocityScaling() {
     double currentTemperature = calculateTemperature();
     if (currentTemperature == 0) {
-        spdlog::error("Cannot scale temperature, because the temperature of the current system ist 0");
-        exit(-1);
+        throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");
     }
     double beta = std::sqrt(targetTemperature / currentTemperature);
     model.particles.applyToEachParticleInDomain([beta](Particle &p) {
@@ -52,8 +50,7 @@ void Thermostat::setTemperatureOfTheSystemViaVelocityScaling() {
 void Thermostat::setTemperatureOfTheSystemViaGradualVelocityScaling() {
     double currentTemperature = calculateTemperature();
     if (currentTemperature == 0) {
-        spdlog::error("Cannot scale temperature, because the temperature of the current system ist 0");
-        exit(-1);
+        throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");
     }
     double intermediateTemperature = targetTemperature;
     double temperatureChange = targetTemperature - currentTemperature;

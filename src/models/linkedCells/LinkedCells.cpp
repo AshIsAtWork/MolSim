@@ -47,8 +47,7 @@ void LinkedCells::processBoundaryForces() {
             }
             break;
             case BoundaryCondition::invalid: {
-                spdlog::error("Invalid boundary condition was selected. Terminating program!");
-                exit(-1);
+                throw std::invalid_argument("Invalid Boundary Condition was selected.");
             };
         }
     }
@@ -70,8 +69,7 @@ void LinkedCells::processHaloCells() {
             }
             break;
             case BoundaryCondition::invalid: {
-                spdlog::error("Invalid boundary condition was selected. Terminating program!");
-                exit(-1);
+                throw std::invalid_argument("Invalid Boundary condition was selected.");
             };
         }
     }

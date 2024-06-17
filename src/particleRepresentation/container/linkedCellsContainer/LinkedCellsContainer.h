@@ -34,20 +34,20 @@ private:
     size_t currentSize;
 
 
-     //Precomputed indizes:
-     //Most of the indizes are precomputed in the constructor and stored in memory to provide fast access in future iterations.
-     //We invest here additional memory space to avoid recomputing all indizes in each iteration again.
+     //Precomputed indices:
+     //Most of the indices are precomputed in the constructor and stored in memory to provide fast access in future iterations.
+     //We invest here additional memory space to avoid recomputing all indices in each iteration again.
 
     /**
-     * The indizes of all halo cells belonging to one or more of the 6 sides,
+     * The indices of all halo cells belonging to one or more of the 6 sides,
      */
     std::array<std::vector<int>, 6> haloCells;
     /**
-     * The indizes of all boundary cells belonging to one or more of the 6 sides
+     * The indices of all boundary cells belonging to one or more of the 6 sides
      */
     std::array<std::vector<int>, 6> boundaries;
     /**
-     * The indizes of the order in which all cells within the domain are processed to process each pair of particles only ones
+     * The indices of the order in which all cells within the domain are processed to process each pair of particles only ones
      */
     std::vector<std::vector<int>> domainCellIterationScheme;
 
@@ -104,24 +104,23 @@ private:
 
     LeonardJonesForce lJF;
 
-    BoundarySet boundarieSet;
-
+    BoundarySet boundariesSet;
 
 
     //Helper methods for index calculation
 
     /**
-     * @brief Precalculation of all halo cell indizes.
+     * @brief Pre-calculation of all halo cell indices.
      */
-    void calculateHaloCellIndizes();
+    void calculateHaloCellIndices();
 
     /**
-     * @brief Precalculation of all boundary cell indizes.
+     * @brief Pre-calculation of all boundary cell indices.
      */
-    void calculateBoundaryCellIndizes();
+    void calculateBoundaryCellIndices();
 
     /**
-     * @brief Precalculation of the indizes defining the processing order of cells.
+     * @brief Pre-calculation of the indices defining the processing order of cells.
      */
     void calculateDomainCellsIterationScheme();
 
@@ -175,7 +174,7 @@ private:
      * @param offsetPosition Offset to move the particles of the opposite edge to the current edge for proper force calculation.
      * @param dim Dimension in which the edge is living.
      */
-    void applyForceToOppositeEgdeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell,std::array<double,3> offsetPosition ,int dim);
+    void applyForceToOppositeEdgeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell, std::array<double,3> offsetPosition , int dim);
 
     /**
      * @brief Checks, if the specified cell is part of the domain.
@@ -294,7 +293,7 @@ public:
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
     /**
-     * @brief Iterate over all particles in the boundry cells of a specific side
+     * @brief Iterate over all particles in the boundary cells of a specific side
      *        which have a distance to that side that is smaller or equal than the threshold.
      *
      * @param function Lambda function that is applied to each particle fulfilling the requirements.
@@ -311,7 +310,7 @@ public:
      *
      * @return Number of particles stored in this container.
      */
-    size_t size() override;
+    [[nodiscard]] size_t size() const override;
 
     /**
      * @brief Move a particle along a certain dimension that underflows the domain int that dimension
@@ -368,7 +367,6 @@ public:
    std::array<std::vector<int>,6>& getBoundaries(){
         return boundaries;
     }
-
 
     std::vector<std::vector<int>>& getDomainCellIterationScheme(){
         return domainCellIterationScheme;
