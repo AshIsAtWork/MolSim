@@ -164,8 +164,32 @@ If you want to run the equilibration phase on your own machine and save the stat
 
 ## Task 4: Performance Measurement and Profiling ##
 
-First, we
+We used the profiling tool `gprof` to analyze our program on our linux machine with Ubuntu installed. We analyzed our program while executing the first `1000` iterations of the big experiment of the Rayleigh-Taylor instability from task 2 because this scenario covers two different boundary conditions (periodic and reflecting), consists of `10000` molecules and should therefore yield representative results. To see our results, click [here](ProfilingResults.txt).   
+The following parts of the code consume the most runtime:   
+
+| Method                                              | s    | %     | 
+|-----------------------------------------------------|------|-------|
+| LeonardJonesForce::compute                          | 3.00 | 37.27 | 
+| LinkedCellsContainer::applyToAllUniquePairsInDomain | 1.83 | 22.73 |
+| Particle::getX()                                    | 0.81 | 10.06 | 
+| Model::updateForces()                               | 0.73 | 9.07  | 
+
+These four methods account for `79.13%` of the total execution time. It therefore makes sense to focus on these methods when optimizing the program. It is not surprising that the program spends the most time computing the Lennard Jones force between two particles. The fact that the program spends a lot of time iterating over cells of the linked cells container was also to be expected. But what is surprising is that the program spends so much time in the getter method for the position of a molecule. We will come back to this in the next task.   
+
+We also ran our program on the linux cluster (the first 1000 iterations of the Rayleigh-Taylor instability of task 2). These are our results:    
+Running time:   
+Molecule updates per second: 
+
 
 ---
 
 ## Task 5: Tuning the sequential Performance ##
+
+**1. General Overview**   
+Throughout the project, we already cared for efficiency and optimized our functions.  We focused so far on algorithmic optimizations to ensure that we compute only that which is necessary. Therefore, from an algorithmic perspective, the things coming directly to the mind have been already realized like the precomputation of indices to ensure fast iteration over halo cells, boundary cells and neighbors of each cell within the domain. As we already mentioned in task 2, we could do without halo cells completely, which would definitely reduce the memory requirements of our program, because there are a lot of halo cells, especially in three-dimensional space. This, however, would require huge changes in the program and some additional logic we do not have time to implement at the moment. Furthermore, we do not want to mess up our working program. It would be fascinating to know if an implementation without halo cells is actually faster, because you need more logic if you want to do without them.   
+
+**2. Ideas for optimization**
+ * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The method `compute` of the class `LeonardJonesForce` is definitely the one which calls these getters most often. Therefore, we declare this class as a friend of the Particle class to have direct access to its members.
+ * The next idea addresses the computation of the Leonard-Jones force between two particles. Our program  
+
+

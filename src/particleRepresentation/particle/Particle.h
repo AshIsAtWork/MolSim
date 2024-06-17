@@ -13,6 +13,9 @@
 #include "utils/ArrayUtils.h"
 
 class Particle {
+
+friend class LeonardJonesForce;
+
 private:
     /**
      * Position of the particle

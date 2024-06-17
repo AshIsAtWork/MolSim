@@ -4,8 +4,6 @@
 
 #include "Thermostat.h"
 
-#include <boost/math/special_functions/sign.hpp>
-
 
 Thermostat::Thermostat(Model &model, double temperatureInit, double temperatureTarget,
                        double maxTemperatureChange, int dimensions) : model{model}, initTemperature{temperatureInit},
@@ -54,8 +52,9 @@ void Thermostat::setTemperatureOfTheSystemViaGradualVelocityScaling() {
     }
     double intermediateTemperature = targetTemperature;
     double temperatureChange = targetTemperature - currentTemperature;
+    double signTemperatureChange = temperatureChange > 0 ? 1 : temperatureChange < 0 ? -1 : 0;
     if (std::abs(temperatureChange) > maxTemperatureChange) {
-        intermediateTemperature = currentTemperature + boost::math::sign(temperatureChange) * maxTemperatureChange;
+        intermediateTemperature = currentTemperature + signTemperatureChange * maxTemperatureChange;
     }
     double beta = std::sqrt(intermediateTemperature / currentTemperature);
     model.particles.applyToEachParticleInDomain([beta](Particle &p) {
