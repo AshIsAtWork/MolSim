@@ -168,52 +168,52 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
 double LinkedCellsContainer::calcDistanceFromBoundary(Particle &p, Side side) {
     switch (side) {
         case Side::front: {
-            return p.getX()[1];
+            return p.x[1];
         }
         case Side::right: {
-            return domainSize[0] - p.getX()[0];
+            return domainSize[0] - p.x[0];
         }
         case Side::back: {
-            return domainSize[1] - p.getX()[1];
+            return domainSize[1] - p.x[1];
         }
         case Side::left: {
-            return p.getX()[0];
+            return p.x[0];
         }
         case Side::top: {
-            return domainSize[2] - p.getX()[2];
+            return domainSize[2] - p.x[2];
         }
         case Side::bottom: {
-            return p.getX()[2];
+            return p.x[2];
         }
     }
     throw std::invalid_argument("A boundary was specified that does not exist!");
 }
 
 std::array<double, 3> LinkedCellsContainer::calcGhostParticle(Particle &p, Side side) {
-    std::array<double, 3> position = p.getX();
+    std::array<double, 3> position = p.x;
     switch (side) {
         case Side::front: {
-            position[1] -= 2 * p.getX()[1];
+            position[1] -= 2 * p.x[1];
         }
         break;
         case Side::right: {
-            position[0] += 2 * (domainSize[0] - p.getX()[0]);
+            position[0] += 2 * (domainSize[0] - p.x[0]);
         }
         break;
         case Side::back: {
-            position[1] += 2 * (domainSize[1] - p.getX()[1]);
+            position[1] += 2 * (domainSize[1] - p.x[1]);
         }
         break;
         case Side::left: {
-            position[0] -= 2 * p.getX()[0];
+            position[0] -= 2 * p.x[0];
         }
         break;
         case Side::top: {
-            position[2] += 2 * (domainSize[2] - p.getX()[2]);
+            position[2] += 2 * (domainSize[2] - p.x[2]);
         }
         break;
         case Side::bottom: {
-            position[2] -= 2 * p.getX()[2];
+            position[2] -= 2 * p.x[2];
         }
     }
     return position;
@@ -224,13 +224,13 @@ void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart,
         for (auto p = cells[cell].begin(); p != cells[cell].end();) {
             //Update position
             if (modus == 0) {
-                p->setX(fromLowToHigh(p->getX(), dimension));
+                p->setX(fromLowToHigh(p->x, dimension));
             } else {
-                p->setX(fromHighToLow(p->getX(), dimension));
+                p->setX(fromHighToLow(p->x, dimension));
             }
             //Update cell if particle is back in domain
-            if (isParticleInDomain(p->getX())) {
-                cells[calcCellIndex(p->getX())].push_back(*p);
+            if (isParticleInDomain(p->x)) {
+                cells[calcCellIndex(p->x)].push_back(*p);
                 p = cells[cell].erase(p);
             } else {
                 ++p;
@@ -405,12 +405,12 @@ void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSo
     for (auto &target: cells[cellTarget]) {
         for (auto &source: cells[cellSource]) {
             //Offset particle
-            source.setX(source.getX() + offsetSource);
-            if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
+            source.setX(source.x + offsetSource);
+            if (ArrayUtils::L2Norm(target.x - source.x) <= rCutOff) {
                 target.setF(target.getF() + lJF.compute(target, source));
             }
             //Reset offset
-            source.setX(source.getX() - offsetSource);
+            source.setX(source.x - offsetSource);
         }
     }
 }
@@ -504,11 +504,11 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
 
 void LinkedCellsContainer::add(Particle &p) {
     //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
-    if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
+    if (twoD && (__fpclassify(p.x[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
                  __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
         throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is Impossible");
     }
-    int index = calcCellIndex(p.getX());
+    int index = calcCellIndex(p.x);
     cells[index].push_back(std::move(p));
     currentSize++;
 }
@@ -528,7 +528,7 @@ std::array<int, 3> LinkedCellsContainer::oneDToThreeD(int index) const {
 void LinkedCellsContainer::updateCells() {
     for (auto &index: domainCellIterationScheme) {
         for (auto p = cells[index[0]].begin(); p != cells[index[0]].end();) {
-            int newIndex = calcCellIndex(p->getX());
+            int newIndex = calcCellIndex(p->x);
             if (newIndex != index[0]) {
                 cells[newIndex].push_back(*p);
                 p = cells[index[0]].erase(p);
@@ -813,7 +813,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
-                if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                if (ArrayUtils::L2Norm(p_i->x - p_j->x) <= rCutOff) {
                     function(*p_i, *p_j);
                 }
             }
@@ -823,7 +823,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
         for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
             for (auto &p_i: cells[cellGroup[0]]) {
                 for (auto &p_j: cells[*neighbour]) {
-                    if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                    if (ArrayUtils::L2Norm(p_i.x - p_j.x) <= rCutOff) {
                         function(p_i, p_j);
                     }
                 }
