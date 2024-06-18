@@ -25,4 +25,6 @@ public:
     virtual std::array<double, 3> compute(Particle &target, Particle &source) = 0;
 
     virtual ~Force() = default;
+
+    virtual std::array<double, 3> computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) = 0;
 };

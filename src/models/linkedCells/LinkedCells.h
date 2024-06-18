@@ -56,4 +56,6 @@ public:
      * @brief Perform one time step in the linked cells model.
      */
     void step() override;
+
+    void updateForcesOptimized();
 };

@@ -833,6 +833,36 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
     }
 }
 
+void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
+    const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function) {
+    for (auto &cellGroup: domainCellIterationScheme) {
+        //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
+        for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
+            for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
+                auto difference = p_j->getX() - p_i->getX();
+                auto distance = ArrayUtils::L2Norm(difference);
+                if (distance <= rCutOff) {
+                    function(*p_i, *p_j, difference, distance);
+                }
+            }
+        }
+        //Then, consider all relevant neighbour cells
+
+        for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
+            for (auto &p_i: cells[cellGroup[0]]) {
+                for (auto &p_j: cells[*neighbour]) {
+                    auto difference = p_j.getX() - p_i.getX();
+                    auto distance = ArrayUtils::L2Norm(difference);
+                    if (distance <= rCutOff) {
+                        function(p_i, p_j, difference, distance);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void LinkedCellsContainer::applyToAllBoundaryParticles(
     const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {

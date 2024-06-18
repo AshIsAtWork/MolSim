@@ -76,7 +76,7 @@ void LinkedCells::processHaloCells() {
 }
 
 void LinkedCells::step() {
-    updateForces();
+    updateForcesOptimized();
     if (gravityOn) {
         applyGravity();
     }
@@ -85,4 +85,17 @@ void LinkedCells::step() {
     updatePositions();
     particles.updateCells();
     processHaloCells();
+}
+
+void LinkedCells::updateForcesOptimized() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        p.resetForce();
+    });
+    //Calculate new forces using Newtons third law of motion
+    particles.applyToAllUniquePairsInDomainOptimized([this](Particle &p_i, Particle &p_j, std::array<double, 3> difference, double distance) {
+        auto f_ij{force.computeOptimized(p_i, p_j, difference, distance)};
+        p_i.setF(p_i.getF() + f_ij);
+        p_j.setF( p_j.getF() - f_ij);
+    });
 }

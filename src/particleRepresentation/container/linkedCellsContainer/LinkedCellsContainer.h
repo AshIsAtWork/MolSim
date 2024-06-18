@@ -293,6 +293,8 @@ public:
 
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
+    void applyToAllUniquePairsInDomainOptimized(const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
+
     /**
      * @brief Iterate over all particles in the boundary cells of a specific side
      *        which have a distance to that side that is smaller or equal than the threshold.
