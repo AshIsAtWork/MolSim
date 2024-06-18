@@ -14,10 +14,6 @@
 
 class Particle {
 
-friend class LeonardJonesForce;
-friend class Model;
-friend class LinkedCellsContainer;
-
 private:
     /**
      * Position of the particle
