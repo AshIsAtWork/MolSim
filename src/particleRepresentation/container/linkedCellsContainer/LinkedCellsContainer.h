@@ -281,7 +281,10 @@ public:
      */
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
 
-     /**
+
+    void updateForcesAtOnce();
+
+    /**
      * @brief Iterate over all unique pairs of particles being part of the simulation domain
      *        and apply a lambda function to them.
      *
@@ -290,6 +293,7 @@ public:
      * The purpose of this function is provide an easy way of calculating the force between all particles by using
      * Newton's third law of motion.
      */
+
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
     /**

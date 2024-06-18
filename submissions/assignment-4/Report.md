@@ -178,9 +178,9 @@ These four methods account for `79.13%` of the total execution time. It therefor
 
 We also ran our program on the linux cluster (the first 1000 iterations of the Rayleigh-Taylor instability of task 2). These are our results:   
 
-|                                |         |
-|--------------------------------|--------:|
-| **Running time**               | 19.77 s |
+|                                 |         |
+|---------------------------------|--------:|
+| **Running time**                | 19.77 s |
 | **Molecule updates per second** |  505646 |
     
   
@@ -192,10 +192,27 @@ We also ran our program on the linux cluster (the first 1000 iterations of the R
 **1. General Overview**   
 Throughout the project, we already cared for efficiency and optimized our functions.  We focused so far on algorithmic optimizations to ensure that we compute only that which is necessary. Therefore, from an algorithmic perspective, the things coming directly to the mind have been already realized like the precomputation of indices to ensure fast iteration over halo cells, boundary cells and neighbors of each cell within the domain. As we already mentioned in task 2, we could do without halo cells completely, which would definitely reduce the memory requirements of our program, because there are a lot of halo cells, especially in three-dimensional space. This, however, would require huge changes in the program and some additional logic we do not have time to implement at the moment. Furthermore, we do not want to mess up our working program. It would be fascinating to know if an implementation without halo cells is actually faster, because you need more logic if you want to do without them.   
 
+
 **2. Ideas for optimization**
  * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The classes `LeonardJonesForce`, `LinkedCellsContainer` and `Model` are the classes which calls them most often. Therefore, it could be useful to grant these particles direct access to all attributes of the class `Particle` so that they do not need to call any getters anymore. In C++ this can be easily realized by making these classes friends of the class `Particle`.   
-  After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimizationSteps.txt). As expected, getters and setters are hardly ever called and thus disappear completely from the upper rows of the statistics. The runtime of the program has also improved significantly. We would never have thought that a simple change like that could have such a positive impact on the runtime.   <br><br>
+  After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimizationSteps.txt). As expected, getters and setters are hardly ever called and thus disappear completely from the upper rows of the statistics. The runtime of the program has also improved by roughly one second, which is really cool. We would never have thought that a simple change like that could have such a positive impact on the runtime.   
+  Performance after our first optimization step:
 
- * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function.
+    |                                 |         |
+    |---------------------------------|--------:|
+    | **Running time**                | 18.62 s |
+    | **Molecule updates per second** |  536967 |
+    | **Speed up**                    |    6.2% |
+
+ * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to inline this function directly into our LinkedCellsContainer and reused the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimizationStep.txt). As the profile shows, our program spends now more than 90% of its running time in one function, namely the new function updateForcesAtOnce which comprises the force calculation and the iteration over the cells in the LinkedCellsContainer. All these steps were distributed over multiple functions before which lead to many function calls.   
+
+   Performance after our second optimization step:
+
+    |                                 |         |
+    |---------------------------------|--------:|
+    | **Running time**                | 18.62 s |
+    | **Molecule updates per second** |  536967 |
+    | **Speed up**                    |    6.2% |
+
 
 

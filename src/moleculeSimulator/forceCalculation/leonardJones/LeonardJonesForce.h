@@ -21,4 +21,6 @@ public:
     * Computation of the Leonard-Jones force which exerts the source on the target.
     */
     std::array<double, 3> compute(Particle &target, Particle &source) override;
+
+    std::array<double, 3> computeOptimized(Particle &target, Particle &source,std::array<double, 3>& difference, double distance);
 };
