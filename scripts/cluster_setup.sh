@@ -12,7 +12,8 @@
 # ${9} - INPUT_FILE_FORMAT The format of the input file
 # ${10} - OUTPUT_FILE_FORMAT The format of the output file
 # ${11} - OPTIONAL: -t for BENCHMARKING
-# ${12} - OPTIONAL: -p1 for PROFILING without Further Optimisations, -p2 for PROFILING with Further Optimisations
+# ${12} - OPTIONAL: -p for PROFILING
+# ${13} - OPTIONAL: -O for optimisation
 
 # Define color codes
 RED='\033[0;31m'
@@ -21,6 +22,7 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 FLAG_T=""
 FLAG_P=""
+OPTIMISATION=""
 
 # Function to display help message
 function display_help() {
@@ -38,10 +40,11 @@ function display_help() {
     echo -e "${YELLOW}INPUT_FILE_FORMAT${NC}  The format of the input file"
     echo -e "${YELLOW}OUTPUT_FILE_FORMAT${NC} The format of the output file"
     echo -e "${YELLOW}BENCHMARKING${NC}       Optional flag -t for benchmarking"
-    echo -e "${YELLOW}PROFILING${NC}          Optional flag -p1 for profiling without Further Optimisations, -p2 for profiling with Further Optimisations"
+    echo -e "${YELLOW}PROFILING${NC}          Optional flag -p for profiling"
+    echo -e "${YELLOW}OPTIMISATION${NC}       Optional flag -O for optimisation"
     echo
     echo "Example:"
-    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p2${NC}"
+    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p -O${NC}"
     echo
 }
 
@@ -101,7 +104,7 @@ if [ "${10}" != "xml" ] && [ "${10}" != "vtk" ]; then
 fi
 
 # Check if the user provided the optional flags for benchmarking
-if [ "${11}" == "-t" ] || [ "${12}" == "-t" ]; then
+if [ "${11}" == "-t" ] || [ "${12}" == "-t" ] || [ "${13}" == "-t" ]; then
     echo -e "${YELLOW}BENCHMARKING flag is set${NC}"
     FLAG_T="-t"
 else
@@ -110,15 +113,21 @@ else
 fi
 
 # Check if the user provided the optional flags for profiling
-if [ "${11}" == "-p1" ] || [ "${12}" == "-p1" ]; then
-    echo -e "${YELLOW}PROFILING flag with Further Optimisations is set${NC}"
-    FLAG_P="-p1"
-elif [ "${11}" == "-p2" ] || [ "${12}" == "-p2" ]; then
-    echo -e "${YELLOW}PROFILING flag without Further Optimisations is set${NC}"
-    FLAG_P="-p2"
+if [ "${11}" == "-p" ] || [ "${12}" == "-p" ] || [ "${13}" == "-p" ]; then
+    echo -e "${YELLOW}PROFILING flag is set${NC}"
+    FLAG_P="-p"
 else
     echo -e "${YELLOW}PROFILING flag is not set${NC}"
     FLAG_P=""
+fi
+
+# Check if the user provided the optional flags for optimisation
+if [ "${11}" == "-O" ] || [ "${12}" == "-O" ] || [ "${13}" == "-O" ]; then
+    echo -e "${YELLOW}OPTIMISATION flag is set${NC}"
+    OPTIMISATION="-DOPTIMISATION=ON"
+else
+    echo -e "${YELLOW}OPTIMISATION flag is not set${NC}"
+    OPTIMISATION=""
 fi
 
 # Load the necessary modules
@@ -131,15 +140,12 @@ module load xerces-c/3.2.1
 # List all the loaded modules
 module list
 
-if [ "${FLAG_P}" == "-p1" ]; then
+if [ "${FLAG_P}" == "-p" ]; then
     # Set up the build directory with profiling without Further Optimisations
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON .. && cmake --build .
-elif [ "${FLAG_P}" == "-p2" ]; then
-    # Set up the build directory with profiling with Further Optimisations
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON -DOPTIMISATION=ON .. && cmake --build .
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON ${OPTIMISATION} .. && cmake --build .
 else
     # Set up the build directory without profiling
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. && make
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release ${OPTIMISATION} .. && cmake --build .
 fi
 
 # Print the parameters
@@ -157,6 +163,7 @@ echo -e "${GREEN}INPUT_FILE_FORMAT: ${YELLOW}${9}${NC}"
 echo -e "${GREEN}OUTPUT_FILE_FORMAT: ${YELLOW}${10}${NC}"
 echo -e "${GREEN}BENCHMARKING: ${YELLOW}${FLAG_T}${NC}"
 echo -e "${GREEN}PROFILING: ${YELLOW}${FLAG_P}${NC}"
+echo -e "${GREEN}OPTIMISATION: ${YELLOW}${OPTIMISATION}${NC}"
 
 # Remove any existing cluster_start.cmd file
 cd .. && rm -f cluster_start.cmd
