@@ -167,12 +167,11 @@ If you want to run the equilibration phase on your own machine and save the stat
 We used the profiling tool `gprof` to analyze our program on our linux machine with Ubuntu installed. We analyzed our program while executing the first `1000` iterations of the big experiment of the Rayleigh-Taylor instability from task 2 because this scenario covers two different boundary conditions (periodic and reflecting), consists of `10000` molecules and should therefore yield representative results. To see our results, click [here](ProfilingResultsBeforeOptimization.txt).   
 The following parts of the code consume the most runtime:   
 
-| Method                                              | s    | %     | 
-|-----------------------------------------------------|------|-------|
-| LeonardJonesForce::compute                          | 3.00 | 37.27 | 
-| LinkedCellsContainer::applyToAllUniquePairsInDomain | 1.83 | 22.73 |
-| Particle::getX()                                    | 0.81 | 10.06 | 
-| Model::updateForces()                               | 0.73 | 9.07  | 
+| Method                                                                    | s    | %     | 
+|---------------------------------------------------------------------------|------|-------|
+| LeonardJonesForce::compute                                                | 2.45 | 42.31 | 
+| LinkedCellsContainer::applyToAllUniquePairsInDomain                       | 1.51 | 26.08 |
+| std::_Function_handler<void (Particle&, Particle&), Model::updateForces() | 1.29 | 22.28 | 
 
 These four methods account for `79.13%` of the total execution time. It therefore makes sense to focus on these methods when optimizing the program. It is not surprising that the program spends the most time computing the Lennard Jones force between two particles. The fact that the program spends a lot of time iterating over cells of the linked cells container was also to be expected. But what is surprising is that the program spends so much time in the getter method for the position of a molecule. We will come back to this in the next task.   
 
