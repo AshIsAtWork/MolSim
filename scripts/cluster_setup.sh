@@ -68,7 +68,7 @@ if [ "${2}" != "serial" ] && [ "${2}" != "inter" ]; then
 fi
 
 # Check if the third parameter is either "serial_std", "serial_long" or "teramem_inter"
-if [ "${3}" != "serial_std" ] && [ "${3}" != "serial_long" ] && [ "${3}" != "teramem_inter" ]; then
+if [ "${3}" != "serial_std" ] && [ "${3}" != "serial_long" ] && [ "${3}" != "teramem_inter" ] && [ "${3}" != "cm2_tiny" ]; then
     echo -e "${RED}Error: The third parameter must be either 'serial_std', 'serial_long' or 'teramem_inter'.${NC}"
     exit 1
 fi
