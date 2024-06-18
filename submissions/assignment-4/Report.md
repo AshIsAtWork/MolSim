@@ -169,11 +169,12 @@ The following parts of the code consume the most runtime:
 
 | Method                                                                    | s    | %     | 
 |---------------------------------------------------------------------------|------|-------|
-| LeonardJonesForce::compute                                                | 2.45 | 42.31 | 
-| LinkedCellsContainer::applyToAllUniquePairsInDomain                       | 1.51 | 26.08 |
-| std::_Function_handler<void (Particle&, Particle&), Model::updateForces() | 1.29 | 22.28 | 
+| LeonardJonesForce::compute                                                | 2.68 | 39.59 | 
+| LinkedCellsContainer::applyToAllUniquePairsInDomain                       | 1.47 | 21.71 |
+| std::_Function_handler<void (Particle&, Particle&), Model::updateForces() | 0.77 | 11.37 | 
+| Particle::getX()                                                          | 0.50 | 7.39  | 
 
-These four methods account for `79.13%` of the total execution time. It therefore makes sense to focus on these methods when optimizing the program. It is not surprising that the program spends the most time computing the Lennard Jones force between two particles. The fact that the program spends a lot of time iterating over cells of the linked cells container was also to be expected. But what is surprising is that the program spends so much time in the getter method for the position of a molecule. We will come back to this in the next task.   
+These four methods account for `80.06%` of the total execution time. It therefore makes sense to focus on these methods when optimizing the program. It is not surprising that the program spends the most time computing the Lennard Jones force between two particles. The fact that the program spends a lot of time iterating over cells of the linked cells container was also to be expected. But what is surprising is that the program spends so much time in the getter method for the position of a molecule. We will come back to this in the next task.   
 
 We also ran our program on the linux cluster (the first 1000 iterations of the Rayleigh-Taylor instability of task 2). These are our results:   
 
@@ -194,15 +195,21 @@ Throughout the project, we already cared for efficiency and optimized our functi
 
 
 **2. Ideas for optimization**
- * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The classes `LeonardJonesForce`, `LinkedCellsContainer` and `Model` are the classes which calls them most often. Therefore, it could be useful to grant these particles direct access to all attributes of the class `Particle` so that they do not need to call any getters anymore. In C++ this can be easily realized by making these classes friends of the class `Particle`.   
-  After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimizationSteps.txt). As expected, getters and setters are hardly ever called and thus disappear completely from the upper rows of the statistics. The runtime of the program has also improved by roughly two seconds, which is really cool. We would never have thought that a simple change like that could have such a positive impact on the runtime.   
-  Performance after our first optimization step:
+ * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The classes `LeonardJonesForce`, `LinkedCellsContainer` and `Model` are the classes which calls them most often. Therefore, it could be useful to grant these particles direct access to all attributes of the class `Particle` so that they do not need to call any getters anymore. In C++ this can be easily realized by making these classes friends of the class `Particle`. But there is an easier way to achieve this by using the compiler flag -Ofast. We also added more compiler flags. Here is a list of all compiler flags we used:
+   * **-flto**: Enables link-time optimization, which can result in more optimized and smaller binaries.
+   * **-funroll**-loops: Unrolls loops to increase performance at the cost of code size.
+   * **-finline-functions**: Inlines functions, which can improve performance by reducing function call overhead.
+   * **-fprefetch-loop-arrays**: Prefetches loop arrays to reduce cache misses.
+   * **-Ofast**: Enables all the optimizations of -O3 and adds more aggressive optimizations. 
+   <br>
+   After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimization.txt). As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. The [calling graph](Profiling-Graph-First-Optimization-Step.png) is now a lot flatter, because most methods have been optimized away to avoid deep calling chains.    
+   Performance after our first optimization step:   
 
-    |                                 |         |
-    |---------------------------------|--------:|
-    | **Running time**                | 17.92 s |
-    | **Molecule updates per second** |  557888 |
-    | **Speed up**                    |  10.32% |
+   |                                 |         |
+   |---------------------------------|--------:|
+   | **Running time**                | 19.24 s |
+   | **Molecule updates per second** |  519777 |
+   | **Speed up**                    |   -7.4% |
 
  * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to inline this function directly into our LinkedCellsContainer and reused the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimizationStep.txt). As the profile shows, our program spends now more than 90% of its running time in one function, namely the new function updateForcesAtOnce which comprises the force calculation and the iteration over the cells in the LinkedCellsContainer. All these steps were distributed over multiple functions before which lead to many function calls. We implemented a new function for this because we do not want to mess up our previous code, where the focus was not directly on efficiency but on maintainability and comprehensibility. 
 
