@@ -3,7 +3,7 @@
 # Params list:
 # ${1} - NAME The name of the job
 # ${2} - CLUSTER Possible values: serial or inter
-# ${3} - PARTITION Possible values: serial_std, serial_long or teramem_inter
+# ${3} - PARTITION Possible values: serial_std, serial_long, teramem_inter or cm2_tiny
 # ${4} - MAIL_TYPE Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE
 # ${5} - MAIL_USER The email address to send the notifications IMPORTANT: mail cannot be gmail, so use your university email
 # ${6} - CPUS_PER_TASK The number of CPUs per task
@@ -31,7 +31,7 @@ function display_help() {
     echo "Parameters:"
     echo -e "${YELLOW}NAME${NC}              The name of the job"
     echo -e "${YELLOW}CLUSTER${NC}            Possible values: serial or inter"
-    echo -e "${YELLOW}PARTITION${NC}          Possible values: serial_std, serial_long or teramem_inter"
+    echo -e "${YELLOW}PARTITION${NC}          Possible values: serial_std, serial_long, teramem_inter or cm2_tiny"
     echo -e "${YELLOW}MAIL_TYPE${NC}          Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
     echo -e "${YELLOW}MAIL_USER${NC}          The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
     echo -e "${YELLOW}CPUS_PER_TASK${NC}      The number of CPUs per task"
