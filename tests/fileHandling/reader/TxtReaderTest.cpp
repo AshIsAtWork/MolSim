@@ -50,7 +50,7 @@ TEST_F(FileReaderTest, CuboidFormat_FormatViolation) {
 
     //Less data given than specified. The function should return the error code -1 to signal that the file format is
     //violated.
-    EXPECT_EQ(FileReader::readFile(pc, "../tests/testData/CuboidTest5.txt"), -1);
+    EXPECT_THROW(FileReader::readFile(pc, "../tests/testData/CuboidTest5.txt"), std::exception);
 }
 
 /**
@@ -152,9 +152,8 @@ TEST_F(FileReaderTest, ParticleFormat_FormatViolation) {
     EXPECT_EQ(FileReader::readFile(pc, "../tests/testData/ParticleTest3.txt"), 0);
     EXPECT_EQ(pc.size(), 1);
 
-    //Less data given than specified. The function should return the error code -1 to signal that the file format is
-    //violated.
-    EXPECT_EQ(FileReader::readFile(pc, "../tests/testData/ParticleTest4.txt"), -1);
+    //Less data given than specified. The function should throw an expection.
+    EXPECT_THROW(FileReader::readFile(pc, "../tests/testData/ParticleTest4.txt"), std::exception);
 }
 
 /**
@@ -163,11 +162,11 @@ TEST_F(FileReaderTest, ParticleFormat_FormatViolation) {
 
 TEST_F(FileReaderTest, InvalidFileFormat) {
     //The specified file format does not exist
-    EXPECT_EQ(FileReader::readFile(pc, "../tests/testData/UnknownFileFormat.txt"), -3);
+    EXPECT_THROW(FileReader::readFile(pc, "../tests/testData/UnknownFileFormat.txt"),std::exception);
 
     //No file format is specified at all
-    EXPECT_EQ(FileReader::readFile(pc, "../tests/testData/Empty.txt"), -3);
+    EXPECT_THROW(FileReader::readFile(pc, "../tests/testData/Empty.txt"),std::exception);
 
     //The file does not exist
-    EXPECT_EQ(FileReader::readFile(pc, "I do not exist"), -2);
+    EXPECT_THROW(FileReader::readFile(pc, "I do not exist"),std::exception);
 }
