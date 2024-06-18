@@ -592,7 +592,7 @@ TEST(LinkedCellContainerTest, Add_EdgeCase_2D){
     //try adding a particle living in 3D space. Should terminate the program with an error.
 
     Particle p3D = {{1,1,1},{1,1,1},1};
-    EXPECT_DEATH(lcc.add(p3D),"");
+    EXPECT_THROW(lcc.add(p3D), std::exception);
 }
 
 

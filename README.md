@@ -167,6 +167,22 @@ The process of building the project is described here:
      ./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk 
      ```
 
+   - **Sprint 4 — Rayleigh-Taylor instability**
+        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-4/images/Rayleigh-Taylor-instability.png" width="1000px" alt=""></div>
+
+     ```bash
+     ./MolSim -f ../input/assignment-4/task2-big-experiment.xml -i xml -o vtk
+     ```
+
+   - **Sprint 4 — Falling drop**
+        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-4/images/Falling-Drop.png" width="1000px" alt=""></div>
+
+     ```bash
+     ./MolSim -f ../input/assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint  
+     ```
+     
+    
+
 5. Running all Tests
 
    - First: Change into your **build/** folder:

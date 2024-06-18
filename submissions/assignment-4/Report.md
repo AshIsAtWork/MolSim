@@ -195,14 +195,14 @@ Throughout the project, we already cared for efficiency and optimized our functi
 
 **2. Ideas for optimization**
  * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The classes `LeonardJonesForce`, `LinkedCellsContainer` and `Model` are the classes which calls them most often. Therefore, it could be useful to grant these particles direct access to all attributes of the class `Particle` so that they do not need to call any getters anymore. In C++ this can be easily realized by making these classes friends of the class `Particle`.   
-  After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimizationSteps.txt). As expected, getters and setters are hardly ever called and thus disappear completely from the upper rows of the statistics. The runtime of the program has also improved by roughly one second, which is really cool. We would never have thought that a simple change like that could have such a positive impact on the runtime.   
+  After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimizationSteps.txt). As expected, getters and setters are hardly ever called and thus disappear completely from the upper rows of the statistics. The runtime of the program has also improved by roughly two seconds, which is really cool. We would never have thought that a simple change like that could have such a positive impact on the runtime.   
   Performance after our first optimization step:
 
     |                                 |         |
     |---------------------------------|--------:|
-    | **Running time**                | 18.62 s |
-    | **Molecule updates per second** |  536967 |
-    | **Speed up**                    |    6.2% |
+    | **Running time**                | 17.92 s |
+    | **Molecule updates per second** |  557888 |
+    | **Speed up**                    |  10.32% |
 
  * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to inline this function directly into our LinkedCellsContainer and reused the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimizationStep.txt). As the profile shows, our program spends now more than 90% of its running time in one function, namely the new function updateForcesAtOnce which comprises the force calculation and the iteration over the cells in the LinkedCellsContainer. All these steps were distributed over multiple functions before which lead to many function calls. We implemented a new function for this because we do not want to mess up our previous code, where the focus was not directly on efficiency but on maintainability and comprehensibility. 
 
@@ -212,12 +212,12 @@ Throughout the project, we already cared for efficiency and optimized our functi
     |---------------------------------|--------:|
     | **Running time**                | 19.24 s |
     | **Molecule updates per second** |  519777 |
-    | **Speed up**                    |   -4.3% |
+    | **Speed up**                    |   -7.4% |
 
    Surprisingly, the performance got worse. It could have something to do with register allocation on which could be negatively influenced by inlining of functions, but we are not sure. Probably there are a lot of different effects, which are jointly responsible for this. Because this optimization decreased the performance of our program, we removed it and deleted the new method.   
 
 In summary, we can say that we were not able to accelerate our program significantly, but at least somewhat. Of course, many other optimizations are possible, but some of them would interfere more deeply with our code structure and are therefore difficult to implement due to time constraints.
-We are entering the contest with the result after our first optimization step. Our program is currently in exactly this state. To reproduce the results, run the following command:   
+We are entering the contest with the result after our first optimization step. This is the commit 603ca5be. To run our program use the following command: 
 
 ```bash
 ./MolSim -f ../input/assignment-4/benchmark.xml -i xml -t 

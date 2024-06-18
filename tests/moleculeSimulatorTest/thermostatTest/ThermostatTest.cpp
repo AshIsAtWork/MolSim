@@ -59,7 +59,7 @@ TEST_F(ThermostatTest, calculateTemperature_BasicTest) {
 
 TEST_F(ThermostatTest, calculateTemperature_UndefinedTemperature) {
     Thermostat thermostat{dS, 10, 10, 10, 3};
-    EXPECT_DEATH(thermostat.calculateTemperature(),"");
+    EXPECT_THROW(thermostat.calculateTemperature(), std::exception);
 }
 
 TEST_F(ThermostatTest, initialiseSystem_BasicTest) {
