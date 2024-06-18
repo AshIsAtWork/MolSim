@@ -12,7 +12,7 @@
 # ${9} - INPUT_FILE_FORMAT The format of the input file
 # ${10} - OUTPUT_FILE_FORMAT The format of the output file
 # ${11} - OPTIONAL: -t for BENCHMARKING
-# ${12} - OPTIONAL: -p for PROFILING
+# ${12} - OPTIONAL: -p1 for PROFILING without Further Optimisations, -p2 for PROFILING with Further Optimisations
 
 # Define color codes
 RED='\033[0;31m'
@@ -38,10 +38,10 @@ function display_help() {
     echo -e "${YELLOW}INPUT_FILE_FORMAT${NC}  The format of the input file"
     echo -e "${YELLOW}OUTPUT_FILE_FORMAT${NC} The format of the output file"
     echo -e "${YELLOW}BENCHMARKING${NC}       Optional flag -t for benchmarking"
-    echo -e "${YELLOW}PROFILING${NC}          Optional flag -p for profiling"
+    echo -e "${YELLOW}PROFILING${NC}          Optional flag -p1 for profiling without Further Optimisations, -p2 for profiling with Further Optimisations"
     echo
     echo "Example:"
-    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p${NC}"
+    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p2${NC}"
     echo
 }
 
@@ -110,9 +110,12 @@ else
 fi
 
 # Check if the user provided the optional flags for profiling
-if [ "${11}" == "-p" ] || [ "${12}" == "-p" ]; then
-    echo -e "${YELLOW}PROFILING flag is set${NC}"
-    FLAG_P="-p"
+if [ "${11}" == "-p1" ] || [ "${12}" == "-p1" ]; then
+    echo -e "${YELLOW}PROFILING flag with Further Optimisations is set${NC}"
+    FLAG_P="-p1"
+elif [ "${11}" == "-p2" ] || [ "${12}" == "-p2" ]; then
+    echo -e "${YELLOW}PROFILING flag without Further Optimisations is set${NC}"
+    FLAG_P="-p2"
 else
     echo -e "${YELLOW}PROFILING flag is not set${NC}"
     FLAG_P=""
@@ -128,11 +131,14 @@ module load xerces-c/3.2.1
 # List all the loaded modules
 module list
 
-if [ "${FLAG_P}" == "-p" ]; then
-    # Set up the build directory
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. -D PROFILING=ON && make -CXXFLAGS="-pg"
+if [ "${FLAG_P}" == "-p1" ]; then
+    # Set up the build directory with profiling without Further Optimisations
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON .. && cmake --build .
+elif [ "${FLAG_P}" == "-p2" ]; then
+    # Set up the build directory with profiling with Further Optimisations
+    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON -DOPTIMISATION=ON .. && cmake --build .
 else
-    # Set up the build directory
+    # Set up the build directory without profiling
     cd .. && rm -rf build/ && mkdir build/ && cd build && cmake .. && make
 fi
 

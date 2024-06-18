@@ -12,6 +12,18 @@ if (NOT CMAKE_BUILD_TYPE)
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
+#TODO: Add to Report
+# set Optimisation flags for Release
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
+
+#TODO: Add to Report
+if (OPTIMISATION)
+    message(STATUS "Further Optimisation flags enabled")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
+endif ()
+
 # collect all cpp files
 file(GLOB_RECURSE MY_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
