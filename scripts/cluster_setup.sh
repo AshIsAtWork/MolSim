@@ -98,8 +98,8 @@ if [ "${9}" != "xml" ] && [ "${8}" != "txt" ]; then
 fi
 
 # Check if the tenth parameter is a valid file format
-if [ "${10}" != "xml" ] && [ "${10}" != "vtk" ]; then
-    echo -e "${RED}Error: The tenth parameter must be either 'xml' or 'vtk'.${NC}"
+if [ "${10}" != "xyz" ] && [ "${10}" != "vtk" ]; then
+    echo -e "${RED}Error: The tenth parameter must be either 'xyz' or 'vtk'.${NC}"
     exit 1
 fi
 
@@ -115,7 +115,7 @@ fi
 # Check if the user provided the optional flags for profiling
 if [ "${11}" == "-p" ] || [ "${12}" == "-p" ] || [ "${13}" == "-p" ]; then
     echo -e "${YELLOW}PROFILING flag is set${NC}"
-    FLAG_P="-p"
+    FLAG_P="-DPROFILING=ON"
 else
     echo -e "${YELLOW}PROFILING flag is not set${NC}"
     FLAG_P=""
@@ -140,13 +140,8 @@ module load xerces-c/3.2.1
 # List all the loaded modules
 module list
 
-if [ "${FLAG_P}" == "-p" ]; then
-    # Set up the build directory with profiling without Further Optimisations
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DPROFILING=ON ${OPTIMISATION} .. && cmake --build .
-else
-    # Set up the build directory without profiling
-    cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release ${OPTIMISATION} .. && cmake --build .
-fi
+# Set up the build directory
+cd .. && rm -rf build/ && mkdir build/ && cd build && cmake -DCMAKE_BUILD_TYPE=Release ${FLAG_P} ${OPTIMISATION} .. && cmake --build .
 
 # Print the parameters
 echo -e
