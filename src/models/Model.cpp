@@ -20,30 +20,23 @@ void Model::updateForces() const {
         auto f_ij{force.compute(p_i, p_j)};
         p_i.f = p_i.f + f_ij;
         p_j.f = p_j.f - f_ij;
-        //p_i.setF(p_i.getF() + f_ij);
-        //p_j.setF(p_j.getF() - f_ij);
     });
 }
 
 void Model::updatePositions() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        //p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
         p.x = p.x + deltaT * p.v + ((deltaT * deltaT) / (2.0 * p.m)) * p.old_f;
     });
 }
 
 void Model::updateVelocities() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        //p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
         p.v = p.v + (deltaT / (2 * p.m)) * (p.old_f + p.f);
     });
 }
 
 void Model::applyGravity() {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        // auto force = p.getF();
-        // force[1] += p.getM() * g;
-        // p.setF(force);
         auto force = p.f;
         force[1] += p.m * g;
         p.f = force;
@@ -80,8 +73,8 @@ void Model::addViaFile(std::string &filepath, FileHandler::inputFormat inputForm
 void Model::saveState() {
     //Before writing the molecules to a file, we offset their types by 100 to avoid type clashes when they are loaded into a new simulation
     //Be doing it this way you always know which particles have been loaded from another simulation and can easily distinguish them.
-    particles.applyToEachParticle([](Particle& p){p.setType(p.getType() + 100);});
+    particles.applyToEachParticle([](Particle& p){p.type += 100;});
     std::string name = "Checkpoint.txt";
     fileHandler.writeToFile(particles,0,FileHandler::outputFormat::txt,name);
-    particles.applyToEachParticle([](Particle& p){p.setType(p.getType() - 100);});
+    particles.applyToEachParticle([](Particle& p){p.type -= 100;});
 }

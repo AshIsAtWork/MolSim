@@ -224,6 +224,7 @@ void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart,
         for (auto p = cells[cell].begin(); p != cells[cell].end();) {
             //Update position
             if (modus == 0) {
+
                 p->setX(fromLowToHigh(p->x, dimension));
             } else {
                 p->setX(fromHighToLow(p->x, dimension));
@@ -405,12 +406,12 @@ void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSo
     for (auto &target: cells[cellTarget]) {
         for (auto &source: cells[cellSource]) {
             //Offset particle
-            source.setX(source.x + offsetSource);
+            source.x = source.x + offsetSource;
             if (ArrayUtils::L2Norm(target.x - source.x) <= rCutOff) {
-                target.setF(target.getF() + lJF.compute(target, source));
+                target.f = target.f + lJF.compute(target, source);
             }
             //Reset offset
-            source.setX(source.x - offsetSource);
+            source.x = source.x - offsetSource;
         }
     }
 }
@@ -807,64 +808,6 @@ void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(
     }
 }
 
-void LinkedCellsContainer::updateForcesAtOnce() {
-    applyToEachParticleInDomain( [](Particle &p) {
-        p.resetForce();
-    });
-    std::array<double, 3> difference{};
-    double distance;
-    for (auto &cellGroup: domainCellIterationScheme) {
-        //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
-
-        for (auto target = cells[cellGroup[0]].begin(); target != cells[cellGroup[0]].end(); std::advance(target, 1)) {
-            for (auto source = std::next(target); source != cells[cellGroup[0]].end(); std::advance(source, 1)) {
-                // if (ArrayUtils::L2Norm(p_i->x - p_j->x) <= rCutOff) {
-                //     function(*p_i, *p_j);
-                // }
-                difference =source->x - target->x;
-                distance = ArrayUtils::L2Norm(difference);
-                // if (ArrayUtils::L2Norm(p_i.x - p_j.x) <= rCutOff) {
-                //     function(p_i, p_j);
-                // }
-                if (distance <= rCutOff) {
-                    double sigma_ij = (target->sigma + source->sigma) / 2;
-                    double epsilon_ij = std::sqrt(target->epsilon * source->epsilon);
-                    //auto difference = source.x - target.x;
-                    //double squared_distance = std::pow(ArrayUtils::L2Norm(difference), 2);
-                    double squared_distance = std::pow(distance, 2);
-                    double c1 = std::pow(sigma_ij * sigma_ij / squared_distance, 3);
-                    double c2 = 2 * c1 * c1;
-                    auto f_ij = ((24 * epsilon_ij) / squared_distance) * (c1 - c2) * difference;
-                    target->f = target->f + f_ij;
-                    source->f = source->f - f_ij;
-                }
-            }
-        }
-        //Then, consider all relevant neighbour cells
-
-        for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
-            for (auto &target: cells[cellGroup[0]]) {
-                for (auto &source: cells[*neighbour]) {
-                    difference =source.x - target.x;
-                    distance = ArrayUtils::L2Norm(difference);
-                    if (distance <= rCutOff) {
-                        double sigma_ij = (target.sigma + source.sigma) / 2;
-                        double epsilon_ij = std::sqrt(target.epsilon * source.epsilon);
-                        //auto difference = source.x - target.x;
-                        //double squared_distance = std::pow(ArrayUtils::L2Norm(difference), 2);
-                        double squared_distance = std::pow(distance, 2);
-                        double c1 = std::pow(sigma_ij * sigma_ij / squared_distance, 3);
-                        double c2 = 2 * c1 * c1;
-                        auto f_ij = ((24 * epsilon_ij) / squared_distance) * (c1 - c2) * difference;
-                        target.f = target.f + f_ij;
-                        source.f = source.f - f_ij;
-                    }
-                }
-            }
-        }
-    }
-}
-
 void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) {
     for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
@@ -895,7 +838,7 @@ void LinkedCellsContainer::applyToAllBoundaryParticles(
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
         for (Particle &p: cells[cell]) {
             double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
-            double threshold = pow(2.0, 1.0 / 6.0) * p.getSigma();
+            double threshold = pow(2.0, 1.0 / 6.0) * p.sigma;
             if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
                 auto ghostPosition = calcGhostParticle(p, boundary);
                 function(p, ghostPosition);

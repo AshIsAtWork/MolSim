@@ -281,9 +281,6 @@ public:
      */
     void applyToEachParticleInDomain(const std::function<void(Particle &)> &function) override;
 
-
-    void updateForcesAtOnce();
-
     /**
      * @brief Iterate over all unique pairs of particles being part of the simulation domain
      *        and apply a lambda function to them.
