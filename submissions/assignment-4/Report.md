@@ -229,20 +229,20 @@ Throughout the project, we already cared for efficiency and optimized our functi
 
 In summary, we can say that we could speed up our program a bit. Nevertheless, simulations that have been long-running before are still long-running now, because our optimizations only speed up the simulation by a constant factor. The complexity of the algorithm stays the same. Of course, many other optimizations are possible, but some of them would interfere more deeply with our code structure and are therefore difficult to implement due to time constraints. For example, you could cache the Leonard-Jones parameters to avoid that they are recomputed all the time as square root operations are quite expensive. We will look further into it in the next weeks.   
 
-**3. Contest**   
-Even if this contest is not fair at all, for example, there are no constraints on how your program should implement reflective boundaries (the ghost particle approach we are using is quite expensive and there exist variants that are a lot cheaper but might not yield such good physical results), we entering it with the result right after our second optimization step. This is the commit 6e41663c. To run reproduce our results do the following:
+**4. Contest**   
+Even if this contest is not fair at all, for example, there are no constraints on how your program should implement reflective boundaries (the ghost particle approach we are using is quite expensive and there exist variants that are a lot cheaper but might not yield such good physical results), we entering it with the result right after our second optimization step. This is the commit 6e41663c. To reproduce our results do the following:
 
-* Login into the linux cluster
-* Clone our repository
+* Login into the linux cluster.
+* Clone our repository and change into the directory `MolSim`.
     ```bash
     git clone https://github.com/AshIsAtWork/MolSim.git
     ```
-* Checkout the commit we used for our time measurements
+* Checkout the commit we used for our time measurements.
 
     ```bash
     git checkout 6e41663c
     ```
-* Change into the script folder, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step.
+* Change into the `scripts` directory, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step.
 
     ```bash
     ./cluster_setup.sh MolSim_A serial serial_std ALL d.schade@tum.de 1 00:01:00 ../input/assignment-4/benchmark.xml xml vtk -t -O
