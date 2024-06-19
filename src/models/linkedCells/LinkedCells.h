@@ -23,7 +23,7 @@ private:
     /**
      * Definition of the boundary condition for each side.
      */
-    std::vector<std::pair<Side,enumsStructs::BoundaryCondition>> boundarySettings;
+    std::vector<std::pair<Side, enumsStructs::BoundaryCondition> > boundarySettings;
 
     /**
      * @brief Apply forces to all particles in boundary cells according to the specified boundary conditions.
@@ -57,5 +57,10 @@ public:
      */
     void step() override;
 
+    /**
+     * @brief Implements the optimization we presented as our second idea.
+     *        At the moment this is dead code, because we did not have time yet to make it compatible
+     *        with our current program structure and only integrated it once when doing the time measurements.
+     */
     void updateForcesOptimized();
 };

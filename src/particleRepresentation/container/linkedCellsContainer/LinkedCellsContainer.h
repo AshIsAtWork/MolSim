@@ -293,6 +293,12 @@ public:
 
     void applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) override;
 
+    /**
+     * @brief Implements the optimization we presented as our second idea.
+     *        At the moment this is dead code, because we did not have time yet to make it compatible
+     *        with our current program structure and only integrated it once when doing the time measurements.
+     */
+
     void applyToAllUniquePairsInDomainOptimized(const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
 
     /**

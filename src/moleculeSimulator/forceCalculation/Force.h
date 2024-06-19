@@ -26,5 +26,10 @@ public:
 
     virtual ~Force() = default;
 
+    /**
+    * @brief We needed this to integrate our optimization in our code to prevent breaking the inheritance hierachy.
+    *        Will be removed, when we integrated the optimization properly.
+    */
+
     virtual std::array<double, 3> computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) = 0;
 };

@@ -76,7 +76,7 @@ void LinkedCells::processHaloCells() {
 }
 
 void LinkedCells::step() {
-    updateForcesOptimized();
+    updateForces();
     if (gravityOn) {
         applyGravity();
     }
