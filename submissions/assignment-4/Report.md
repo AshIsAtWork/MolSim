@@ -190,9 +190,7 @@ We also ran our program on the linux cluster (the first 1000 iterations of the R
 ## Task 5: Tuning the sequential Performance ##
 
 **1. General Overview**   
-Throughout the project, we already cared for efficiency and optimized our functions.  We focused so far on algorithmic optimizations to ensure that we compute only that which is necessary. Therefore, from an algorithmic perspective, the things coming directly to the mind have been already realized like the precomputation of indices to ensure fast iteration over halo cells, boundary cells and neighbors of each cell within the domain. As we already mentioned in task 2, we could do without halo cells completely, which would definitely reduce the memory requirements of our program, because there are a lot of halo cells, especially in three-dimensional space. This, however, would require huge changes in the program and some additional logic we do not have time to implement at the moment. Furthermore, we do not want to mess up our working program. It would be fascinating to know if an implementation without halo cells is actually faster, because you need more logic if you want to do without them.   
-
-
+Throughout the project, we already cared for efficiency and optimized our functions.  We focused so far on algorithmic optimizations to ensure that we compute only that which is necessary. Therefore, from an algorithmic perspective, the things coming directly to the mind have been already realized like the precomputation of indices to ensure fast iteration over halo cells, boundary cells and neighbors of each cell within the domain. As we already mentioned in task 2, we could do without halo cells completely, which would definitely reduce the memory requirements of our program, because there are a lot of halo cells, especially in three-dimensional space. This, however, would require huge changes in the program and some additional logic we do not have time to implement at the moment. Furthermore, we do not want to mess up our working program. It would be fascinating to know if an implementation without halo cells is actually faster, because you need more logic if you want to do without them.
 
 **2. Ideas for optimization**
  * As already identified in the last task, our program currently spends a lot of time with calling getter methods. It therefore makes sense to try to reduce the number of getter calls. The classes `LeonardJonesForce`, `LinkedCellsContainer` and `Model` are the classes which calls them most often. Therefore, it could be useful to grant these particles direct access to all attributes of the class `Particle` so that they do not need to call any getters anymore. In C++ this can be easily realized by making these classes friends of the class `Particle`. But there is an easier way to achieve this by using the compiler flag -Ofast. We also added more compiler flags. Here is a list of all compiler flags we used:
@@ -202,7 +200,7 @@ Throughout the project, we already cared for efficiency and optimized our functi
    * **-fprefetch-loop-arrays**: Prefetches loop arrays to reduce cache misses.
    * **-Ofast**: Enables all the optimizations of -O3 and adds more aggressive optimizations. 
    <br>
-   After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimization.txt). As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. The [calling graph](Profiling-Graph-First-Optimization-Step.png) is now a lot flatter, because most methods have been optimized away to avoid deep calling chains. As can be seen below the program is now much faster.     
+   After this optimization step, we analyzed our program again using gprof. As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. As can be seen below the program is now much faster.     
    Performance after our first optimization step:   
 
    |                                 |                |
@@ -226,6 +224,10 @@ Throughout the project, we already cared for efficiency and optimized our functi
 * Using the Intel LLVM C++ compiler did not yield any interesting results that are worth noting. It was similar to the results we already presented. 
 * As far as memory consumption is concerned, we should not worry too much. We are using additional memory to store the precomputed indices for iterating faster over the cells in the LinkedCellContainer. As already mentioned, we could do without halo cells which would save a lot of memory, especially when the domain size is big. 
 * One major algorithmic improvement that we thought about is the application of Newton's third law in periodic boundary conditions. If opposite boundaries are periodic, you could thus half the number of force calculations occurring processing the boundaries. Because in our implementation, sides opposite two each other may have different boundary conditions, this optimization would require some more logic we haven't time yet to implement. We may come back to this in the next weeks. 
+
+As a cool side note, the graph after our second optimization step looks like:
+
+<img src="Optimisation_Graph.png" width = 100%></img>
 
 In summary, we can say that we could speed up our program a bit. Nevertheless, simulations that have been long-running before are still long-running now, because our optimizations only speed up the simulation by a constant factor. The complexity of the algorithm stays the same. Of course, many other optimizations are possible, but some of them would interfere more deeply with our code structure and are therefore difficult to implement due to time constraints. For example, you could cache the Leonard-Jones parameters to avoid that they are recomputed all the time as square root operations are quite expensive. We will look further into it in the next weeks.   
 
@@ -256,5 +258,20 @@ Even if this contest is not fair at all, for example, there are no constraints o
     squeue --cluster serial --me
     ```
 * When your job has finished, there should be an output file in the build folder. This contains the performance measurements.
+
+---
+
+## Miscellaneous ##
+
+* As you might have noticed above, we used graphs to analyze our program. We used the tool `gprof2dot` to convert the output of `gprof` into a graph. The tool was added to the docker image. You can follow the following steps to generate a calling graph for your program:
+    ```bash
+    mkdir build && cd build && cmake -DPROFILING=ON .. && make CXXFLAGS="-pg" && ./MolSim -f ../input/assignment-4/benchmark.xml -i xml -o vtk
+    ```
+    Followed by:
+    ```bash
+    gprof molsim gmon.out | gprof2dot -s -w | dot -Gdpi=200 -Tpng -o output.png
+    ```
+    The output.png file contains the calling graph.
+
 
 
