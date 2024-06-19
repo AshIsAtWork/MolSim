@@ -178,10 +178,10 @@ These four methods account for `80.06%` of the total execution time. It therefor
 
 We also ran our program on the linux cluster (the first 1000 iterations of the Rayleigh-Taylor instability of task 2). These are our results:   
 
-|                                 |         |
-|---------------------------------|--------:|
-| **Running time**                | 19.77 s |
-| **Molecule updates per second** |  505646 |
+|                                 |             |
+|---------------------------------|------------:|
+| **Running time**                |     19.16 s |
+| **Molecule updates per second** | 522030 MUPS/s |
     
   
 
@@ -202,24 +202,24 @@ Throughout the project, we already cared for efficiency and optimized our functi
    * **-fprefetch-loop-arrays**: Prefetches loop arrays to reduce cache misses.
    * **-Ofast**: Enables all the optimizations of -O3 and adds more aggressive optimizations. 
    <br>
-   After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimization.txt). As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. The [calling graph](Profiling-Graph-First-Optimization-Step.png) is now a lot flatter, because most methods have been optimized away to avoid deep calling chains.    
+   After this optimization step, we analyzed our program again using gprof. The results can be found [here](ProfilingResultsAfterFirstOptimization.txt). As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. The [calling graph](Profiling-Graph-First-Optimization-Step.png) is now a lot flatter, because most methods have been optimized away to avoid deep calling chains. As can be seen below the program is now much faster.     
    Performance after our first optimization step:   
 
-   |                                 |         |
-   |---------------------------------|--------:|
-   | **Running time**                | 19.24 s |
-   | **Molecule updates per second** |  519777 |
-   | **Speed up**                    |   -7.4% |
+   |                                 |                |
+   |---------------------------------|---------------:|
+   | **Running time**                |         9.40 s |
+   | **Molecule updates per second** | 1064170 MUPS/s |
+   | **Speed up**                    |           2.04 |
 
- * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to inline this function directly into our LinkedCellsContainer and reused the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimization.txt). The profiling results are now completely different, so different that they are hardly comparable. We presume that our optimization opened new ways for the compiler to further optimize our code. As suspected, reusing difference and distance speed up our program quite a bit which hoped for.  
+ * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to reuse the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimization.txt). The profiling results are now completely different, so different that they are hardly comparable. We presume that our optimization opened new ways for the compiler to further optimize our code. As suspected, reusing difference and distance speed up our program quite a bit which we hoped for.  
 
    Performance after our second optimization step:
 
-    |                                 |         |
-    |---------------------------------|--------:|
-    | **Running time**                | 19.24 s |
-    | **Molecule updates per second** |  519777 |
-    | **Speed up**                    |   -7.4% |
+    |                                 |                |
+    |---------------------------------|---------------:|
+    | **Running time**                |         7.83 s |
+    | **Molecule updates per second** | 1276370 MUPS/s |
+    | **Speed up**                    |           1.20 |
 
 **3. Further comments**
 
@@ -230,10 +230,31 @@ Throughout the project, we already cared for efficiency and optimized our functi
 In summary, we can say that we could speed up our program a bit. Nevertheless, simulations that have been long-running before are still long-running now, because our optimizations only speed up the simulation by a constant factor. The complexity of the algorithm stays the same. Of course, many other optimizations are possible, but some of them would interfere more deeply with our code structure and are therefore difficult to implement due to time constraints. For example, you could cache the Leonard-Jones parameters to avoid that they are recomputed all the time as square root operations are quite expensive. We will look further into it in the next weeks.   
 
 **3. Contest**   
-Even if this contest is not fair at all, for example, there are no constraints on how your program should implement reflective boundaries (the ghost particle approach we are using is quite expensive and there exist variants that are a lot cheaper but might not yield such good physical results), we entering it with the result right after our second optimization step. This is the commit 603ca5be. To run our program, use the following command: 
+Even if this contest is not fair at all, for example, there are no constraints on how your program should implement reflective boundaries (the ghost particle approach we are using is quite expensive and there exist variants that are a lot cheaper but might not yield such good physical results), we entering it with the result right after our second optimization step. This is the commit 6e41663c. To run reproduce our results do the following:
 
-```bash
-./MolSim -f ../input/assignment-4/benchmark.xml -i xml -t 
-```
+* Login into the linux cluster
+* Clone our repository
+    ```bash
+    git clone https://github.com/AshIsAtWork/MolSim.git
+    ```
+* Checkout the commit we used for our time measurements
+
+    ```bash
+    git checkout 6e41663c
+    ```
+* Change into the script folder, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step.
+
+    ```bash
+    ./cluster_setup.sh MolSim_A serial serial_std ALL d.schade@tum.de 1 00:01:00 ../input/assignment-4/benchmark.xml xml vtk -t -O
+    ```
+* Submit the bash script to the scheduler to queue our program for execution. 
+    ```bash
+    sbatch ../cluster_start.cmd
+    ```
+* Wait until your program is scheduled for execution. You can check the status of your jobs with the following command:
+    ```bash
+    squeue --cluster serial --me
+    ```
+* When your job has finished, there should be an output file in the build folder. This contains the performance measurements.
 
 
