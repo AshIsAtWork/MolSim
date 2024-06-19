@@ -171,7 +171,7 @@ The process of building the project is described here:
         <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-4/images/Rayleigh-Taylor-instability.png" width="1000px" alt=""></div>
 
      ```bash
-     git
+     ./MolSim -f ../input/assignment-4/task2-big-experiment.xml -i xml -o vtk
      ```
 
    - **Sprint 4 — Falling drop**
