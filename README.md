@@ -44,7 +44,7 @@ This is the practical project repository for the course offered by the Scientifi
 
 ### Current Project Structure
 
-<div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3/images/project-Structure.png" width="100%" alt=""></div>
+<div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/project-Structure.png" width="100%" alt=""></div>
 
 ---
 
@@ -139,7 +139,7 @@ The process of building the project is described here:
 
    - **Sprint 1 — Halley's Comet**
      
-     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3/images/halleys-Comet.png" width="1000px" alt=""></div>
+     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/halleys-Comet.png" width="1000px" alt=""></div>
        
       ```bash
       ./MolSim -f ../input/assignment-1/eingabe-sonne.txt --force gravity -e 1000 -d 0.014 -i txt -o vtk
@@ -147,7 +147,7 @@ The process of building the project is described here:
 
    - **Sprint 2 — 2D collision of two bodies**
         
-      <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3/images/collision-of-two-bodies.png" width="1000px" alt=""></div>
+      <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/collision-of-two-bodies.png" width="1000px" alt=""></div>
 
      ```bash
      ./MolSim -f ../input/assignment-2/2D-cuboid-collision.txt -e 5 -d 0.0002 --force ljf -i txt -o vtk
@@ -155,30 +155,30 @@ The process of building the project is described here:
      
    - **Sprint 3 — 2D collision of two bodies revisited** 
         
-       <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3/images/collision-of-two-bodies-reflective-boundaries.png" width="1000px" alt=""></div>
+       <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/collision-of-two-bodies-reflective-boundaries.png" width="1000px" alt=""></div>
     
      ```bash
-     ./MolSim -f ../input/assignment-3/2D-cuboid-collision.xml -i xml -o vtk
+     ./MolSim -f ../input/assignment-4/2D-cuboid-collision.xml -i xml -o vtk
      ```
    - **Sprint 3 — Disc flying against a reflective boundary**
-     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-3/images/disc-flying-against-reflective-boundary.png" width="1000px" alt=""></div>
+     <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/disc-flying-against-reflective-boundary.png" width="1000px" alt=""></div>
 
      ```bash
-     ./MolSim -f ../input/assignment-3/disc-against-wall.xml -i xml -o vtk 
+     ./MolSim -f ../input/assignment-4/disc-against-wall.xml -i xml -o vtk 
      ```
 
    - **Sprint 4 — Rayleigh-Taylor instability**
-        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-4/images/Rayleigh-Taylor-instability.png" width="1000px" alt=""></div>
+        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/Rayleigh-Taylor-instability.png" width="1000px" alt=""></div>
 
      ```bash
      ./MolSim -f ../input/assignment-4/task2-big-experiment.xml -i xml -o vtk
      ```
 
    - **Sprint 4 — Falling drop**
-        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-4/images/Falling-Drop.png" width="1000px" alt=""></div>
+        <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/Falling-Drop.png" width="1000px" alt=""></div>
 
      ```bash
-     ./MolSim -f ../input/assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint  
+     ./MolSim -f ../input/Assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/Assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint  
      ```
      
     
