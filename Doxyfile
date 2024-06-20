@@ -1050,7 +1050,7 @@ EXAMPLE_RECURSIVE      = NO
 # \image command).
 
 //TODO: ADD IMAGE PATH IF IMAGES ARE ADDED
-IMAGE_PATH             =
+IMAGE_PATH             = ../submissions/assignment-3
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

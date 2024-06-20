@@ -14,7 +14,7 @@ Members:
 
 ## Task 1: Unit Tests ##
 
-**1. Setting up the googletest framework**  
+**1. Setting up the googletest framework**   
 We started this task with informing ourselves about ways to integrate the googletest framework into our project via CMake without relying on system-wide installations as it is required. There are two main approaches for this:
 
 * Install libraries and headers: Import GoogleTest by using `find_package` (or `pkg_check_modules`).  
@@ -96,7 +96,7 @@ The definition of one cuboid requires seven parameters
 whereas some parameters like the position consist of three numbers.
 Handling the input over the command line seems to us, therefore, to be not the right approach.
 Instead, we introduced a new file format, specially for cuboid data.
-Additional information about this file format can be found [here](../../input/2D-cuboid-collision.txt).
+Additional information about this file format can be found [here](../../input/assignment-2/2D-cuboid-collision.txt).
 Additionally, we implemented a new parser being part of the class `FileReader`.
 For our implementation we took the already existing parser (the one that parses the file `eingabe-sonne.txt`),
 which was already provided, as example and adapted the function to our needs.

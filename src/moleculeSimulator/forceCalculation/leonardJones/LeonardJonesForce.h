@@ -7,12 +7,19 @@
 
 class LeonardJonesForce : public Force {
 private:
-    //Hard encoded constants for computation of the LeonardJonesForce. May be non const in future implementations
 
-    static double constexpr  epsilon = 5;
-    static double constexpr  sigma = 1;
+    const double epsilon;
+    const double sigma;
 
 public:
+    /**
+     * @brief Initialize leonardJonesForce calculation with required constants.
+     *
+     * @param epsilon Constant epsilon.
+     * @param sigma Constant sigma.
+     */
+    LeonardJonesForce(double epsilon, double sigma);
+
     /**
     * @brief Actual computation of the Leonard-Jones force occurring.
     *
