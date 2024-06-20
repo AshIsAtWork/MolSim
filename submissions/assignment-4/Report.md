@@ -8,7 +8,7 @@ Members:
 
 # Code #
 
-* Link to Pull Request: [Pull Request for Assignment 3](TODO!!!)
+* Link to Pull Request: [Pull Request for Assignment 4](TODO!!!)
 * Compiler: gcc 11.4.0
 
 # Report #
@@ -102,10 +102,10 @@ If you want to run the simulation on your own machine, execute the following com
 
 **1. Checkpointing**   
 To use the state of the molecules being part of a previous simulation as one of the inputs for a new simulation we implemented a [TxtWriter](../../src/fileHandling/outputWriter/TXTWriter/TxtWriter.h) that writes the state of all molecules to a txt file at the end of the simulation. You can activate this option by setting the flag `--saveState` over the command line. After the simulation a file called `checkpoint` should appear in your build folder.   
-If you want to start a new simulation with these molecules, you can load them back in using `--loadState checkpoint`. The configuration of you simulation and adding additional particles or structures of particles like discs is done in the xml file. Therefore, you can think of a checkpoint as additional input. For parsing the txt file, we extended the [TxtReader](../../src/fileHandling/reader/TxtReader/TxtReader.h) class that already existed.
+If you want to start a new simulation with these molecules, you can load them back in using `--loadState checkpoint`. The configuration of the simulation and adding additional particles or structures of particles like discs is done in the xml file. Therefore, you can think of a checkpoint as additional input. For parsing the txt file, we extended the [TxtReader](../../src/fileHandling/reader/TxtReader/TxtReader.h) class that already existed.
 
 **2. The equilibration run**   
-Before letting the drop falling into the liquid we need to prepare the liquid. Representing the liquid by a single cuboid hardly comes close to reality because in reality the molecules are not perfectly arranged in a mesh width with equal distance to each other. A solution is to let gravity act on the fluid first for some time so that the molecules can arrange naturally. Additionally, we use the thermostat to set the initial temperature of the liquid to `0.5`. This provides the following result:  
+Before letting the drop falling into the liquid we need to prepare the liquid. Representing the liquid by a single cuboid hardly comes close to reality because in reality the molecules are not perfectly arranged in a mesh with equal distance to each other. A solution is to let gravity act on the fluid first for some time so that the molecules can arrange naturally. Additionally, we use the thermostat to set the initial temperature of the liquid to `0.5`. This provides the following result:  
 
 "Liquid" before equilibration. It has too much structure and does not look like a liquid at all.   
 
@@ -153,8 +153,8 @@ The liquid starts equilibrating again.
 
 <img src="Falling-Drop-6.png" width = 100%></img>
 
-If you want to see how the liquid equilibrates, click [here](Falling-Drop.mp4).    
-If you want to run the equilibration phase on your own machine and save the state of the molecules for the next step, run the following command in your build folder:
+If you want to see the corresponding video, click [here](Falling-Drop.mp4).    
+If you want to run the simulation on your own machine, run the following command in your build folder (first you have to run the equilibration phase):
 
 ```bash
 ./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint 
@@ -198,8 +198,8 @@ Throughout the project, we already cared for efficiency and optimized our functi
    * **-funroll**-loops: Unrolls loops to increase performance at the cost of code size.
    * **-finline-functions**: Inlines functions, which can improve performance by reducing function call overhead.
    * **-fprefetch-loop-arrays**: Prefetches loop arrays to reduce cache misses.
-   * **-Ofast**: Enables all the optimizations of -O3 and adds more aggressive optimizations. 
-   <br>
+   * **-Ofast**: Enables all the optimizations of -O3 and adds more aggressive optimizations.   
+ 
    After this optimization step, we analyzed our program again using gprof. As expected, getters and setters disappeared completely. The runtime of the program has also improved significantly, which is really cool. As can be seen below the program is now much faster.     
    Performance after our first optimization step:   
 
@@ -209,7 +209,7 @@ Throughout the project, we already cared for efficiency and optimized our functi
    | **Molecule updates per second** | 1064170 MUPS/s |
    | **Speed up**                    |           2.04 |
 
- * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the functions our program spends the most time in, so it is definitely worth having a closer look at this function. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to reuse the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimization.txt). The profiling results are now completely different, so different that they are hardly comparable. We presume that our optimization opened new ways for the compiler to further optimize our code. As suspected, reusing difference and distance speed up our program quite a bit which we hoped for.  
+ * The next idea addresses the computation of the Leonard-Jones force between two particles. According to gprof this is the function our program spends the most time in, so it is definitely worth having a closer look at it. We did already rearrange the formula to reduce the exponents and avoid unnecessary square roots. Now we tried to reuse the distance and difference of the particles´ positions which we had calculated twice before: One time in the LinkedCellContainer to determine if the force between the two particles has to be calculated at all and another time in the force calculation itself. The new profile of our program can be found [here](ProfilingResultsAfterSecondOptimization.txt). The profiling results are now completely different, so different that they are hardly comparable. We presume that our optimization opened new ways for the compiler to further optimize our code. As suspected, reusing difference and distance speed up our program quite a bit which we hoped for.  
 
    Performance after our second optimization step:
 
@@ -225,7 +225,7 @@ Throughout the project, we already cared for efficiency and optimized our functi
 * As far as memory consumption is concerned, we should not worry too much. We are using additional memory to store the precomputed indices for iterating faster over the cells in the LinkedCellContainer. As already mentioned, we could do without halo cells which would save a lot of memory, especially when the domain size is big. 
 * One major algorithmic improvement that we thought about is the application of Newton's third law in periodic boundary conditions. If opposite boundaries are periodic, you could thus half the number of force calculations occurring processing the boundaries. Because in our implementation, sides opposite two each other may have different boundary conditions, this optimization would require some more logic we haven't time yet to implement. We may come back to this in the next weeks. 
 
-As a cool side note, the graph after our second optimization step looks like:
+As a cool side note, the calling graph after our second optimization step looks like:
 
 <img src="Optimisation_Graph.png" width = 100%></img>
 
@@ -263,7 +263,7 @@ Even if this contest is not fair at all, for example, there are no constraints o
 
 ## Miscellaneous ##
 
-* As you might have noticed above, we used graphs to analyze our program. We used the tool `gprof2dot` to convert the output of `gprof` into a graph. The tool was added to the docker image. You can follow the following steps to generate a calling graph for your program:
+* As you might have noticed above, we used graphs to visualize the profiling results of our program. We used the tool `gprof2dot` to convert the output of `gprof` into a graph. The tool was added to the docker image. You can follow the following steps to generate a calling graph for your program:
     ```bash
     mkdir build && cd build && cmake -DPROFILING=ON .. && make CXXFLAGS="-pg" && ./MolSim -f ../input/assignment-4/benchmark.xml -i xml -o vtk
     ```
