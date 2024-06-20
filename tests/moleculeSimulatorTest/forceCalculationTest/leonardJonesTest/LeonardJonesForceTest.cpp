@@ -22,7 +22,7 @@
 TEST(LeonardJonesForceTest, CompareWithHandCalculatedResult) {
     Particle p1({4, 0, 0}, {0, 0, 0}, 1, 1);
     Particle p2({0, 0, 0}, {0, 0, 0}, 1, 1);
-    LeonardJonesForce lJF(5, 1);
+    LeonardJonesForce lJF;
 
     auto force = lJF.compute(p1, p2);
     EXPECT_NEAR(force[0], -0.007320642471313, 1e-9);
@@ -37,7 +37,7 @@ TEST(LeonardJonesForceTest, CompareWithHandCalculatedResult) {
 TEST(LeonardJonesForceTest, NewtonsThirdLawOfMotion) {
     Particle p1({1, 3, 4}, {0, 0, 0}, 1, 1);
     Particle p2({7, 3, 9}, {0, 0, 0}, 1, 1);
-    LeonardJonesForce lJF(5, 1);
+    LeonardJonesForce lJF;
 
     auto force_p1p2 = lJF.compute(p1, p2);
     auto force_p2p1 = lJF.compute(p2, p1);
@@ -59,7 +59,7 @@ TEST(LeonardJonesForceTest, MassEqualsZero) {
     Particle p2({7, 3, 9}, {0, 0, 0}, 1, 1);
     Particle p3({1, 3, 4}, {0, 0, 0}, 2, 1);
     Particle p4({7, 3, 9}, {0, 0, 0}, 5, 1);
-    LeonardJonesForce g(5, 1);
+    LeonardJonesForce g;
 
     auto force_p1p2 = g.compute(p1, p2);
     auto force_p3p4 = g.compute(p3, p4);
@@ -74,7 +74,7 @@ TEST(LeonardJonesForceTest, MassEqualsZero) {
 
 TEST(LeonardJonesForceTest, ForceOnItself) {
     Particle p1({1, 3, 4}, {0, 0, 0}, 1, 1);
-    LeonardJonesForce g(5, 1);
+    LeonardJonesForce g;
 
     auto force_p1p1 = g.compute(p1, p1);
     EXPECT_TRUE(std::isnan(force_p1p1[0]));
@@ -89,7 +89,7 @@ TEST(LeonardJonesForceTest, ForceOnItself) {
 TEST(LeonardJonesForceTest, PositionsEqual) {
     Particle p1({1, 1, 1}, {0, 0, 0}, 1, 1);
     Particle p2({1, 1, 1}, {1, 2, 3}, 5, 1);
-    LeonardJonesForce g(5, 1);
+    LeonardJonesForce g;
 
     auto force_p1p2 = g.compute(p1, p2);
     EXPECT_TRUE(std::isnan(force_p1p2[0]));

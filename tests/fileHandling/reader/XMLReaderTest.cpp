@@ -18,7 +18,7 @@ protected:
 
 /**
  * Simple test that checks whether all the parameters in the test file are being parsed correctly.
-ma * Test file is the 2D-cuboid-collision.xml form assignment 3
+ * Test file is the 2D-cuboid-collision.xml form assignment 3
  */
 
 TEST_F(XMLReaderTest, Basic_XMLTest) {
@@ -34,28 +34,21 @@ TEST_F(XMLReaderTest, Basic_XMLTest) {
     // Parameters for LinkedCellModel
     EXPECT_EQ(simulationSettings.parametersLinkedCells.deltaT, 0.00005);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.endT, 10);
-    EXPECT_EQ(simulationSettings.parametersLinkedCells.epsilon, 5);
-    EXPECT_EQ(simulationSettings.parametersLinkedCells.sigma, 1);
+
     EXPECT_EQ(simulationSettings.parametersLinkedCells.force, enumsStructs::TypeOfForce::leonardJonesForce);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.rCutOff, 3);
 
     EXPECT_EQ(simulationSettings.parametersLinkedCells.domainSize[0], 180);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.domainSize[1], 90);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.domainSize[2], 0);
-
-    std::vector<std::pair<enumsStructs::Side, enumsStructs::BoundaryCondition>> expectedBoundarySettings = {
-            {enumsStructs::Side::front, enumsStructs::BoundaryCondition::reflective},
-            {enumsStructs::Side::right, enumsStructs::BoundaryCondition::reflective},
-            {enumsStructs::Side::back, enumsStructs::BoundaryCondition::reflective},
-            {enumsStructs::Side::left, enumsStructs::BoundaryCondition::reflective},
-            {enumsStructs::Side::top, enumsStructs::BoundaryCondition::reflective},
-            {enumsStructs::Side::bottom, enumsStructs::BoundaryCondition::reflective}
-    };
-
-    for (size_t i = 0; i < expectedBoundarySettings.size(); ++i) {
-        EXPECT_EQ(simulationSettings.parametersLinkedCells.boundarySettings[i].first, expectedBoundarySettings[i].first);
-        EXPECT_EQ(simulationSettings.parametersLinkedCells.boundarySettings[i].second, expectedBoundarySettings[i].second);
-    }
+    
+    // checking for boundaries
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.front, enumsStructs::BoundaryCondition::reflective);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.right, enumsStructs::BoundaryCondition::reflective);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.back, enumsStructs::BoundaryCondition::reflective);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.left, enumsStructs::BoundaryCondition::reflective);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.top, enumsStructs::BoundaryCondition::reflective);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.boundaryConditions.bottom, enumsStructs::BoundaryCondition::reflective);
 
     // Cuboid 1
     EXPECT_EQ(simulationSettings.cuboids[0].position[0], 20.0);
@@ -101,8 +94,8 @@ TEST_F(XMLReaderTest, Basic_XMLTest) {
  *      XMLTest10.xml: negative t_end
  *      XMLTest11.xml: negative delta_t
  *      XMLTest12.xml: invalid force
- *      XMLTest13.xml: negative sigma
- *      XMLTest14.xml: negative epsilon
+ *      XMLTest13.xml: negative sigma (not part of the file anymore)
+ *      XMLTest14.xml: negative epsilon (not part of the file anymore)
  *      XMLTest15.xml: DomainSize elements
  *      XMLTest16.xml: negative Cuboids size
  *      XMLTest17.xml: negative or zero N1/N2/N3 in Cuboids
@@ -112,15 +105,16 @@ TEST_F(XMLReaderTest, Basic_XMLTest) {
  *      XMLTest21.xml: invalid brownian in Cuboids
  */
 
-class XMLReaderFailureTest : public XMLReaderTest, public ::testing::WithParamInterface<std::string> {};
+class XMLReaderFailureTest : public XMLReaderTest, public ::testing::WithParamInterface<std::string> {
+};
 
 TEST_P(XMLReaderFailureTest, FailureCases) {
-    ASSERT_EQ(readXMLFile(GetParam()), 1);
+    EXPECT_THROW(readXMLFile(GetParam()), std::runtime_error);
 }
 
 INSTANTIATE_TEST_SUITE_P(FailureTests, XMLReaderFailureTest, ::testing::Values(
         "XMLTest3.xml",
-//        "XMLTest4.xml",
+        // "XMLTest4.xml",
         "XMLTest5.xml",
         "XMLTest6.xml",
         "XMLTest7.xml",
@@ -129,8 +123,6 @@ INSTANTIATE_TEST_SUITE_P(FailureTests, XMLReaderFailureTest, ::testing::Values(
         "XMLTest10.xml",
         "XMLTest11.xml",
         "XMLTest12.xml",
-        "XMLTest13.xml",
-        "XMLTest14.xml",
         "XMLTest15.xml",
         "XMLTest16.xml",
         "XMLTest17.xml",

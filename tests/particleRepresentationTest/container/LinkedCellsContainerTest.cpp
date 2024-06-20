@@ -18,7 +18,8 @@
  */
 
 TEST(LinkedCellsContainerTest, ThreeDtoOneD_BasicTest) {
-    LinkedCellsContainer lcc{{3, 3, 3}, 1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3, 3, 3}, 1,boundaries};
     EXPECT_EQ(lcc.threeDToOneD(0,0,0), 0);
     EXPECT_EQ(lcc.threeDToOneD(4,4,4), 124);
     EXPECT_EQ(lcc.threeDToOneD(1,2,3), 86);
@@ -30,7 +31,8 @@ TEST(LinkedCellsContainerTest, ThreeDtoOneD_BasicTest) {
  */
 
 TEST(LinkedCellsContainerTest, ThreeDtoOneD_TwoDTest) {
-    LinkedCellsContainer lcc{{3, 3, 0}, 1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3, 3, 0}, 1, boundaries};
     EXPECT_EQ(lcc.threeDToOneD(0,0,0), 0);
     EXPECT_EQ(lcc.threeDToOneD(4,4,0), 24);
     EXPECT_EQ(lcc.threeDToOneD(2,2,0), 12);
@@ -42,7 +44,8 @@ TEST(LinkedCellsContainerTest, ThreeDtoOneD_TwoDTest) {
  */
 
 TEST(LinkedCellsContainerTest, OneDToThreeD_BasicTest) {
-    LinkedCellsContainer lcc{{1, 2, 3}, 1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{1, 2, 3}, 1, boundaries};
     std::array<int, 3> res = {0, 0, 0};
     EXPECT_TRUE(lcc.oneDToThreeD(0) == res);
     res = {1, 1, 0};
@@ -60,7 +63,8 @@ TEST(LinkedCellsContainerTest, OneDToThreeD_BasicTest) {
  */
 
 TEST(LinkedCellsContainerTest, OneDToThreeD_TwoDTest) {
-    LinkedCellsContainer lcc{{1, 2, 0}, 1.5};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{1, 2, 0}, 1.5, boundaries};
     std::array<int, 3> res = {0, 0, 0};
     EXPECT_TRUE(lcc.oneDToThreeD(0) == res);
     res = {2, 2, 0};
@@ -75,7 +79,8 @@ TEST(LinkedCellsContainerTest, OneDToThreeD_TwoDTest) {
  */
 
 TEST(LinkedCellsContainerTest, CalcCellIndex_BasicTest) {
-    LinkedCellsContainer lcc{{3, 3, 3}, 1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3, 3, 3}, 1, boundaries};
     //Particles
     std::array<double, 3> p1 = {0, 0, 0};
     std::array<double, 3> p2 = {1.75, 0.66, 1.234};
@@ -98,7 +103,8 @@ TEST(LinkedCellsContainerTest, CalcCellIndex_BasicTest) {
  */
 
 TEST(LinkedCellsContainerTest, CalcCellIndex_Test2D) {
-    LinkedCellsContainer lcc{{3, 3, 0}, 0.9};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3, 3, 0}, 0.9, boundaries};
     //Particles
     std::array<double, 3> p1 = {0, 0, 0};
     std::array<double, 3> p2 = {1.75, 1.66, 0};
@@ -116,7 +122,8 @@ TEST(LinkedCellsContainerTest, CalcCellIndex_Test2D) {
  */
 
 TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_BasicFunctionality) {
-    LinkedCellsContainer lcc{{3,2,1},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3,2,1},1, boundaries};
     auto haloCells = lcc.getHaloCells();
 
     std::set<int> front = {0,1,2,3,4,20,21,22,23,24,40,41,42,43,44};
@@ -141,7 +148,8 @@ TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_BasicFunctionality) {
  */
 
 TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_Test2D) {
-    LinkedCellsContainer lcc{{1,2,0},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{1,2,0},1, boundaries};
     auto haloCells = lcc.getHaloCells();
 
     std::set<int> front = {0,1,2};
@@ -166,7 +174,8 @@ TEST(LinkedCellsContainerTest,calculateHaloCellIndizes_Test2D) {
  */
 
 TEST(LinkedCellsContainerTest,calculateBoundryCellIndizes_BasicFunctionality) {
-    LinkedCellsContainer lcc{{2,1,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{2,1,3},1, boundaries};
     auto boundryCells = lcc.getBoundaries();
 
     std::set<int> front = {17,18,29,30,41,42};
@@ -191,7 +200,8 @@ TEST(LinkedCellsContainerTest,calculateBoundryCellIndizes_BasicFunctionality) {
  */
 
 TEST(LinkedCellsContainerTest, calculateBoundryCellIndizes_Test2D) {
-    LinkedCellsContainer lcc{{2,2,0},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{2,2,0},1, boundaries};
     auto boundryCells = lcc.getBoundaries();
 
     std::set<int> front = {5,6};
@@ -216,7 +226,8 @@ TEST(LinkedCellsContainerTest, calculateBoundryCellIndizes_Test2D) {
  */
 
 TEST(LinkedCellsContainerTest, calculateDomainCellsIterationScheme_BasicFunctionality) {
-    LinkedCellsContainer lcc{{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc{{3,3,3},1,boundaries};
     auto domainCellsIterationScheme = lcc.getDomainCellIterationScheme();
 
     std::set<int> cell0 = {31};
@@ -268,7 +279,8 @@ TEST(LinkedCellsContainerTest, calculateDomainCellsIterationScheme_BasicFunction
  */
 
 TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticle) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
         cell.emplace_back();
@@ -290,7 +302,8 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticle) {
  */
 
 TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
         cell.emplace_back();
@@ -341,7 +354,8 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
  */
 
 TEST(LinkedCellsContainerTest,Iterators_ApplyToAllUniquePairsInDomain) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
     auto& cells = lcc.getCells();
     for(auto& cell: cells) {
         cell.emplace_back();
@@ -379,18 +393,19 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllUniquePairsInDomain) {
  * Values used as referenced are calculated by hand.
  */
 
-TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundaryParticles) {
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1, boundaries};
     //Add some particles to the container with different positions covering most parts of the domain
     std::vector<Particle> toAdd = {
-        Particle{{1.5,1.5,0.4},{0,0,0},1},
-        Particle{{2.5,1.5,0.5},{0,0,0},1},
-        Particle{{0.1,2.1,1.5},{0,0,0},1},
-        Particle{{1.5,2.7,1.5},{0,0,0},1},
-        Particle{{1.5,0.5,1.5},{0,0,0},1},
-        Particle{{2.9,1.2,1.5},{0,0,0},1},
-        Particle{{0.1,0.1,2.5},{0,0,0},1},
-        Particle{{1.6,2.5,2.6},{0,0,0},1}
+        Particle{{1.5,1.5,0.4},{0,0,0},1,1,1},
+        Particle{{2.5,1.5,0.5},{0,0,0},1,1,1,0.2},
+        Particle{{0.1,2.1,1.5},{0,0,0},1,1,1,0.3},
+        Particle{{1.5,2.7,1.5},{0,0,0},1,1,1,0.3},
+        Particle{{1.5,0.5,1.5},{0,0,0},1,1,1,0.05},
+        Particle{{2.9,1.2,1.5},{0,0,0},1,1,1,0.2},
+        Particle{{0.1,0.1,2.5},{0,0,0},1,1,1,0.05},
+        Particle{{1.6,2.5,2.6},{0,0,0},1,1,1,0.3}
     };
     for(Particle& p : toAdd) {
         lcc.add(p);
@@ -400,39 +415,31 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
     lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {0.1,-0.1,2.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, Side::front , 0.1);
+    }, Side::front);
 
     //Test right
     lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {3.1,1.2,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, Side::right , 0.2);
+    }, Side::right);
 
     //Test back
     lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,3.3,1.5};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, Side::back , 0.3);
-
-    //Test left, here we choose the threshhold small enough that no particle fulfills the requirements.
-    //Therefore the function should be called 0 times.
-    int i = 0;
-    lcc.applyToAllBoundaryParticles([&i](Particle& p, std::array<double, 3> ghostPosition) {
-        i++;
-    }, Side::left , 0.05);
-    EXPECT_EQ(i, 0);
+    }, Side::back);
 
     //Test top
     lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.6,2.5,3.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, Side::top , 0.4);
+    }, Side::top);
 
     //Test bottom
     lcc.applyToAllBoundaryParticles([](Particle& p, std::array<double, 3> ghostPosition) {
         std::array<double, 3> expectedGhostPosition = {1.5,1.5,-0.4};
         EXPECT_TRUE(ghostPosition == expectedGhostPosition);
-    }, Side::bottom , 0.4);
+    }, Side::bottom);
 }
 
 /**
@@ -440,7 +447,8 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllBoundryParticles) {
  */
 
 TEST(LinkedCellsContainerTest, ClearHaloCells) {
-    LinkedCellsContainer lcc = {{1,1,1},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{1,1,1},1,boundaries};
 
     //Add one particle to each side of halo cells
     std::vector<Particle> toAdd = {
@@ -478,7 +486,8 @@ TEST(LinkedCellsContainerTest, ClearHaloCells) {
  */
 
 TEST(LinkedCellContainerTest, UpdateCells) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
 
     //Add 9 particles, one particle in each cell for the slice with Z=1
     std::vector<Particle> toAdd = {
@@ -520,7 +529,8 @@ TEST(LinkedCellContainerTest, UpdateCells) {
  */
 
 TEST(LinkedCellContainerTest, Size) {
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
     //Size at the begining should be 0
     ASSERT_EQ(lcc.size(), 0);
 
@@ -550,7 +560,8 @@ TEST(LinkedCellContainerTest, Size) {
  */
 
 TEST(LinkedCellContainerTest, Add_BasicFunctionality){
-    LinkedCellsContainer lcc = {{3,3,3},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,3},1,boundaries};
     //Size at the begining should be 0
     ASSERT_EQ(lcc.size(), 0);
 
@@ -567,7 +578,8 @@ TEST(LinkedCellContainerTest, Add_BasicFunctionality){
  */
 
 TEST(LinkedCellContainerTest, Add_EdgeCase_2D){
-    LinkedCellsContainer lcc = {{3,3,0},1};
+    BoundarySet boundaries;
+    LinkedCellsContainer lcc = {{3,3,0},1,boundaries};
     //Size at the begining should be 0
     ASSERT_EQ(lcc.size(), 0);
     //We want to test an 2D simulation environment
@@ -580,7 +592,7 @@ TEST(LinkedCellContainerTest, Add_EdgeCase_2D){
     //try adding a particle living in 3D space. Should terminate the program with an error.
 
     Particle p3D = {{1,1,1},{1,1,1},1};
-    EXPECT_DEATH(lcc.add(p3D),"");
+    EXPECT_THROW(lcc.add(p3D), std::exception);
 }
 
 

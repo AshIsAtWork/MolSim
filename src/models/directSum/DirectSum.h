@@ -18,8 +18,16 @@ private:
     DefaultParticleContainer particles;
 
 public:
-    DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-              FileHandler::outputFormat outputFormat);
+    /**
+     * @brief Construct a new Direct Sum model.
+     *
+     * @param force Force to use.
+     * @param deltaT Discretisation step.
+     * @param outputFormat Output format.
+     * @param gravityOn Toggle gravity on or off.
+     * @param g Gravitational factor g.
+     */
+    DirectSum(Force &force, double deltaT, FileHandler::outputFormat outputFormat, bool gravityOn, double g = 1);
 
     /**
      * @brief Perform one time step in the direct sum model.

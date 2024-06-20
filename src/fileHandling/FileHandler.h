@@ -28,7 +28,7 @@ public:
      *
      * This enum class enables the user to select the desired output format in the writeToFile method.
      */
-    enum class outputFormat { vtk, xyz, xml, invalid };
+    enum class outputFormat { vtk, xyz, xml, txt, invalid };
 
     /**
      * @brief Supported input formats.

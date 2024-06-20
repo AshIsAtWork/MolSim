@@ -4,10 +4,11 @@
 
 #include "Simulator.h"
 
+#include <iostream>
+
 using namespace enumsStructs;
 
-Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputFormat inputFormat,
-                     FileHandler::outputFormat outputFormat) {
+Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::outputFormat outputFormat) {
     //Set model independent parameters
     outputFrequency = simulationSettings.outputFrequency;
     outputFileBaseName = simulationSettings.outputFileName;
@@ -21,19 +22,17 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
                 }
                 break;
                 case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersDirectSum.epsilon,
-                                                                simulationSettings.parametersDirectSum.sigma);
+                    force = std::make_unique<LeonardJonesForce>();
                 }
                 break;
                 default: {
-                    spdlog::error("Use of invalid force type! Programm will be terminated!");
-                    exit(-1);
+                    throw std::invalid_argument("Invalid force used.");
                 }
             }
             deltaT = simulationSettings.parametersDirectSum.deltaT;
             endT = simulationSettings.parametersDirectSum.endT;
-            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, inputFormat,
-                                                outputFormat);
+            model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, outputFormat,
+                                                simulationSettings.gravityOn, simulationSettings.gravityFactor);
         }
         break;
         case TypeOfModel::linkedCells: {
@@ -43,13 +42,11 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
                 }
                 break;
                 case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>(simulationSettings.parametersLinkedCells.epsilon,
-                                                                simulationSettings.parametersLinkedCells.sigma);
+                    force = std::make_unique<LeonardJonesForce>();
                 }
                 break;
                 default: {
-                    spdlog::error("Use of invalid force type! Programm will be terminated!");
-                    exit(-1);
+                    throw std::invalid_argument("Invalid Force type is used.");
                 }
             }
             deltaT = simulationSettings.parametersLinkedCells.deltaT;
@@ -57,39 +54,63 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::inputF
             model = std::make_unique<LinkedCells>(*force, simulationSettings.parametersLinkedCells.deltaT,
                                                   simulationSettings.parametersLinkedCells.domainSize,
                                                   simulationSettings.parametersLinkedCells.rCutOff,
-                                                  simulationSettings.parametersLinkedCells.sigma, inputFormat,
                                                   outputFormat,
-                                                  simulationSettings.parametersLinkedCells.boundarySettings);
+                                                  simulationSettings.parametersLinkedCells.boundaryConditions,
+                                                  simulationSettings.gravityOn,
+                                                  simulationSettings.gravityFactor);
         }
         break;
         default: {
-            spdlog::error("Use of invalid model type! Programm will be terminated!");
-            exit(-1);
+            throw std::invalid_argument("Invalid Model type used");
         }
+    }
+
+    //Set thermostat, if it is used
+    useThermostat = simulationSettings.thermostatParameters.useThermostat;
+
+    if (useThermostat) {
+        applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
+        nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
+        initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
+        thermostat = std::make_unique<Thermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
+                                                  simulationSettings.thermostatParameters.targetTemperature,
+                                                  simulationSettings.thermostatParameters.maxTemperatureChange,
+                                                  simulationSettings.thermostatParameters.dimensions);
+    } else {
+        applyScalingGradually = false;
+        nThermostat = INT32_MAX;
+        initialiseSystemWithBrownianMotion = false;
+    }
+
+    //Set gravity
+
+    if (simulationSettings.gravityOn) {
     }
 
     //Add particles and objects of particles
 
     //Particles
     for (auto pT: simulationSettings.particles) {
-        Particle p{pT.x, pT.v, pT.m};
+        Particle p{pT.x, pT.v, pT.m, 1,pT.epsilon, pT.sigma};
         model->addParticle(p);
     }
     //Cuboids
     for (auto cuboid: simulationSettings.cuboids) {
         model->addCuboid(cuboid.position, cuboid.dimensions[0], cuboid.dimensions[1], cuboid.dimensions[2], cuboid.h,
                          cuboid.mass, cuboid.initVelocity, cuboid.dimensionsBrownianMotion,
-                         cuboid.brownianMotionAverageVelocity);
+                         cuboid.brownianMotionAverageVelocity, cuboid.epsilon, cuboid.sigma);
     }
     //Discs
     for (auto disc: simulationSettings.discs) {
         model->addDisc(disc.center, disc.initVelocity, disc.N, disc.h, disc.mass, disc.dimensionsBrownianMotion,
-                       disc.brownianMotionAverageVelocity);
+                       disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma);
     }
+
+    totalMoleculeUpdates = 0;
 }
 
 Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
-                     FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat,
+                     FileHandler::outputFormat outputFormat,
                      int outputFrequency, std::string &outputFileBaseName) : deltaT{parameters.deltaT},
                                                                              endT{parameters.endT},
                                                                              outputFrequency{outputFrequency},
@@ -100,21 +121,32 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
         }
         break;
         case TypeOfForce::leonardJonesForce: {
-            force = std::make_unique<LeonardJonesForce>(parameters.epsilon, parameters.sigma);
+            force = std::make_unique<LeonardJonesForce>();
         }
         break;
         default: {
-            spdlog::error("Use of invalid force type! Programm will be terminated!");
-            exit(-1);
+            throw std::invalid_argument("Invalid Force Type");
         }
     }
-    model = std::make_unique<DirectSum>(*force, parameters.deltaT, inputFormat, outputFormat);
-    model->addViaFile(inputFilePath);
+    model = std::make_unique<DirectSum>(*force, parameters.deltaT, outputFormat, false);
+    model->addViaFile(inputFilePath, FileHandler::inputFormat::txt);
+
+    //Thermostat is not used
+    useThermostat = false;
+    applyScalingGradually = false;
+    nThermostat = INT32_MAX;
+    initialiseSystemWithBrownianMotion = false;
+    totalMoleculeUpdates = 0;
 }
 
 void Simulator::run(bool benchmark) {
     double current_time = 0;
     int iteration = 0;
+
+    //Set the temperature of the system if specified
+    if (initialiseSystemWithBrownianMotion) {
+        thermostat->initialiseSystem();
+    }
 
     //Plot everything one time before the simulation starts.
     if (!benchmark) {
@@ -126,7 +158,24 @@ void Simulator::run(bool benchmark) {
 
 
     while (current_time < endT) {
+
+        //Count, how much molecules will be updated in total.
+        if(benchmark) {
+            totalMoleculeUpdates += model->getParticles().size();
+        }
+
+        //Do one simulation step
         model->step();
+
+        //Control temperature if thermostat is specified
+        if (useThermostat && iteration % nThermostat == 0) {
+            if (applyScalingGradually) {
+                thermostat->setTemperatureOfTheSystemViaGradualVelocityScaling();
+            } else {
+                thermostat->setTemperatureOfTheSystemViaVelocityScaling();
+            }
+        }
+
         iteration++;
         if (!benchmark && iteration % outputFrequency == 0) {
             model->plot(iteration, outputFileBaseName);
@@ -140,6 +189,20 @@ void Simulator::run(bool benchmark) {
     spdlog::info("Output written. Terminating...");
 }
 
-ParticleContainer& Simulator::getParticles() {
+void Simulator::loadState(std::string &pathToMolecules) {
+    int particlesBefore = model->getParticles().size();
+    model->addViaFile(pathToMolecules,FileHandler::inputFormat::txt);
+    spdlog::info("Loaded {} molecules into the simulation", model->getParticles().size() - particlesBefore);
+}
+
+void Simulator::saveState() {
+    model->saveState();
+}
+
+ParticleContainer &Simulator::getParticles() {
     return model->getParticles();
+}
+
+unsigned long long Simulator::getTotalMoleculeUpdates() {
+    return totalMoleculeUpdates;
 }

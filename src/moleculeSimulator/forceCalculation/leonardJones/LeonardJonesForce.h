@@ -6,19 +6,10 @@
 #include "../Force.h"
 
 class LeonardJonesForce : public Force {
-private:
-
-    const double epsilon;
-    const double sigma;
 
 public:
-    /**
-     * @brief Initialize leonardJonesForce calculation with required constants.
-     *
-     * @param epsilon Constant epsilon.
-     * @param sigma Constant sigma.
-     */
-    LeonardJonesForce(double epsilon, double sigma);
+
+    LeonardJonesForce();
 
     /**
     * @brief Actual computation of the Leonard-Jones force occurring.
@@ -30,4 +21,12 @@ public:
     * Computation of the Leonard-Jones force which exerts the source on the target.
     */
     std::array<double, 3> compute(Particle &target, Particle &source) override;
+
+    /**
+    * @brief Implements the optimization we presented as our second idea.
+    *        At the moment this is dead code, because we have not been able yet to make it compatible
+    *        with our current program structure and only integrated it once when doing the time measurements.
+    */
+
+    std::array<double, 3> computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) override;
 };

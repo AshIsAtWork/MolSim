@@ -32,30 +32,30 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
     for (int i = 0; i < numCuboids; i++) {
         tmpString.clear();
         if (getline(input_file, tmpString).eof() && tmpString.empty()) {
-            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
-            return -1;
+            throw std::runtime_error(
+                    "Error reading file: eof reached unexpectedly reading at line " + std::to_string(i));
         }
         spdlog::debug("Read line: {}", tmpString);
-        std::istringstream datastream(tmpString);
+        std::istringstream dataStream(tmpString);
 
         for (auto &pos: position) {
-            datastream >> pos;
+            dataStream >> pos;
         }
-        datastream >> N1;
-        datastream >> N2;
-        datastream >> N3;
-        datastream >> h;
-        datastream >> mass;
+        dataStream >> N1;
+        dataStream >> N2;
+        dataStream >> N3;
+        dataStream >> h;
+        dataStream >> mass;
         for (auto &v: velocity) {
-            datastream >> v;
+            dataStream >> v;
         }
 
-        if (datastream.eof()) {
-            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
-            return -1;
+        if (dataStream.eof()) {
+            throw std::runtime_error("Error reading file: eof reached unexpectedly reading at line " + std::to_string(i));
         }
-        datastream >> brownianMotionAverageVelocity;
-        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity, dimensions, brownianMotionAverageVelocity);
+        dataStream >> brownianMotionAverageVelocity;
+        ParticleGenerator::generateCuboid(particles, position, N1, N2, N3, h, mass, velocity, dimensions,
+                                          brownianMotionAverageVelocity);
     }
     return 0;
 }
@@ -63,37 +63,54 @@ int FileReader::readCuboid(ParticleContainer &particles, std::ifstream &input_fi
 int FileReader::readParticle(ParticleContainer &particles, std::ifstream &input_file) {
     std::array<double, 3> x{};
     std::array<double, 3> v{};
+    std::array<double, 3> f{};
+    std::array<double, 3> old_f{};
     double m;
+    int type;
+    double epsilon;
+    double sigma;
     std::string tmpString;
     int numParticles = 0;
 
     getline(input_file, tmpString);
-    std::istringstream numstream(tmpString);
+    std::istringstream numStream(tmpString);
     spdlog::debug("Read line: {}", tmpString);
-    numstream >> numParticles;
+    numStream >> numParticles;
     spdlog::debug("Reading {} particles", numParticles);
 
     for (int i = 0; i < numParticles; i++) {
         tmpString.clear();
-        if (getline(input_file, tmpString).eof() && tmpString.empty()) {
-            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
-            return -1;
+        getline(input_file, tmpString).eof();
+
+        if (tmpString.empty()) {
+            throw std::runtime_error("Error reading file: eof reached unexpectedly reading at line " + std::to_string(i));
         }
         spdlog::debug("Read line: {}", tmpString);
-        std::istringstream datastream(tmpString);
+        std::istringstream dataStream(tmpString);
 
         for (auto &xj: x) {
-            datastream >> xj;
+            dataStream >> xj;
         }
         for (auto &vj: v) {
-            datastream >> vj;
+            dataStream >> vj;
         }
-        if (datastream.eof()) {
-            spdlog::error("Error reading file: eof reached unexpectedly reading from line {}", i);
-            return -1;
+        for (auto &fj: f) {
+            dataStream >> fj;
         }
-        datastream >> m;
-        Particle newP{x, v, m, i};
+        for (auto &old_fj: old_f) {
+            dataStream >> old_fj;
+        }
+        if (dataStream.eof()) {
+            throw std::runtime_error(
+                    "Error reading file: eof reached unexpectedly reading at line " + std::to_string(i));
+        }
+        dataStream >> m;
+        dataStream >> type;
+        dataStream >> epsilon;
+        dataStream >> sigma;
+        Particle newP{x, v, m, type, epsilon, sigma};
+        newP.setF(f);
+        newP.setOldF(old_f);
         particles.add(newP);
     }
     return 0;
@@ -106,11 +123,10 @@ int FileReader::readFile(ParticleContainer &particles, const std::string &filena
     if (input_file.is_open()) {
         spdlog::info("Opened file: {}", filename.find_first_of('/')
                                         != std::string::npos
-                                            ? filename.substr(filename.find_last_of('/') + 1)
-                                            : filename);
+                                        ? filename.substr(filename.find_last_of('/') + 1)
+                                        : filename);
         if (getline(input_file, tmpString).eof()) {
-            spdlog::error("Error reading file: eof reached unexpectedly");
-            return -3;
+            throw std::runtime_error("Error reading file: eof reached unexpectedly reading.");
         }
         spdlog::debug("Read line: {}", tmpString);
 
@@ -127,11 +143,9 @@ int FileReader::readFile(ParticleContainer &particles, const std::string &filena
             spdlog::info("File Format is Cuboid!");
             return readCuboid(particles, input_file);
         }
-        spdlog::error("Unknown file format!");
-        return -3;
+        throw std::runtime_error("Unknown File Format");
     }
-    spdlog::error("Could not open file!");
-    return -2;
+    throw std::runtime_error("Error opening file");
 }
 
 

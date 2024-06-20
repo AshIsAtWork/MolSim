@@ -10,6 +10,7 @@
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
 #include <memory>
+#include <moleculeSimulator/thermostat/Thermostat.h>
 #include "forceCalculation/gravity/Gravity.h"
 #include "forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "models/directSum/DirectSum.h"
@@ -24,54 +25,87 @@
 
 class Simulator {
 private:
-    std::unique_ptr<Force> force;
-    std::unique_ptr<Model> model;
-    double deltaT;
-    double endT;
-    int outputFrequency;
-    std::string outputFileBaseName;
+ //thermostat
+ std::unique_ptr<Thermostat> thermostat;
+ int nThermostat;
+ bool useThermostat;
+ bool initialiseSystemWithBrownianMotion;
+ bool applyScalingGradually;
+
+ //simulation dependent
+ std::unique_ptr<Force> force;
+ std::unique_ptr<Model> model;
+ double deltaT;
+ double endT;
+
+ //output
+ int outputFrequency;
+ std::string outputFileBaseName;
+
+ //performance measurements
+ unsigned long long totalMoleculeUpdates;
 
 public:
-    Simulator() = delete;
+ Simulator() = delete;
 
 
-    Simulator(SimulationSettings &simulationSettings,FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat);
+ /**
+  * @brief Constructor to contruct a new simulation evironment.
+  *
+  * @param simulationSettings Specify all parameters of the simulation environment.
+  * @param outputFormat Format of the output files.
+  */
+ Simulator(SimulationSettings &simulationSettings, FileHandler::outputFormat outputFormat);
 
-    /**
-     * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
-     *
-     * @param parameters Simulation parameters for the direct sum model.
-     * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
-     * @param inputFormat Format of the input file. Supported formats are txt and xml.
-     * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
-     * @param outputFrequency Specifies after how much time steps an output file is written. For example an output frequency
-     *                        of 10 means that after each 10 iterations an output file is written.
-     * @param outputFileBaseName Base name of the output files.
-     *
-     * To create a new simulation environment you have to provide an input file containing the particles you want
-     * to simulate.
-     */
+ /**
+  * @brief Legacy constructor to construct a new simulation environment using the direct sum algorithm.
+  *
+  * @param parameters Simulation parameters for the direct sum model.
+  * @param inputFilePath Path to the input file which comprises the particles going to be simulated.
+  * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+  * @param outputFrequency Specifies after how much time steps an output file is written. For example an output frequency
+  *                        of 10 means that after each 10 iterations an output file is written.
+  * @param outputFileBaseName Base name of the output files.
+  *
+  * To create a new simulation environment you have to provide an input file containing the particles you want
+  * to simulate.
+  */
 
-    Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
-              FileHandler::inputFormat inputFormat, FileHandler::outputFormat outputFormat, int outputFrequency,
-              std::string &outputFileBaseName);
+ Simulator(DirectSumSimulationParameters &parameters, std::string &inputFilePath,
+           FileHandler::outputFormat outputFormat, int outputFrequency,
+           std::string &outputFileBaseName);
 
-    /**
-     * @brief Run the simulation.
-     *
-     * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
-     * the default parameters will be used.
-     *
-     * @param benchmark Activate or deactivate time measurement
-     */
+ /**
+  * @brief Run the simulation.
+  *
+  * After configuration of the parameters the simulation can be run calling this method. When no configuration is done before,
+  * the default parameters will be used.
+  *
+  * @param benchmark Activate or deactivate time measurement
+  */
 
-    void run(bool benchmark);
+ void run(bool benchmark);
 
-    /**
-     * Get the Particle container of this simulator
-     *
-     * @return Particle container of this simulator
-     */
+ /**
+  * @brief Load the state of all molecules from a previous simulation back into this simulation.
+  *
+  * @param pathToMolecules Path pointing to the txt file which stores the state of the molecules.
+  */
+ void loadState(std::string& pathToMolecules);
 
-    ParticleContainer &getParticles();
+ /**
+  * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
+  */
+ void saveState();
+
+ /**
+  * @brief Get the Particle container of this simulator
+  *
+  * @return Particle container of this simulator
+  */
+
+ ParticleContainer &getParticles();
+
+ unsigned long long getTotalMoleculeUpdates();
+
 };

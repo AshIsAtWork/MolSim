@@ -49,7 +49,7 @@ target_link_libraries(
         #For Mocking, similar to Mockito in Java
         GTest::gmock_main
         spdlog::spdlog
-        xerces-c
+        XercesC::XercesC
 )
 enable_testing()
 
