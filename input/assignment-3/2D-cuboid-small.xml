@@ -9,8 +9,6 @@
         <t_end>5</t_end>
         <delta_t>0.0002</delta_t>
         <force>LeonardJonesForce</force>
-        <Sigma>1</Sigma>
-        <Epsilon>5</Epsilon>
         <DomainSize>
             <First>200</First>
             <Second>200</Second>

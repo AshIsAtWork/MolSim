@@ -17,7 +17,7 @@ Particle &DefaultParticleContainer::at(size_t i) {
     return particles.at(i);
 }
 
-size_t DefaultParticleContainer::size() {
+size_t DefaultParticleContainer::size() const {
     return particles.size();
 }
 
