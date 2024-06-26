@@ -152,3 +152,30 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::
     }
     id++;
 }
+
+void ParticleGenerator::generateMembrane(ParticleContainer &particles, const std::array<double, 3> &position,
+    unsigned N1, unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity,
+    double epsilon, double sigma) {
+
+    std::array<double, 3> currentPosition = position;
+
+    for (unsigned n1 = 0; n1 < N1; n1++) {
+        for (unsigned n2 = 0; n2 < N2; n2++) {
+            Particle pToAdd = {
+                    currentPosition,
+                    initVelocity,
+                    mass,
+                    id,
+                    epsilon,
+                    sigma
+                };
+            particles[1];
+            currentLine.push_back(std::move(pToAdd));
+            if()
+            currentPosition[1] += h;
+        }
+        currentPosition = {currentPosition[0] + h, position[1], position[2]};
+    }
+    //Increment id, so that all particles of the next body being generated will receive another id.
+    ++id;
+}

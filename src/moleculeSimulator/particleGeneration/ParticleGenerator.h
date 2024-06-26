@@ -11,7 +11,6 @@
  */
 class ParticleGenerator {
 private:
-
     /**
      * All particles being part of the same structure will be assigned the same id. This id is incremented by
      * one for each structure that is created.
@@ -38,8 +37,10 @@ private:
      * @param sigma Lennard Jones force parameter sigma.
      */
     static void generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
-                                     const std::array<double, 3> &initVelocity, double h, double mass, int N, double r, int dimensions,
-                                     double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix, double epsilon = 5, double sigma = 1);
+                                     const std::array<double, 3> &initVelocity, double h, double mass, int N, double r,
+                                     int dimensions,
+                                     double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix,
+                                     double epsilon = 5, double sigma = 1);
 
 public:
     /**
@@ -98,4 +99,8 @@ public:
     static void generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
                                const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
                                double brownianMotionAverageVelocity, double epsilon, double sigma);
+
+    static void generateMembrane(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
+                                 unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity,
+                                 double epsilon = 5, double sigma = 1);
 };
