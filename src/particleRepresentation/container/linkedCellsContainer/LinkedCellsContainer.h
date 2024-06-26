@@ -21,11 +21,12 @@ class LinkedCellsContainer : public ParticleContainer{
 private:
 
     //Data structure
+
     /**
      * We use an 1D vector to store the flattened 3D cell structure
      * being an essential property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
      */
-    std::vector<std::vector<Particle>> cells;
+    std::vector<std::vector<std::shared_ptr<Particle>>> cells;
 
     /**
      * The current number of particles that is contained in this container is tracked by the attribute currentSize and kept up-to-date
@@ -365,7 +366,7 @@ public:
 
     //Getter and setters. Especially the setters should only by used for testing purposes.
 
-    std::vector<std::vector<Particle>>& getCells(){
+    std::vector<std::vector<std::shared_ptr<Particle>>>& getCells(){
         return cells;
     }
 

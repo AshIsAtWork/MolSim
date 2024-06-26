@@ -292,7 +292,7 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticle) {
 
     for(auto& cell : cells) {
         for(auto& particle : cell) {
-            EXPECT_TRUE(particle.getX() == toAdd);
+            EXPECT_TRUE(particle->getX() == toAdd);
         }
     }
 }
@@ -317,7 +317,7 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
 
     for(auto& cell : domainIterationScheme) {
         for(auto& particle : cells[cell[0]]) {
-            EXPECT_TRUE(particle.getX() == toAdd);
+            EXPECT_TRUE(particle->getX() == toAdd);
         }
     }
 
@@ -327,7 +327,7 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToEachParticleInDomain) {
     for(auto& side : haloCells) {
         for(auto& cell : side) {
             for(auto& particle : cells[cell]) {
-                EXPECT_TRUE(particle.getX() == zero);
+                EXPECT_TRUE(particle->getX() == zero);
             }
         }
     }
@@ -379,7 +379,7 @@ TEST(LinkedCellsContainerTest,Iterators_ApplyToAllUniquePairsInDomain) {
     auto& domainIterationScheme = lcc.getDomainCellIterationScheme();
     for(auto& cellIndizes : domainIterationScheme) {
         for(auto& particle : cells[cellIndizes[0]]) {
-            EXPECT_EQ(particle.getType(), expected[i]);
+            EXPECT_EQ(particle->getType(), expected[i]);
         }
         i++;
     }
@@ -518,7 +518,7 @@ TEST(LinkedCellContainerTest, UpdateCells) {
     int type = 1;
     for(int y = 1; y <= 3; y++) {
         for(int x = 1; x <= 3; x++) {
-            EXPECT_EQ(lcc.getCells()[lcc.threeDToOneD(x, y, 2)][0].getType(), type++);
+            EXPECT_EQ(lcc.getCells()[lcc.threeDToOneD(x, y, 2)][0]->getType(), type++);
 
         }
     }
@@ -570,7 +570,7 @@ TEST(LinkedCellContainerTest, Add_BasicFunctionality){
     lcc.add(p);
     ASSERT_EQ(lcc.size(), 1);
     ASSERT_EQ(lcc.getCells()[lcc.threeDToOneD(1,1,1)].size(), 1);
-    EXPECT_EQ(lcc.getCells()[lcc.threeDToOneD(1,1,1)][0].getType(),10);
+    EXPECT_EQ(lcc.getCells()[lcc.threeDToOneD(1,1,1)][0]->getType(),10);
 }
 
 /**

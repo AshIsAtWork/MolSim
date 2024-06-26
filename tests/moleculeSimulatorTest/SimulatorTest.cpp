@@ -1,6 +1,6 @@
-////
-//// Created by daniel on 11.05.24.
-////
+//
+// Created by daniel on 11.05.24.
+//
 #include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
 #include "moleculeSimulator/Simulator.h"

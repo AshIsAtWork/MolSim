@@ -7,7 +7,6 @@
 
 #include "Particle.h"
 
-
 Particle::Particle(int type_arg) : f{0., 0., 0.}, old_f{0., 0., 0.}, type{type_arg}, epsilon{5}, sigma{1} {
     std::stringstream stream;
     spdlog::trace("Particle generated with the following parameters: X={}, v={}, f={}, type={}, epsilon{}, sigma{}",
@@ -37,12 +36,12 @@ double Particle::calculateEKin() const {
     return 0.5 * m * (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
-void Particle::addDirectNeighbor(Particle &p) {
-    directNeighbors.push_back(&p);
+void Particle::addDirectNeighbor(std::shared_ptr<Particle> &p) {
+    directNeighbors.push_back(p);
 }
 
-void Particle::addDiagonalNeighbor(Particle &p) {
-    diagonalNeighbors.push_back(&p);
+void Particle::addDiagonalNeighbor(std::shared_ptr<Particle> &p) {
+    diagonalNeighbors.push_back(p);
 }
 
 Particle::~Particle() { spdlog::trace("Particle destructed"); }
@@ -67,14 +66,13 @@ double Particle::getSigma() const {
     return sigma;
 }
 
-std::vector<Particle*>& Particle::getDirectNeighbors() {
+std::vector<std::shared_ptr<Particle>> & Particle::getDirectNeighbors() {
     return directNeighbors;
 }
 
-std::vector<Particle*>& Particle::getDiagonalNeighbors() {
+std::vector<std::shared_ptr<Particle>> & Particle::getDiagonalNeighbors() {
     return diagonalNeighbors;
 }
-
 
 void Particle::setOldF(const std::array<double, 3> &oldF) {
     old_f = oldF;

@@ -15,6 +15,7 @@
 class Particle {
 
 private:
+
     /**
      * Position of the particle
      */
@@ -60,14 +61,12 @@ private:
     /**
      * Direct neighbors within a membrane
      */
-    std::vector<Particle*> directNeighbors;
+    std::vector<std::shared_ptr<Particle>> directNeighbors;
 
     /**
      * Diagonal neighbors within a membrane
      */
-    std::vector<Particle*> diagonalNeighbors;
-
-
+    std::vector<std::shared_ptr<Particle>> diagonalNeighbors;
 
 public:
     explicit Particle(int type = 0);
@@ -96,14 +95,14 @@ public:
      *
      * @param p New direct neighbor of this particle.
      */
-    void addDirectNeighbor(Particle& p);
+    void addDirectNeighbor(std::shared_ptr<Particle> &p);
 
     /**
      * Make particle p a diagonal neighbor of this particle.
      *
      * @param p New diagonal neighbor of this particle.
      */
-    void addDiagonalNeighbor(Particle& p);
+    void addDiagonalNeighbor(std::shared_ptr<Particle> &p);
 
     virtual ~Particle();
 
@@ -121,11 +120,12 @@ public:
 
     [[nodiscard]] double getEpsilon() const;
 
-    [[nodiscard]] double getSigma() const;
+    [[nodiscard]] double getSigma() const;;
 
-    std::vector<Particle*>& getDirectNeighbors();
+    [[nodiscard]] std::vector<std::shared_ptr<Particle>> & getDirectNeighbors();
 
-    std::vector<Particle*>& getDiagonalNeighbors();
+    [[nodiscard]] std::vector<std::shared_ptr<Particle>> & getDiagonalNeighbors();
+
 
     void setOldF(const std::array<double, 3> &oldF);
 
@@ -135,7 +135,7 @@ public:
 
     void setV(const std::array<double, 3> &v);
 
-    void setType(const int type);
+    void setType(int type);
 
     bool operator==(Particle &other) const;
 

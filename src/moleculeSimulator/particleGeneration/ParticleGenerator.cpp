@@ -169,9 +169,6 @@ void ParticleGenerator::generateMembrane(ParticleContainer &particles, const std
                     epsilon,
                     sigma
                 };
-            particles[1];
-            currentLine.push_back(std::move(pToAdd));
-            if()
             currentPosition[1] += h;
         }
         currentPosition = {currentPosition[0] + h, position[1], position[2]};
