@@ -37,6 +37,14 @@ double Particle::calculateEKin() const {
     return 0.5 * m * (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
+void Particle::addDirectNeighbor(Particle &p) {
+    directNeighbors.push_back(&p);
+}
+
+void Particle::addDiagonalNeighbor(Particle &p) {
+    diagonalNeighbors.push_back(&p);
+}
+
 Particle::~Particle() { spdlog::trace("Particle destructed"); }
 
 const std::array<double, 3> &Particle::getX() const { return x; }
@@ -57,6 +65,14 @@ double Particle::getEpsilon() const {
 
 double Particle::getSigma() const {
     return sigma;
+}
+
+std::vector<Particle*>& Particle::getDirectNeighbors() {
+    return directNeighbors;
+}
+
+std::vector<Particle*>& Particle::getDiagonalNeighbors() {
+    return diagonalNeighbors;
 }
 
 

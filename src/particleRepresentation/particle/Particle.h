@@ -57,6 +57,18 @@ private:
 
     double sigma;
 
+    /**
+     * Direct neighbors within a membrane
+     */
+    std::vector<Particle*> directNeighbors;
+
+    /**
+     * Diagonal neighbors within a membrane
+     */
+    std::vector<Particle*> diagonalNeighbors;
+
+
+
 public:
     explicit Particle(int type = 0);
 
@@ -79,6 +91,20 @@ public:
      */
     double calculateEKin() const;
 
+    /**
+     * Make particle p a direct neighbor of this particle.
+     *
+     * @param p New direct neighbor of this particle.
+     */
+    void addDirectNeighbor(Particle& p);
+
+    /**
+     * Make particle p a diagonal neighbor of this particle.
+     *
+     * @param p New diagonal neighbor of this particle.
+     */
+    void addDiagonalNeighbor(Particle& p);
+
     virtual ~Particle();
 
     [[nodiscard]] const std::array<double, 3> &getX() const;
@@ -96,6 +122,10 @@ public:
     [[nodiscard]] double getEpsilon() const;
 
     [[nodiscard]] double getSigma() const;
+
+    std::vector<Particle*>& getDirectNeighbors();
+
+    std::vector<Particle*>& getDiagonalNeighbors();
 
     void setOldF(const std::array<double, 3> &oldF);
 
