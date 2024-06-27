@@ -69,6 +69,7 @@ private:
     std::vector<std::shared_ptr<Particle>> diagonalNeighbors;
 
 public:
+
     explicit Particle(int type = 0);
 
     Particle(const Particle &other);
@@ -103,6 +104,25 @@ public:
      * @param p New diagonal neighbor of this particle.
      */
     void addDiagonalNeighbor(std::shared_ptr<Particle> &p);
+
+    /**
+     * @brief Apply the specified force between this particle and its direct neighbors.
+     *
+     * @param function Function to apply between self and all direct neighbors.
+     *
+     * Only unique pairs are considered to apply Netwon's third law of motion.
+     */
+    void applyToDirectNeighborsAndSelf(const std::function<void(Particle &, Particle &)> &function);
+
+    /**
+     * @brief Apply the specified force between this particle and its diagonal neighbors.
+     *
+     * @param function Function to apply between self and all diagonal neighbors.
+     *
+     * Only unique pairs are considered to apply Netwon's third law of motion.
+     */
+
+    void applyToDiagonalNeighborsAndSelf(const std::function<void(Particle &, Particle &)> &function);
 
     virtual ~Particle();
 

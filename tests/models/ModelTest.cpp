@@ -22,7 +22,7 @@ TEST(ModelTest, applyGravityOff) {
     Particle p{{4.5,4.5,0},{0,0,0},1};
     linkedCellModel.addParticle(p);
     ASSERT_EQ(linkedCellModel.getParticles().size(), 1);
-    linkedCellModel.step();
+    linkedCellModel.step(1);
     linkedCellModel.getParticles().applyToEachParticleInDomain([](Particle& p) {
         std::array<double, 3> expected = {0,0,0};
        ASSERT_TRUE(p.getF() == expected);
@@ -44,7 +44,7 @@ TEST(ModelTest, applyGravityOn) {
     Particle p{{4.5,4.5,0},{0,0,0},1};
     linkedCellModel.addParticle(p);
     ASSERT_EQ(linkedCellModel.getParticles().size(), 1);
-    linkedCellModel.step();
+    linkedCellModel.step(1);
     linkedCellModel.getParticles().applyToEachParticleInDomain([](Particle& p) {
         std::array<double, 3> expected = {0,10,0};
        ASSERT_TRUE(p.getF() == expected);

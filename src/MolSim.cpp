@@ -40,9 +40,9 @@ int main(int argc, char *argsv[]) {
                  "Time to which simulation will run (starting at 0).")
                 ("deltaT,d", po::value<double>(&deltaT)->default_value(0.014), "Duration of one time step.")
                 ("inputFilePath,f", po::value<std::string>(&inputFilePath), "Path to the input file. Caution: This "
-                                                                            "is a required argument. In case it is not specified, the program will terminate immediately.")
+                 "is a required argument. In case it is not specified, the program will terminate immediately.")
                 ("logLevel,l", po::value<std::string>(&logLevel)->default_value("info"), "Log level:"
-                                                                                         " Possible options are (off, critical, error, warn, info, debug, trace)")
+                 " Possible options are (off, critical, error, warn, info, debug, trace)")
                 ("inputFileFormatString,i", po::value<std::string>(&inputFileFormatString),
                  "Format of the input file. Supported formats are txt and xml.")
                 ("outputFileFormatString,o", po::value<std::string>(&outputFileFormatString)->default_value("vtk"),
@@ -72,14 +72,14 @@ int main(int argc, char *argsv[]) {
             store(parsed, vm);
         } catch (boost::wrapexcept<po::unknown_option> &e) {
             std::cout << "Something went wrong while parsing your arguments: " << e.what()
-                      << "\nPlease have a look on the usage!\n" << std::endl;
+                    << "\nPlease have a look on the usage!\n" << std::endl;
 
             std::cout << desc << "\n";
             return -1;
         }
         catch (...) {
             std::cout << "Something went wrong while parsing your arguments. Please have a look on the usage!\n"
-                      << std::endl;
+                    << std::endl;
             std::cout << desc << "\n";
             return -1;
         }
@@ -137,11 +137,18 @@ int main(int argc, char *argsv[]) {
             SimulationSettings simulationSettings;
             const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
             if (returnedErrorHandlingInt != 0) {
-                throw std::invalid_argument("Error while reading the XML file. Please check the file and try again. Exiting...");
+                throw std::invalid_argument(
+                    "Error while reading the XML file. Please check the file and try again. Exiting...");
             }
+            MembraneParameters test{
+                true, true, 150, {0, 0, 0.8},
+                2.2, 300, {0, 0, 0}, {15, 15, 15}, 50, 50,
+                1, 2.2, 1, 1
+            };
+            simulationSettings.membraneParameters = test;
             simulator = std::make_unique<Simulator>(simulationSettings, outputFormat);
         }
-            //Legacy input over the command line
+        //Legacy input over the command line
         else {
             if (selectedForce == "gravity") {
                 force = TypeOfForce::gravity;
@@ -180,8 +187,7 @@ int main(int argc, char *argsv[]) {
             spdlog::info("Saving state of molecules...");
         }
         return 0;
-    }
-    catch (const std::exception &e) {
+    } catch (const std::exception &e) {
         spdlog::error(e.what());
         return EXIT_FAILURE;
     }

@@ -509,11 +509,24 @@ void LinkedCellsContainer::add(Particle &p) {
     //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
     if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
                  __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
-        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is Impossible");
+        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is impossible");
     }
     int index = calcCellIndex(p.getX());
     cells[index].push_back(std::make_shared<Particle>(std::move(p)));
     currentSize++;
+}
+
+std::shared_ptr<Particle> LinkedCellsContainer::addAndShare(Particle &p) {
+    //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
+    if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
+                 __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
+        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is impossible");
+                 }
+    int index = calcCellIndex(p.getX());
+    auto pointerToParticle = std::make_shared<Particle>(std::move(p));
+    cells[index].push_back(pointerToParticle);
+    currentSize++;
+    return pointerToParticle;
 }
 
 int LinkedCellsContainer::threeDToOneD(int x, int y, int z) const {

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "particleRepresentation/container/defaultParticleContainer/DefaultParticleContainer.h"
+#include "particleRepresentation/container/linkedCellsContainer/LinkedCellsContainer.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
 
 /**
@@ -100,7 +101,7 @@ public:
                                const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
                                double brownianMotionAverageVelocity, double epsilon, double sigma);
 
-    static void generateMembrane(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
-                                 unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity,
+    static std::vector<std::shared_ptr<Particle>> generateMembrane(LinkedCellsContainer &particles, const std::array<double, 3> &position, unsigned N1,
+                                 unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity, bool isMarked(unsigned, unsigned),
                                  double epsilon = 5, double sigma = 1);
 };

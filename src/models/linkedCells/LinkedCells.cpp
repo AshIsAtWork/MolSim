@@ -6,9 +6,10 @@
 
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, FileHandler::outputFormat outputFormat,
-                         BoundarySet boundaryConditions, bool gravityOn, double g) : Model(particles, force, deltaT,
-        outputFormat, gravityOn, g),
-    particles(domainSize, rCutOff, boundaryConditions) {
+                         BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g,
+                         MembraneParameters membraneParameters) : Model(particles, force, deltaT,
+                                                                        outputFormat, gravityOn, g),
+                                                                  particles(domainSize, rCutOff, boundaryConditions) {
     std::pair<Side, BoundaryCondition> cFront{Side::front, boundaryConditions.front};
     boundarySettings.push_back(cFront);
     std::pair<Side, BoundaryCondition> cRight{Side::right, boundaryConditions.right};
@@ -22,6 +23,50 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
         boundarySettings.push_back(cTop);
         std::pair<Side, BoundaryCondition> cBottom{Side::bottom, boundaryConditions.bottom};
         boundarySettings.push_back(cBottom);
+    }
+
+    //Configure membrane
+
+    if (membraneParameters.membraneSetting) {
+        //Configure membrane setting
+        membraneSetting = true;
+        pull = membraneParameters.pull;
+        pullingActiveUntil = membraneParameters.pullingActiveUntil;
+        pullingForce = membraneParameters.pullingForce;
+        forceBetweenDirectNeighborsInMembrane = std::make_unique<HarmonicForce>(
+            membraneParameters.k, membraneParameters.r0);
+        forceBetweenDiagonalNeighborsInMembrane = std::make_unique<HarmonicForce>(
+            membraneParameters.k, membraneParameters.r0 * sqrt(2));
+        //Generate membrane
+        auto marking = [](unsigned x, unsigned y) {
+            //Particle (17,24)
+            if (x == 16 and y == 23) {
+                return true;
+            }
+            //Particle (17,25)
+            if (x == 16 and y == 24) {
+                return true;
+            }
+            //Particle (18,24)
+            if (x == 17 and y == 23) {
+                return true;
+            }
+            //Particle (18,25)
+            if (x == 17 and y == 24) {
+                return true;
+            }
+            return false;
+        };
+        particlesToPull = ParticleGenerator::generateMembrane(particles, membraneParameters.position,
+                                                              membraneParameters.N1, membraneParameters.N2,
+                                                              membraneParameters.h, membraneParameters.mass,
+                                                              membraneParameters.initialVelocity, marking,
+                                                              membraneParameters.epsilon, membraneParameters.sigma);
+    } else {
+        membraneSetting = false;
+        pull = false;
+        pullingActiveUntil = 0;
+        pullingForce = {0, 0, 0};
     }
 }
 
@@ -39,8 +84,8 @@ void LinkedCells::processBoundaryForces() {
                     std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
                     p.setF(p.getF() + ghostForce);
                 }, setting.first);
-            }
-            break;
+            };
+                break;
             case BoundaryCondition::periodic: {
                 //Add forces from particles of adjacent boundary cells from the opposite side.
                 particles.applyForcesFromOppositeSide(setting.first);
@@ -48,7 +93,7 @@ void LinkedCells::processBoundaryForces() {
             break;
             case BoundaryCondition::invalid: {
                 throw std::invalid_argument("Invalid Boundary Condition was selected.");
-            };
+            }
         }
     }
 }
@@ -75,8 +120,53 @@ void LinkedCells::processHaloCells() {
     }
 }
 
-void LinkedCells::step() {
-    updateForces();
+void LinkedCells::pullSelectedParticles() {
+    for (const auto &p: particlesToPull) {
+        p->setF(p->getF() + p->getF() * pullingForce);
+    }
+}
+
+void LinkedCells::applyForcesBetweenNeighborsInMembrane() {
+    particles.applyToEachParticleInDomain([this](Particle &p) {
+        p.applyToDirectNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
+            auto f = forceBetweenDirectNeighborsInMembrane->compute(self, neighbor);
+            self.setF(self.getF() + f);
+            neighbor.setF(neighbor.getF() - f);
+        });
+        p.applyToDirectNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
+            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(self, neighbor);
+            self.setF(self.getF() + f);
+            neighbor.setF(neighbor.getF() - f);
+        });
+    });
+}
+
+void LinkedCells::updateForcesTruncated() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        p.resetForce();
+    });
+    //Calculate new forces using Newtons third law of motion
+    particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
+        //Forces are only applied, if it is repusive.
+        if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= p_i.getSigma() * sqrt(2)) {
+            auto f_ij{force.compute(p_i, p_j)};
+            p_i.setF(p_i.getF() + f_ij);
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::step(int iteration) {
+    if (membraneSetting) {
+        updateForcesTruncated();
+        applyForcesBetweenNeighborsInMembrane();
+        if (pull && iteration <= pullingActiveUntil) {
+            pullSelectedParticles();
+        }
+    } else {
+        updateForces();
+    }
     if (gravityOn) {
         applyGravity();
     }
@@ -93,9 +183,10 @@ void LinkedCells::updateForcesOptimized() {
         p.resetForce();
     });
     //Calculate new forces using Newtons third law of motion
-    particles.applyToAllUniquePairsInDomainOptimized([this](Particle &p_i, Particle &p_j, std::array<double, 3> difference, double distance) {
-        auto f_ij{force.computeOptimized(p_i, p_j, difference, distance)};
-        p_i.setF(p_i.getF() + f_ij);
-        p_j.setF( p_j.getF() - f_ij);
-    });
+    particles.applyToAllUniquePairsInDomainOptimized(
+        [this](Particle &p_i, Particle &p_j, std::array<double, 3> difference, double distance) {
+            auto f_ij{force.computeOptimized(p_i, p_j, difference, distance)};
+            p_i.setF(p_i.getF() + f_ij);
+            p_j.setF(p_j.getF() - f_ij);
+        });
 }

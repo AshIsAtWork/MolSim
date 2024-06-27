@@ -5,6 +5,7 @@
 
 #include "../Model.h"
 #include "../../particleRepresentation/container/linkedCellsContainer/LinkedCellsContainer.h"
+#include "moleculeSimulator/forceCalculation/harmonic/HarmonicForce.h"
 
 /**
  * @brief Model that implements the linked cell algorithm
@@ -16,6 +17,13 @@
 
 class LinkedCells final : public Model {
 private:
+    bool membraneSetting;
+    bool pull;
+    int pullingActiveUntil;
+    std::array<double, 3> pullingForce{};
+    std::unique_ptr<Force> forceBetweenDiagonalNeighborsInMembrane;
+    std::unique_ptr<Force> forceBetweenDirectNeighborsInMembrane;
+
     /**
      * This model uses the LinkedCellsContainer to store its particles
      */
@@ -23,7 +31,9 @@ private:
     /**
      * Definition of the boundary condition for each side.
      */
-    std::vector<std::pair<Side, enumsStructs::BoundaryCondition> > boundarySettings;
+    std::vector<std::pair<Side, enumsStructs::BoundaryCondition>> boundarySettings;
+
+    std::vector<std::shared_ptr<Particle>> particlesToPull;
 
     /**
      * @brief Apply forces to all particles in boundary cells according to the specified boundary conditions.
@@ -35,6 +45,12 @@ private:
      *        to the specified boundary conditions.
      */
     void processHaloCells();
+
+    void pullSelectedParticles();
+
+    void applyForcesBetweenNeighborsInMembrane();
+
+    void updateForcesTruncated();
 
 public:
     /**
@@ -48,14 +64,17 @@ public:
      * @param boundaryConditions Boundary conditions.
      * @param gravityOn Toggle gravity on or off.
      * @param g Gravitational factor.
+     * @param membraneParameters Contains specification if a membrane is simulated
      */
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff,
-                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions, bool gravityOn, double g = 1);
+                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g = {}, MembraneParameters membraneParameters = MembraneParameters{});
 
     /**
      * @brief Perform one time step in the linked cells model.
+     *
+     * @param iteration Current iteration the simulator is in.
      */
-    void step() override;
+    void step(int iteration) override;
 
     /**
      * @brief Implements the optimization we presented as our second idea.

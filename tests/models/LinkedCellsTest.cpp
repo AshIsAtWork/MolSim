@@ -63,7 +63,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
     linkedCellModel.addParticle(p);
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.00005;
         //Check conditions
@@ -116,7 +116,7 @@ TEST(LinkedCellsTest, Outflow) {
     linkedCellModel.updateForces();
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.05;
     }
@@ -168,7 +168,7 @@ TEST(LinkedCellsTest, Periodic_PostionUpdates) {
         linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateBefore](Particle &p) {
             xCoordinateBefore = p.getX()[0];
         });
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         double xCoordinateAfter;
         linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateAfter](Particle &p) {
             xCoordinateAfter = p.getX()[0];
@@ -234,7 +234,7 @@ TEST(LinkedCellsTest, Periodic_Force_Calculation) {
             }
 
         });
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.0005;
     }

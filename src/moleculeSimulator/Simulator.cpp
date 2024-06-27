@@ -51,13 +51,14 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
             }
             deltaT = simulationSettings.parametersLinkedCells.deltaT;
             endT = simulationSettings.parametersLinkedCells.endT;
+
             model = std::make_unique<LinkedCells>(*force, simulationSettings.parametersLinkedCells.deltaT,
                                                   simulationSettings.parametersLinkedCells.domainSize,
                                                   simulationSettings.parametersLinkedCells.rCutOff,
                                                   outputFormat,
                                                   simulationSettings.parametersLinkedCells.boundaryConditions,
                                                   simulationSettings.gravityOn,
-                                                  simulationSettings.gravityFactor);
+                                                  simulationSettings.gravityFactor, simulationSettings.membraneParameters);
         }
         break;
         default: {
@@ -165,7 +166,7 @@ void Simulator::run(bool benchmark) {
         }
 
         //Do one simulation step
-        model->step();
+        model->step(iteration);
 
         //Control temperature if thermostat is specified
         if (useThermostat && iteration % nThermostat == 0) {

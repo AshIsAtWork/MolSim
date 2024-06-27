@@ -8,7 +8,7 @@ DirectSum::DirectSum(Force &force, double deltaT, FileHandler::outputFormat outp
     particles, force, deltaT, outputFormat, gravityOn, g) {
 }
 
-void DirectSum::step() {
+void DirectSum::step(int iteration) {
     updateForces();
     if(gravityOn) {
         applyGravity();

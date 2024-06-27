@@ -31,6 +31,8 @@ public:
 
     /**
      * @brief Perform one time step in the direct sum model.
+     *
+     * @param iteration Current iteration the simulator is in.
      */
-    void step() override;
+    void step(int iteration) override;
 };

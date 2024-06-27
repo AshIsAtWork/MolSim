@@ -6,7 +6,7 @@
 #include "moleculeSimulator/particleGeneration/ParticleGenerator.h"
 
 Model::Model(ParticleContainer &particles, Force &force, double deltaT,
-             FileHandler::outputFormat outputFormat, bool gravityOn, double g) : outputFormat{outputFormat}, particles{particles},
+             FileHandler::outputFormat outputFormat, bool gravityOn, std::array<double, 3> g) : outputFormat{outputFormat}, particles{particles},
              force{force}, deltaT{deltaT}, gravityOn{gravityOn}, g{g} {
 }
 
@@ -37,9 +37,7 @@ void Model::updateVelocities() const {
 
 void Model::applyGravity() {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        auto force = p.getF();
-        force[1] += p.getM() * g;
-        p.setF(force);
+        p.setF(p.getF() + p.getM() * g);
     });
 }
 

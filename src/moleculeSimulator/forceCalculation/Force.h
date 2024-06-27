@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "particleRepresentation/particle/Particle.h"
+#include <particleRepresentation/particle/Particle.h>
 
 /**
  * @brief Interface representing the force that the source exerts on the target.

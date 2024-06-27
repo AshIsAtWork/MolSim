@@ -139,8 +139,8 @@ TEST(ParticleGeneratorTest_Cuboid_2, AddMultipleCuboids) {
 
 TEST(ParticleGeneratorTest_Disc, AllParticlesInsideTheCircle) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 10, 1.5, 1, 3, 0.1);
-    for(Particle& p : pc) {
+    ParticleGenerator::generateDisc(pc, {0, 0, 0}, {0, 0, 0}, 10, 1.5, 1, 3, 0.1);
+    for (Particle &p: pc) {
         EXPECT_LE(ArrayUtils::L2Norm(p.getX()), 13.5);
     }
 }
@@ -151,8 +151,8 @@ TEST(ParticleGeneratorTest_Disc, AllParticlesInsideTheCircle) {
 
 TEST(ParticleGeneratorTest_Disc, OnlyOneParticleInTheCenter) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 1, 0.2, 1, 3, 0.1);
-    EXPECT_EQ(pc.size(),1);
+    ParticleGenerator::generateDisc(pc, {0, 0, 0}, {0, 0, 0}, 1, 0.2, 1, 3, 0.1);
+    EXPECT_EQ(pc.size(), 1);
 }
 
 /*
@@ -161,8 +161,8 @@ TEST(ParticleGeneratorTest_Disc, OnlyOneParticleInTheCenter) {
 
 TEST(ParticleGeneratorTest_Disc, ZeroParticles) {
     DefaultParticleContainer pc;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 0, 0.2, 1, 3, 0.1);
-    EXPECT_EQ(pc.size(),0);
+    ParticleGenerator::generateDisc(pc, {0, 0, 0}, {0, 0, 0}, 0, 0.2, 1, 3, 0.1);
+    EXPECT_EQ(pc.size(), 0);
 }
 
 /*
@@ -171,18 +171,108 @@ TEST(ParticleGeneratorTest_Disc, ZeroParticles) {
 
 TEST(ParticleGeneratorTest_Disc, MeshWidthCorrect) {
     DefaultParticleContainer pc, pcRef;
-    ParticleGenerator::generateDisc(pc, {0,0,0}, {0,0,0}, 6, 1, 1, 3, 0.1);
-    ParticleGenerator::generateCuboid(pcRef,{-5,-5,0},11,11,1,1,1,{0,0,0}, 3, 0.1);
+    ParticleGenerator::generateDisc(pc, {0, 0, 0}, {0, 0, 0}, 6, 1, 1, 3, 0.1);
+    ParticleGenerator::generateCuboid(pcRef, {-5, -5, 0}, 11, 11, 1, 1, 1, {0, 0, 0}, 3, 0.1);
     //Brownian Motion has to be removed for this test.
-    for(Particle& p: pcRef) {
-        p.setV({0,0,0});
+    for (Particle &p: pcRef) {
+        p.setV({0, 0, 0});
         p.setType(pc.at(0).getType());
     }
-    for(Particle p : pc) {
-        p.setV({0,0,0});
+    for (Particle p: pc) {
+        p.setV({0, 0, 0});
         EXPECT_TRUE(pcRef.contains(p));
     }
 }
 
+/*
+ *Part three: Testing the generateMembrane() method:
+ */
 
+/*
+ *Testing basic functionality.
+ */
 
+bool isDiagonalTopLeftNeighbor(Particle &source, Particle &neighbor, double h) {
+    return source.getX()[1] + h == neighbor.getX()[1]
+           and source.getX()[0] - h == neighbor.getX()[0];
+}
+
+bool isDiagonalBottomLeftNeighbor(Particle &source, Particle &neighbor, double h) {
+    return source.getX()[1] - h == neighbor.getX()[1]
+           and source.getX()[0] - h == neighbor.getX()[0];
+}
+
+bool isDirectNeighborOnYAxis(Particle &source, Particle &neighbor, double h) {
+    return source.getX()[1] - h == neighbor.getX()[1]
+           and source.getX()[0] == neighbor.getX()[0];
+}
+
+bool isDirectNeighborOnXAxis(Particle &source, Particle &neighbor, double h) {
+    return source.getX()[1] == neighbor.getX()[1]
+           and source.getX()[0] - h == neighbor.getX()[0];
+}
+
+TEST(ParticleGeneratorTest_Membrane, NumberOfParticlesCorrect) {
+    LinkedCellsContainer lcc{{12, 12, 0}, 1, BoundarySet{}};
+    ParticleGenerator::generateMembrane(lcc, {1, 1, 0}, 10, 10, 1, 1, {0, 0, 0},
+                                        [](unsigned n1, unsigned n2) { return false; });
+    EXPECT_EQ(lcc.size(), 100);
+}
+
+TEST(ParticleGeneratorTest_Membrane, NeighborsCorrect) {
+    LinkedCellsContainer lcc{{3, 3, 0}, 1, BoundarySet{}};
+    ParticleGenerator::generateMembrane(lcc, {0.5, 0.5, 0}, 3, 3, 1, 1, {0, 0, 0},
+                                        [](unsigned n1, unsigned n2) { return false; });
+    ASSERT_EQ(lcc.size(), 9);
+    //Check Particle bottom left (has no neighbors)
+    EXPECT_EQ(lcc.getCells()[6][0]->getDirectNeighbors().size(), 0);
+    EXPECT_EQ(lcc.getCells()[6][0]->getDiagonalNeighbors().size(), 0);
+    //Check Particle bottom middle (has one direct neighbor and one diagonal neighbor)
+    ASSERT_EQ(lcc.getCells()[7][0]->getDiagonalNeighbors().size(), 1);
+    EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[7][0],*lcc.getCells()[7][0]->getDiagonalNeighbors()[0],1));
+    ASSERT_EQ(lcc.getCells()[7][0]->getDirectNeighbors().size(), 1);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[7][0],*lcc.getCells()[7][0]->getDirectNeighbors()[0],1));
+    //Check Particle bottom right (has one direct neighbor and one diagonal neighbor)
+    ASSERT_EQ(lcc.getCells()[8][0]->getDiagonalNeighbors().size(), 1);
+    EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[8][0],*lcc.getCells()[8][0]->getDiagonalNeighbors()[0],1));
+    ASSERT_EQ(lcc.getCells()[8][0]->getDirectNeighbors().size(), 1);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[8][0],*lcc.getCells()[8][0]->getDirectNeighbors()[0],1));
+    //Check Particle middle right (has one direct neighbor and zero diagonal neighbors)
+    ASSERT_EQ(lcc.getCells()[11][0]->getDiagonalNeighbors().size(), 0);
+    ASSERT_EQ(lcc.getCells()[11][0]->getDirectNeighbors().size(), 1);
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[11][0],*lcc.getCells()[11][0]->getDirectNeighbors()[0],1));
+    //Check Particle middle middle (has two direct and diagonal neighbors)
+    ASSERT_EQ(lcc.getCells()[12][0]->getDiagonalNeighbors().size(), 2);
+    EXPECT_TRUE(
+        isDiagonalBottomLeftNeighbor(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDiagonalNeighbors()[0],1));
+    EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDiagonalNeighbors()[1],1));
+    ASSERT_EQ(lcc.getCells()[12][0]->getDirectNeighbors().size(), 2);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDirectNeighbors()[0],1));
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDirectNeighbors()[1],1));
+    //Check Particle middle right (has two direct and diagonal neighbors)
+    ASSERT_EQ(lcc.getCells()[13][0]->getDiagonalNeighbors().size(), 2);
+    EXPECT_TRUE(
+        isDiagonalBottomLeftNeighbor(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDiagonalNeighbors()[0],1));
+    EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDiagonalNeighbors()[1],1));
+    ASSERT_EQ(lcc.getCells()[13][0]->getDirectNeighbors().size(), 2);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDirectNeighbors()[0],1));
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDirectNeighbors()[1],1));
+    //Check Particle top left (has no diagonal and one direct neighbor)
+    ASSERT_EQ(lcc.getCells()[16][0]->getDiagonalNeighbors().size(), 0);
+    ASSERT_EQ(lcc.getCells()[16][0]->getDirectNeighbors().size(), 1);
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[16][0],*lcc.getCells()[16][0]->getDirectNeighbors()[0],1));
+    //Check Particle top middle (has one diagonal and two direct neighbors)
+    ASSERT_EQ(lcc.getCells()[17][0]->getDiagonalNeighbors().size(), 1);
+    EXPECT_TRUE(
+        isDiagonalBottomLeftNeighbor(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDiagonalNeighbors()[0],1));
+    ASSERT_EQ(lcc.getCells()[17][0]->getDirectNeighbors().size(), 2);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDirectNeighbors()[0],1));
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDirectNeighbors()[1],1));
+    //Check Particle top right (has one diagonal and two direct neighbors)
+    ASSERT_EQ(lcc.getCells()[18][0]->getDiagonalNeighbors().size(), 1);
+    EXPECT_TRUE(
+        isDiagonalBottomLeftNeighbor(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDiagonalNeighbors()[0],1));
+    ASSERT_EQ(lcc.getCells()[18][0]->getDirectNeighbors().size(), 2);
+    EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDirectNeighbors()[0],1));
+    EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDirectNeighbors()[1],1));
+}

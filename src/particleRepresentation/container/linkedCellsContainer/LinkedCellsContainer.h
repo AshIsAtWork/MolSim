@@ -236,6 +236,8 @@ public:
      */
     void add(Particle& p) override;
 
+    std::shared_ptr<Particle> addAndShare(Particle& p);
+
     /**
      * @brief Convert 3 dimensional coordinates to one dimensional coordinates.
      *

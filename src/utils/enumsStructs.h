@@ -135,6 +135,25 @@ namespace enumsStructs {
         int dimensions;
     };
 
+    struct MembraneParameters {
+        //Setting
+        bool membraneSetting;
+        bool pull;
+        int pullingActiveUntil;
+        std::array<double, 3> pullingForce;
+        double r0;
+        double k;
+        //Membrane itself
+        std::array<double, 3> initialVelocity;
+        std::array<double, 3> position;
+        unsigned N1;
+        unsigned N2;
+        double mass;
+        double h;
+        double epsilon;
+        double sigma;
+    };
+
     /**
      * Struct for storing all simulation parameters.
      */
@@ -143,10 +162,13 @@ namespace enumsStructs {
         std::string outputFileName;
         int outputFrequency;
         bool gravityOn;
-        double gravityFactor;
+        std::array<double, 3> gravityVector;
 
         //thermostat
         ThermostatParameters thermostatParameters;
+
+        //membrane
+        MembraneParameters membraneParameters;
 
         //model to use in the simulation
         TypeOfModel model;

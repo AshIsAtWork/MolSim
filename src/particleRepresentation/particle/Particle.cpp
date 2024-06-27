@@ -44,6 +44,18 @@ void Particle::addDiagonalNeighbor(std::shared_ptr<Particle> &p) {
     diagonalNeighbors.push_back(p);
 }
 
+void Particle::applyToDirectNeighborsAndSelf(const std::function<void(Particle &self, Particle &neighbor)> &function) {
+    for(auto p: directNeighbors) {
+       function(*this, *p);
+    }
+}
+
+void Particle::applyToDiagonalNeighborsAndSelf(const std::function<void(Particle &self, Particle &neighbor)> &function) {
+    for(auto p: diagonalNeighbors) {
+        function(*this, *p);
+    }
+}
+
 Particle::~Particle() { spdlog::trace("Particle destructed"); }
 
 const std::array<double, 3> &Particle::getX() const { return x; }

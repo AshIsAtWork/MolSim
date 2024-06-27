@@ -27,7 +27,7 @@ protected:
     Force &force;
     double deltaT;
     bool gravityOn;
-    double g;
+    std::array<double, 3> g;
 
     /**
      * @brief Constructor for this model. Cannot be called from any other class but classes that extend this class,
@@ -41,7 +41,7 @@ protected:
      * @param g Gravity factor
      */
     Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::outputFormat outputFormat,
-          bool gravityOn, double g = 1);
+          bool gravityOn, std::array<double, 3> g = {});
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -149,11 +149,13 @@ public:
     /**
      * @brief Perform one single step in the simulation.
      *
+     * @parameter Current iteration the simulator is in.
+     *
      * Each step consists of force, velocity and position updates. For each concrete model the exact
      * implementation might differ.
      */
 
-    virtual void step() = 0;
+    virtual void step(int iteration) = 0;
 
     /**
      * @brief Get the Particles of this model.
