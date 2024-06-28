@@ -155,14 +155,14 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::
     id++;
 }
 
-std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(LinkedCellsContainer &particles, const std::array<double, 3> &position,
+void ParticleGenerator::generateMembrane(LinkedCellsContainer &particles, const std::array<double, 3> &position,
     unsigned N1, unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity, bool isMarked(unsigned x, unsigned y),
     double epsilon, double sigma) {
 
     std::array<double, 3> currentPosition = position;
-    std::vector<std::shared_ptr<Particle>> previousLine;
-    std::vector<std::shared_ptr<Particle>> currentLine;
-    std::vector<std::shared_ptr<Particle>> markedParticles;
+    std::vector<int> previousLine;
+    std::vector<int> currentLine;
+    std::vector<int> markedParticles;
 
     for (unsigned n1 = 0; n1 < N1; n1++) {
         for (unsigned n2 = 0; n2 < N2; n2++) {
@@ -170,32 +170,34 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
                     currentPosition,
                     initVelocity,
                     mass,
-                    0,
+                    id,
                     epsilon,
                     sigma
                 };
-            currentLine.push_back(particles.addAndShare(pToAdd));
+            currentLine.push_back(pToAdd.getId());
             if(n1 > 0) {
                 //Add direct neighbor on x-axis
-                currentLine[n2]->addDirectNeighbor(previousLine[n2]);
+                pToAdd.addDirectNeighbor(previousLine[n2]);
                 //Add diagonal neighbors on the left if they exist
                 if(n2 > 0) {
                     //bottom-left
-                    currentLine[n2]->addDiagonalNeighbor(previousLine[n2 - 1]);
+                    pToAdd.addDiagonalNeighbor(previousLine[n2 - 1]);
                 }
                 if(n2 < N2 - 1) {
                     //top-left
-                    currentLine[n2]->addDiagonalNeighbor(previousLine[n2 + 1]);
+                    pToAdd.addDiagonalNeighbor(previousLine[n2 + 1]);
                 }
             }
             //Add direct neighbor on y-axis
             if(n2 > 0) {
-                currentLine[n2]->addDirectNeighbor(currentLine[n2 - 1]);
+                pToAdd.addDirectNeighbor(currentLine[n2 - 1]);
             }
             currentPosition[1] += h;
             if(isMarked(n1,n2)) {
-                markedParticles.push_back(currentLine[n2]);
+                pToAdd.setMarked(true);
             }
+            //Add particle to container
+            particles.add(pToAdd);
         }
         currentPosition = {currentPosition[0] + h, position[1], position[2]};
         previousLine.clear();
@@ -204,5 +206,4 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
     }
     //Increment id, so that all particles of the next body being generated will receive another id.
     ++id;
-    return markedParticles;
 }

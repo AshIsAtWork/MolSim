@@ -9,12 +9,14 @@
 
 #include <array>
 #include <string>
+#include <algorithm>
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 
 class Particle {
 
 private:
+    static int nextId;
 
     /**
      * Position of the particle
@@ -58,19 +60,21 @@ private:
 
     double sigma;
 
+    bool marked;
+
+    int id;
+
     /**
      * Direct neighbors within a membrane
      */
-    std::vector<std::shared_ptr<Particle>> directNeighbors;
+    std::vector<int> directNeighbors;
 
     /**
      * Diagonal neighbors within a membrane
      */
-    std::vector<std::shared_ptr<Particle>> diagonalNeighbors;
+    std::vector<int> diagonalNeighbors;
 
 public:
-
-    static bool areNeighbors(Particle *p1, Particle *p2);
 
     explicit Particle(int type = 0);
 
@@ -98,33 +102,18 @@ public:
      *
      * @param p New direct neighbor of this particle.
      */
-    void addDirectNeighbor(std::shared_ptr<Particle> &p);
+    void addDirectNeighbor(int idToAdd);
 
     /**
      * Make particle p a diagonal neighbor of this particle.
      *
      * @param p New diagonal neighbor of this particle.
      */
-    void addDiagonalNeighbor(std::shared_ptr<Particle> &p);
+    void addDiagonalNeighbor(int idToAdd);
 
-    /**
-     * @brief Apply the specified force between this particle and its direct neighbors.
-     *
-     * @param function Function to apply between self and all direct neighbors.
-     *
-     * Only unique pairs are considered to apply Netwon's third law of motion.
-     */
-    void applyToDirectNeighborsAndSelf(const std::function<void(Particle &, Particle &)> &function);
+    bool isDirectNeighbor(Particle& neighbor);
 
-    /**
-     * @brief Apply the specified force between this particle and its diagonal neighbors.
-     *
-     * @param function Function to apply between self and all diagonal neighbors.
-     *
-     * Only unique pairs are considered to apply Netwon's third law of motion.
-     */
-
-    void applyToDiagonalNeighborsAndSelf(const std::function<void(Particle &, Particle &)> &function);
+    bool isDiagonalNeighbor(Particle& neighbor);
 
     virtual ~Particle();
 
@@ -142,11 +131,15 @@ public:
 
     [[nodiscard]] double getEpsilon() const;
 
-    [[nodiscard]] double getSigma() const;;
+    [[nodiscard]] double getSigma() const;
 
-    [[nodiscard]] std::vector<std::shared_ptr<Particle>> & getDirectNeighbors();
+    [[nodiscard]] int getId() const;
 
-    [[nodiscard]] std::vector<std::shared_ptr<Particle>> & getDiagonalNeighbors();
+    [[nodiscard]] bool isMarked()const;
+
+    [[nodiscard]] std::vector<int> & getDirectNeighbors();
+
+    [[nodiscard]] std::vector<int> & getDiagonalNeighbors();
 
 
     void setOldF(const std::array<double, 3> &oldF);
@@ -158,6 +151,8 @@ public:
     void setV(const std::array<double, 3> &v);
 
     void setType(int type);
+
+    void setMarked(bool status);
 
     bool operator==(Particle &other) const;
 

@@ -227,13 +227,13 @@ void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart,
             //Update position
             if (modus == 0) {
 
-                (*p)->setX(fromLowToHigh((*p)->getX(), dimension));
+                p->setX(fromLowToHigh(p->getX(), dimension));
             } else {
-                (*p)->setX(fromHighToLow((*p)->getX(), dimension));
+                p->setX(fromHighToLow(p->getX(), dimension));
             }
             //Update cell if particle is back in domain
-            if (isParticleInDomain((*p)->getX())) {
-                cells[calcCellIndex((*p)->getX())].push_back(*p);
+            if (isParticleInDomain(p->getX())) {
+                cells[calcCellIndex(p->getX())].push_back(*p);
                 p = cells[cell].erase(p);
             } else {
                 ++p;
@@ -408,12 +408,12 @@ void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSo
     for (auto &target: cells[cellTarget]) {
         for (auto &source: cells[cellSource]) {
             //Offset particle
-            source->setX(source->getX() + offsetSource);
-            if (ArrayUtils::L2Norm(target->getX() - source->getX()) <= rCutOff) {
-                target->setF(target->getF() + lJF.compute(*target, *source));
+            source.setX(source.getX() + offsetSource);
+            if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
+                target.setF(target.getF() + lJF.compute(target, source));
             }
             //Reset offset
-            source->setX(source->getX() - offsetSource);
+            source.setX(source.getX() - offsetSource);
         }
     }
 }
@@ -512,21 +512,8 @@ void LinkedCellsContainer::add(Particle &p) {
         throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is impossible");
     }
     int index = calcCellIndex(p.getX());
-    cells[index].push_back(std::make_shared<Particle>(std::move(p)));
+    cells[index].push_back(std::move(p));
     currentSize++;
-}
-
-std::shared_ptr<Particle> LinkedCellsContainer::addAndShare(Particle &p) {
-    //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
-    if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
-                 __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
-        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is impossible");
-                 }
-    int index = calcCellIndex(p.getX());
-    auto pointerToParticle = std::make_shared<Particle>(std::move(p));
-    cells[index].push_back(pointerToParticle);
-    currentSize++;
-    return pointerToParticle;
 }
 
 int LinkedCellsContainer::threeDToOneD(int x, int y, int z) const {
@@ -544,7 +531,7 @@ std::array<int, 3> LinkedCellsContainer::oneDToThreeD(int index) const {
 void LinkedCellsContainer::updateCells() {
     for (auto &index: domainCellIterationScheme) {
         for (auto p = cells[index[0]].begin(); p != cells[index[0]].end();) {
-            int newIndex = calcCellIndex((*p)->getX());
+            int newIndex = calcCellIndex(p->getX());
             if (newIndex != index[0]) {
                 cells[newIndex].push_back(*p);
                 p = cells[index[0]].erase(p);
@@ -811,16 +798,16 @@ void LinkedCellsContainer::clearHaloCells(Side side) {
 
 void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle &)> &function) {
     for (auto &cell: cells) {
-        for(const auto& p : cell) {
-            function(*p);
+        for(auto& p : cell) {
+            function(p);
         }
     }
 }
 
 void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(Particle &)> &function) {
     for (auto &cellGroup: domainCellIterationScheme) {
-        for (const auto& p: cells[cellGroup[0]]) {
-            function(*p);
+        for (auto& p: cells[cellGroup[0]]) {
+            function(p);
         }
     }
 }
@@ -831,8 +818,8 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
-                if (ArrayUtils::L2Norm((*p_i)->getX() - (*p_j)->getX()) <= rCutOff) {
-                    function(**p_i, **p_j);
+                if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                    function(*p_i, *p_j);
                 }
             }
         }
@@ -841,8 +828,8 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
         for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
             for (auto &p_i: cells[cellGroup[0]]) {
                 for (auto &p_j: cells[*neighbour]) {
-                    if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
-                        function(*p_i, *p_j);
+                    if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                        function(p_i, p_j);
                     }
                 }
             }
@@ -857,10 +844,10 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
 
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
-                auto difference = (*p_j)->getX() - (*p_i)->getX();
+                auto difference = p_j->getX() - p_i->getX();
                 auto distance = ArrayUtils::L2Norm(difference);
                 if (distance <= rCutOff) {
-                    function(**p_i, **p_j, difference, distance);
+                    function(*p_i, *p_j, difference, distance);
                 }
             }
         }
@@ -869,10 +856,10 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
         for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
             for (auto &p_i: cells[cellGroup[0]]) {
                 for (auto &p_j: cells[*neighbour]) {
-                    auto difference = p_j->getX() - p_i->getX();
+                    auto difference = p_j.getX() - p_i.getX();
                     auto distance = ArrayUtils::L2Norm(difference);
                     if (distance <= rCutOff) {
-                        function(*p_i, *p_j, difference, distance);
+                        function(p_i, p_j, difference, distance);
                     }
                 }
             }
@@ -883,12 +870,12 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
 void LinkedCellsContainer::applyToAllBoundaryParticles(
     const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
-        for (const auto& p: cells[cell]) {
-            double distanceFromBoundary = calcDistanceFromBoundary(*p, boundary);
-            double threshold = pow(2.0, 1.0 / 6.0) * p->getSigma();
+        for (auto& p: cells[cell]) {
+            double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
+            double threshold = pow(2.0, 1.0 / 6.0) * p.getSigma();
             if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
-                auto ghostPosition = calcGhostParticle(*p, boundary);
-                function(*p, ghostPosition);
+                auto ghostPosition = calcGhostParticle(p, boundary);
+                function(p, ghostPosition);
             }
         }
     }

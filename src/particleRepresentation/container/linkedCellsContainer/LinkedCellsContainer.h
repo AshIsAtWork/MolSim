@@ -26,7 +26,7 @@ private:
      * We use an 1D vector to store the flattened 3D cell structure
      * being an essential property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
      */
-    std::vector<std::vector<std::shared_ptr<Particle>>> cells;
+    std::vector<std::vector<Particle>> cells;
 
     /**
      * The current number of particles that is contained in this container is tracked by the attribute currentSize and kept up-to-date
@@ -236,8 +236,6 @@ public:
      */
     void add(Particle& p) override;
 
-    std::shared_ptr<Particle> addAndShare(Particle& p);
-
     /**
      * @brief Convert 3 dimensional coordinates to one dimensional coordinates.
      *
@@ -368,7 +366,7 @@ public:
 
     //Getter and setters. Especially the setters should only by used for testing purposes.
 
-    std::vector<std::vector<std::shared_ptr<Particle>>>& getCells(){
+    std::vector<std::vector<Particle>>& getCells(){
         return cells;
     }
 

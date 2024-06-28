@@ -33,8 +33,6 @@ private:
      */
     std::vector<std::pair<Side, enumsStructs::BoundaryCondition>> boundarySettings;
 
-    std::vector<std::shared_ptr<Particle>> particlesToPull;
-
     /**
      * @brief Apply forces to all particles in boundary cells according to the specified boundary conditions.
      */
@@ -46,11 +44,9 @@ private:
      */
     void processHaloCells();
 
-    void pullSelectedParticles();
+    void pullMarkedParticles();
 
-    void applyForcesBetweenNeighborsInMembrane();
-
-    void updateForcesTruncated();
+    void updateForcesMembrane();
 
 public:
     /**

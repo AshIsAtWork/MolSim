@@ -59,7 +59,7 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
              }
             return false;
         };
-        particlesToPull = ParticleGenerator::generateMembrane(particles, membraneParameters.position,
+        ParticleGenerator::generateMembrane(particles, membraneParameters.position,
                                                               membraneParameters.N1, membraneParameters.N2,
                                                               membraneParameters.h, membraneParameters.mass,
                                                               membraneParameters.initialVelocity, marking,
@@ -122,61 +122,60 @@ void LinkedCells::processHaloCells() {
     }
 }
 
-void LinkedCells::pullSelectedParticles() {
-    for (const auto &p: particlesToPull) {
-        p->setF(p->getF() + pullingForce);
-    }
-}
-
-void LinkedCells::applyForcesBetweenNeighborsInMembrane() {
-    particles.applyToEachParticleInDomain([this](Particle &p) {
-        p.applyToDirectNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
-            auto f = forceBetweenDirectNeighborsInMembrane->compute(self, neighbor);
-            self.setF(self.getF() + f);
-            neighbor.setF(neighbor.getF() - f);
-            // spdlog::debug("Calculate force between direct neighbors {} and {}", self.getType(), neighbor.getType());
-            // spdlog::debug("{} applies to direct neighbor {} force {}", self.getType(), neighbor.getType(), ArrayUtils::to_string(f));
-            // spdlog::debug("{} applies to direct neighbor {} force {}", neighbor.getType(), self.getType(), ArrayUtils::to_string((-1)*f));
-        });
-        p.applyToDiagonalNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
-            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(self, neighbor);
-            // spdlog::debug("Calculate force between diagonal neighbors {} and {}", self.getType(), neighbor.getType());
-            // spdlog::debug("{} applies to diagonal neighbor {} force {}", self.getType(), neighbor.getType(), ArrayUtils::to_string(f));
-            // spdlog::debug("{} applies to diagonal neighbor {} force {}", neighbor.getType(), self.getType(), ArrayUtils::to_string((-1)*f));
-            self.setF(self.getF() + f);
-            neighbor.setF(neighbor.getF() - f);
-        });
+void LinkedCells::pullMarkedParticles() {
+    particles.applyToEachParticleInDomain([this](Particle& p) {
+        if(p.isMarked()) {
+            p.setF(p.getF() + pullingForce);
+        }
     });
 }
 
-void LinkedCells::updateForcesTruncated() {
+void LinkedCells::updateForcesMembrane() {
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         p.resetForce();
     });
+    int count = 0;
     //Calculate new forces using Newtons third law of motion
-    particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
-        //Forces are only applied, if they are repulsive and if particles are not neighbors.
-        if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= pow(2.0, 1.0 / 6.0) * p_i.getSigma() and !Particle::areNeighbors(&p_i, &p_j)) {
+    particles.applyToAllUniquePairsInDomain([this, &count](Particle &p_i, Particle &p_j) {
+        //Apply harmonic forces
+        //1. Check, if they are direct neighbors
+        if(p_i.isDirectNeighbor(p_j)) {
+            auto f = forceBetweenDirectNeighborsInMembrane->compute(p_i,p_j);
+            p_i.setF(p_i.getF() + f);
+            p_j.setF(p_j.getF() - f);
+            count++;
+        }
+        //2. Check, if they are diagonal neighbors
+        else if(p_i.isDiagonalNeighbor(p_j)) {
+            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(p_i,p_j);
+            p_i.setF(p_i.getF() + f);
+            p_j.setF(p_j.getF() - f);
+            count++;
+        }
+
+        //If they are no direct or diagonal neighbors than truncated Lennard-Jones force is applied
+
+        else if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= std::pow(2.0, 1.0 / 6.0) * p_i.getSigma()) {
             auto f_ij{force.compute(p_i, p_j)};
             p_i.setF(p_i.getF() + f_ij);
             p_j.setF(p_j.getF() - f_ij);
         }
     });
+    std::cout << count << "\n";
 }
 
 void LinkedCells::step(int iteration) {
     if (membraneSetting) {
-        updateForcesTruncated();
-        applyForcesBetweenNeighborsInMembrane();
+        updateForcesMembrane();
         if (pull && iteration <= pullingActiveUntil) {
-            pullSelectedParticles();
+            pullMarkedParticles();
         }
     } else {
         updateForces();
     }
     if (gravityOn) {
-        //applyGravity();
+        applyGravity();
     }
     processBoundaryForces();
     updateVelocities();
@@ -201,8 +200,7 @@ void LinkedCells::updateForcesOptimized() {
 
 void LinkedCells::initializeForces() {
     if(membraneSetting) {
-        updateForcesTruncated();
-        applyForcesBetweenNeighborsInMembrane();
+       updateForcesMembrane();
     }else {
         updateForces();
     }
