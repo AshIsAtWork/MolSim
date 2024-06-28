@@ -2,10 +2,12 @@
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
-    <OutputFileName>Debug</OutputFileName>
+    <OutputFileName>FallingDrop</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
     <GravityConfig>
-        <GravitationFactor>-12.44</GravitationFactor>
+        <X>0</X>
+        <Y>-12.44</Y>
+        <Z>0</Z>
     </GravityConfig>
     <model>
         <Name>LinkedCells</Name>

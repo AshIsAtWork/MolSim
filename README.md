@@ -178,7 +178,7 @@ The process of building the project is described here:
         <div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-4/images/Falling-Drop.png" width="1000px" alt=""></div>
 
      ```bash
-     ./MolSim -f ../input/Assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/Assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint  
+     ./MolSim -f ../input/assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState Checkpoint.txt  
      ```
      
     

@@ -117,8 +117,13 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 if (molecules.GravityConfig().present()) {
                         simulationSettings.gravityOn = true;
-                        simulationSettings.gravityFactor = static_cast<double>(molecules.GravityConfig().get().GravitationFactor());
-                        spdlog::debug("Gravity: {}",static_cast<double>(molecules.GravityConfig().get().GravitationFactor()));
+                        simulationSettings.gravityVector =
+                            {
+                            static_cast<double>(molecules.GravityConfig().get().X()),
+                            static_cast<double>(molecules.GravityConfig().get().Y()),
+                            static_cast<double>(molecules.GravityConfig().get().Z())
+                            };
+                        spdlog::debug("Gravity: {}",ArrayUtils::to_string(simulationSettings.gravityVector));
                 } else {
                     simulationSettings.gravityOn = false;
                     spdlog::debug("Gravity was set to false");

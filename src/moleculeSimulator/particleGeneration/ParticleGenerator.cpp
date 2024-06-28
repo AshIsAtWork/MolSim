@@ -162,7 +162,7 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
     std::array<double, 3> currentPosition = position;
     std::vector<std::shared_ptr<Particle>> previousLine;
     std::vector<std::shared_ptr<Particle>> currentLine;
-    std::vector<std::shared_ptr<Particle>> markedPartices;
+    std::vector<std::shared_ptr<Particle>> markedParticles;
 
     for (unsigned n1 = 0; n1 < N1; n1++) {
         for (unsigned n2 = 0; n2 < N2; n2++) {
@@ -170,7 +170,7 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
                     currentPosition,
                     initVelocity,
                     mass,
-                    id,
+                    0,
                     epsilon,
                     sigma
                 };
@@ -194,7 +194,7 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
             }
             currentPosition[1] += h;
             if(isMarked(n1,n2)) {
-                markedPartices.push_back(currentLine[n2]);
+                markedParticles.push_back(currentLine[n2]);
             }
         }
         currentPosition = {currentPosition[0] + h, position[1], position[2]};
@@ -204,5 +204,5 @@ std::vector<std::shared_ptr<Particle>> ParticleGenerator::generateMembrane(Linke
     }
     //Increment id, so that all particles of the next body being generated will receive another id.
     ++id;
-    return std::move(markedPartices);
+    return markedParticles;
 }

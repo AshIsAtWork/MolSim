@@ -82,4 +82,6 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
     void updateForcesOptimized();
+
+    void initializeForces() override;
 };

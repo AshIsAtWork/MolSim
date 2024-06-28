@@ -32,7 +32,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
             deltaT = simulationSettings.parametersDirectSum.deltaT;
             endT = simulationSettings.parametersDirectSum.endT;
             model = std::make_unique<DirectSum>(*force, simulationSettings.parametersDirectSum.deltaT, outputFormat,
-                                                simulationSettings.gravityOn, simulationSettings.gravityFactor);
+                                                simulationSettings.gravityOn, simulationSettings.gravityVector);
         }
         break;
         case TypeOfModel::linkedCells: {
@@ -58,7 +58,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                                                   outputFormat,
                                                   simulationSettings.parametersLinkedCells.boundaryConditions,
                                                   simulationSettings.gravityOn,
-                                                  simulationSettings.gravityFactor, simulationSettings.membraneParameters);
+                                                  simulationSettings.gravityVector, simulationSettings.membraneParameters);
         }
         break;
         default: {
@@ -155,7 +155,7 @@ void Simulator::run(bool benchmark) {
     }
 
     //Calculate the initial forces before starting the simulation
-    model->updateForces();
+    model->initializeForces();
 
 
     while (current_time < endT) {

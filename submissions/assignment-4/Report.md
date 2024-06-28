@@ -157,7 +157,7 @@ If you want to see the corresponding video, click [here](Falling-Drop.mp4).
 If you want to run the simulation on your own machine, run the following command in your build folder (first you have to run the equilibration phase):
 
 ```bash
-./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState checkpoint 
+./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState Checkpoint.txt 
 ```
 
 ---
@@ -178,9 +178,9 @@ These four methods account for `80.06%` of the total execution time. It therefor
 
 We also ran our program on the linux cluster (the first 1000 iterations of the Rayleigh-Taylor instability of task 2). These are our results:   
 
-|                                 |             |
-|---------------------------------|------------:|
-| **Running time**                |     19.16 s |
+|                                 |               |
+|---------------------------------|--------------:|
+| **Running time**                |    19.16 s    |
 | **Molecule updates per second** | 522030 MUPS/s |
     
   

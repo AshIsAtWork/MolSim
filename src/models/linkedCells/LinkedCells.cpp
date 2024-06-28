@@ -4,6 +4,8 @@
 
 #include "LinkedCells.h"
 
+#include <iostream>
+
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, FileHandler::outputFormat outputFormat,
                          BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g,
@@ -36,25 +38,25 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
         forceBetweenDirectNeighborsInMembrane = std::make_unique<HarmonicForce>(
             membraneParameters.k, membraneParameters.r0);
         forceBetweenDiagonalNeighborsInMembrane = std::make_unique<HarmonicForce>(
-            membraneParameters.k, membraneParameters.r0 * sqrt(2));
+            membraneParameters.k, membraneParameters.r0 * std::sqrt(2));
         //Generate membrane
         auto marking = [](unsigned x, unsigned y) {
             //Particle (17,24)
-            if (x == 16 and y == 23) {
-                return true;
-            }
-            //Particle (17,25)
-            if (x == 16 and y == 24) {
-                return true;
-            }
-            //Particle (18,24)
-            if (x == 17 and y == 23) {
-                return true;
-            }
-            //Particle (18,25)
-            if (x == 17 and y == 24) {
-                return true;
-            }
+             if (x == 16 and y == 23) {
+                 return true;
+             }
+             //Particle (17,25)
+             if (x == 16 and y == 24) {
+                 return true;
+             }
+             //Particle (18,24)
+             if (x == 17 and y == 23) {
+                 return true;
+             }
+             //Particle (18,25)
+             if (x == 17 and y == 24) {
+                 return true;
+             }
             return false;
         };
         particlesToPull = ParticleGenerator::generateMembrane(particles, membraneParameters.position,
@@ -122,7 +124,7 @@ void LinkedCells::processHaloCells() {
 
 void LinkedCells::pullSelectedParticles() {
     for (const auto &p: particlesToPull) {
-        p->setF(p->getF() + p->getF() * pullingForce);
+        p->setF(p->getF() + pullingForce);
     }
 }
 
@@ -132,9 +134,15 @@ void LinkedCells::applyForcesBetweenNeighborsInMembrane() {
             auto f = forceBetweenDirectNeighborsInMembrane->compute(self, neighbor);
             self.setF(self.getF() + f);
             neighbor.setF(neighbor.getF() - f);
+            // spdlog::debug("Calculate force between direct neighbors {} and {}", self.getType(), neighbor.getType());
+            // spdlog::debug("{} applies to direct neighbor {} force {}", self.getType(), neighbor.getType(), ArrayUtils::to_string(f));
+            // spdlog::debug("{} applies to direct neighbor {} force {}", neighbor.getType(), self.getType(), ArrayUtils::to_string((-1)*f));
         });
-        p.applyToDirectNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
+        p.applyToDiagonalNeighborsAndSelf([this](Particle& self, Particle& neighbor) {
             auto f = forceBetweenDiagonalNeighborsInMembrane->compute(self, neighbor);
+            // spdlog::debug("Calculate force between diagonal neighbors {} and {}", self.getType(), neighbor.getType());
+            // spdlog::debug("{} applies to diagonal neighbor {} force {}", self.getType(), neighbor.getType(), ArrayUtils::to_string(f));
+            // spdlog::debug("{} applies to diagonal neighbor {} force {}", neighbor.getType(), self.getType(), ArrayUtils::to_string((-1)*f));
             self.setF(self.getF() + f);
             neighbor.setF(neighbor.getF() - f);
         });
@@ -148,8 +156,8 @@ void LinkedCells::updateForcesTruncated() {
     });
     //Calculate new forces using Newtons third law of motion
     particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
-        //Forces are only applied, if it is repusive.
-        if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= p_i.getSigma() * sqrt(2)) {
+        //Forces are only applied, if they are repulsive and if particles are not neighbors.
+        if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= pow(2.0, 1.0 / 6.0) * p_i.getSigma() and !Particle::areNeighbors(&p_i, &p_j)) {
             auto f_ij{force.compute(p_i, p_j)};
             p_i.setF(p_i.getF() + f_ij);
             p_j.setF(p_j.getF() - f_ij);
@@ -168,7 +176,7 @@ void LinkedCells::step(int iteration) {
         updateForces();
     }
     if (gravityOn) {
-        applyGravity();
+        //applyGravity();
     }
     processBoundaryForces();
     updateVelocities();
@@ -189,4 +197,13 @@ void LinkedCells::updateForcesOptimized() {
             p_i.setF(p_i.getF() + f_ij);
             p_j.setF(p_j.getF() - f_ij);
         });
+}
+
+void LinkedCells::initializeForces() {
+    if(membraneSetting) {
+        updateForcesTruncated();
+        applyForcesBetweenNeighborsInMembrane();
+    }else {
+        updateForces();
+    }
 }

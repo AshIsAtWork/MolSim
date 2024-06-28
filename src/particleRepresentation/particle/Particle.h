@@ -70,6 +70,8 @@ private:
 
 public:
 
+    static bool areNeighbors(Particle *p1, Particle *p2);
+
     explicit Particle(int type = 0);
 
     Particle(const Particle &other);

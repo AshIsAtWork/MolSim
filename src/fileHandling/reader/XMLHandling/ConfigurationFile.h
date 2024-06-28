@@ -2132,9 +2132,9 @@ class GravityConfig: public ::xml_schema::type
 {
   public:
   /**
-   * @name GravitationFactor
+   * @name X
    *
-   * @brief Accessor and modifier functions for the %GravitationFactor
+   * @brief Accessor and modifier functions for the %X
    * required element.
    */
   //@{
@@ -2142,28 +2142,28 @@ class GravityConfig: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::decimal GravitationFactor_type;
+  typedef ::xml_schema::decimal X_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< GravitationFactor_type, char, ::xsd::cxx::tree::schema_type::decimal > GravitationFactor_traits;
+  typedef ::xsd::cxx::tree::traits< X_type, char, ::xsd::cxx::tree::schema_type::decimal > X_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const GravitationFactor_type&
-  GravitationFactor () const;
+  const X_type&
+  X () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  GravitationFactor_type&
-  GravitationFactor ();
+  X_type&
+  X ();
 
   /**
    * @brief Set the element value.
@@ -2174,7 +2174,101 @@ class GravityConfig: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  GravitationFactor (const GravitationFactor_type& x);
+  X (const X_type& x);
+
+  //@}
+
+  /**
+   * @name Y
+   *
+   * @brief Accessor and modifier functions for the %Y
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal Y_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< Y_type, char, ::xsd::cxx::tree::schema_type::decimal > Y_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const Y_type&
+  Y () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  Y_type&
+  Y ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  Y (const Y_type& x);
+
+  //@}
+
+  /**
+   * @name Z
+   *
+   * @brief Accessor and modifier functions for the %Z
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::decimal Z_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< Z_type, char, ::xsd::cxx::tree::schema_type::decimal > Z_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const Z_type&
+  Z () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  Z_type&
+  Z ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  Z (const Z_type& x);
 
   //@}
 
@@ -2187,7 +2281,9 @@ class GravityConfig: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  GravityConfig (const GravitationFactor_type&);
+  GravityConfig (const X_type&,
+                 const Y_type&,
+                 const Z_type&);
 
   /**
    * @brief Create an instance from a DOM element.
@@ -2259,7 +2355,9 @@ class GravityConfig: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< GravitationFactor_type > GravitationFactor_;
+  ::xsd::cxx::tree::one< X_type > X_;
+  ::xsd::cxx::tree::one< Y_type > Y_;
+  ::xsd::cxx::tree::one< Z_type > Z_;
 
   //@endcond
 };

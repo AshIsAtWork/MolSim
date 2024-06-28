@@ -40,7 +40,7 @@ TEST(ModelTest, applyGravityOn) {
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective
     };
 
-    LinkedCells linkedCellModel = {lJF, 0.00005, {9, 9, 0}, 3, FileHandler::outputFormat::vtk, boundaries, true, 10};
+    LinkedCells linkedCellModel = {lJF, 0.00005, {9, 9, 0}, 3, FileHandler::outputFormat::vtk, boundaries, true, {0,10,0}};
     Particle p{{4.5,4.5,0},{0,0,0},1};
     linkedCellModel.addParticle(p);
     ASSERT_EQ(linkedCellModel.getParticles().size(), 1);

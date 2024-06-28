@@ -7,6 +7,32 @@
 
 #include "Particle.h"
 
+bool Particle::areNeighbors(Particle* p1, Particle* p2) {
+    //Check, if p1 points at p2
+    for(const auto& p : p1->directNeighbors) {
+        if(p.get() == p2) {
+            return true;
+        }
+    }
+    for(const auto& p : p1->diagonalNeighbors) {
+        if(p.get() == p2) {
+            return true;
+        }
+    }
+    //Check, if p2 points at p1
+    for(const auto& p : p2->directNeighbors) {
+        if(p.get() == p1) {
+            return true;
+        }
+    }
+    for(const auto& p : p2->diagonalNeighbors) {
+        if(p.get() == p1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 Particle::Particle(int type_arg) : f{0., 0., 0.}, old_f{0., 0., 0.}, type{type_arg}, epsilon{5}, sigma{1} {
     std::stringstream stream;
     spdlog::trace("Particle generated with the following parameters: X={}, v={}, f={}, type={}, epsilon{}, sigma{}",
@@ -45,13 +71,13 @@ void Particle::addDiagonalNeighbor(std::shared_ptr<Particle> &p) {
 }
 
 void Particle::applyToDirectNeighborsAndSelf(const std::function<void(Particle &self, Particle &neighbor)> &function) {
-    for(auto p: directNeighbors) {
+    for(const auto& p: directNeighbors) {
        function(*this, *p);
     }
 }
 
 void Particle::applyToDiagonalNeighborsAndSelf(const std::function<void(Particle &self, Particle &neighbor)> &function) {
-    for(auto p: diagonalNeighbors) {
+    for(const auto& p: diagonalNeighbors) {
         function(*this, *p);
     }
 }

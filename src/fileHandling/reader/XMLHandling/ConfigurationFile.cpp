@@ -467,22 +467,58 @@ Dimension (::std::unique_ptr< Dimension_type > x)
 // GravityConfig
 // 
 
-const GravityConfig::GravitationFactor_type& GravityConfig::
-GravitationFactor () const
+const GravityConfig::X_type& GravityConfig::
+X () const
 {
-  return this->GravitationFactor_.get ();
+  return this->X_.get ();
 }
 
-GravityConfig::GravitationFactor_type& GravityConfig::
-GravitationFactor ()
+GravityConfig::X_type& GravityConfig::
+X ()
 {
-  return this->GravitationFactor_.get ();
+  return this->X_.get ();
 }
 
 void GravityConfig::
-GravitationFactor (const GravitationFactor_type& x)
+X (const X_type& x)
 {
-  this->GravitationFactor_.set (x);
+  this->X_.set (x);
+}
+
+const GravityConfig::Y_type& GravityConfig::
+Y () const
+{
+  return this->Y_.get ();
+}
+
+GravityConfig::Y_type& GravityConfig::
+Y ()
+{
+  return this->Y_.get ();
+}
+
+void GravityConfig::
+Y (const Y_type& x)
+{
+  this->Y_.set (x);
+}
+
+const GravityConfig::Z_type& GravityConfig::
+Z () const
+{
+  return this->Z_.get ();
+}
+
+GravityConfig::Z_type& GravityConfig::
+Z ()
+{
+  return this->Z_.get ();
+}
+
+void GravityConfig::
+Z (const Z_type& x)
+{
+  this->Z_.set (x);
 }
 
 
@@ -3221,9 +3257,13 @@ ThermostatConfig::
 //
 
 GravityConfig::
-GravityConfig (const GravitationFactor_type& GravitationFactor)
+GravityConfig (const X_type& X,
+               const Y_type& Y,
+               const Z_type& Z)
 : ::xml_schema::type (),
-  GravitationFactor_ (GravitationFactor, this)
+  X_ (X, this),
+  Y_ (Y, this),
+  Z_ (Z, this)
 {
 }
 
@@ -3232,7 +3272,9 @@ GravityConfig (const GravityConfig& x,
                ::xml_schema::flags f,
                ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  GravitationFactor_ (x.GravitationFactor_, f, this)
+  X_ (x.X_, f, this),
+  Y_ (x.Y_, f, this),
+  Z_ (x.Z_, f, this)
 {
 }
 
@@ -3241,7 +3283,9 @@ GravityConfig (const ::xercesc::DOMElement& e,
                ::xml_schema::flags f,
                ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  GravitationFactor_ (this)
+  X_ (this),
+  Y_ (this),
+  Z_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -3260,13 +3304,35 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // GravitationFactor
+    // X
     //
-    if (n.name () == "GravitationFactor" && n.namespace_ ().empty ())
+    if (n.name () == "X" && n.namespace_ ().empty ())
     {
-      if (!GravitationFactor_.present ())
+      if (!X_.present ())
       {
-        this->GravitationFactor_.set (GravitationFactor_traits::create (i, f, this));
+        this->X_.set (X_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Y
+    //
+    if (n.name () == "Y" && n.namespace_ ().empty ())
+    {
+      if (!Y_.present ())
+      {
+        this->Y_.set (Y_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // Z
+    //
+    if (n.name () == "Z" && n.namespace_ ().empty ())
+    {
+      if (!Z_.present ())
+      {
+        this->Z_.set (Z_traits::create (i, f, this));
         continue;
       }
     }
@@ -3274,10 +3340,24 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!GravitationFactor_.present ())
+  if (!X_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "GravitationFactor",
+      "X",
+      "");
+  }
+
+  if (!Y_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Y",
+      "");
+  }
+
+  if (!Z_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Z",
       "");
   }
 }
@@ -3295,7 +3375,9 @@ operator= (const GravityConfig& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
-    this->GravitationFactor_ = x.GravitationFactor_;
+    this->X_ = x.X_;
+    this->Y_ = x.Y_;
+    this->Z_ = x.Z_;
   }
 
   return *this;
@@ -8393,15 +8475,37 @@ operator<< (::xercesc::DOMElement& e, const GravityConfig& i)
 {
   e << static_cast< const ::xml_schema::type& > (i);
 
-  // GravitationFactor
+  // X
   //
   {
     ::xercesc::DOMElement& s (
       ::xsd::cxx::xml::dom::create_element (
-        "GravitationFactor",
+        "X",
         e));
 
-    s << ::xml_schema::as_decimal(i.GravitationFactor ());
+    s << ::xml_schema::as_decimal(i.X ());
+  }
+
+  // Y
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Y",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Y ());
+  }
+
+  // Z
+  //
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Z",
+        e));
+
+    s << ::xml_schema::as_decimal(i.Z ());
   }
 }
 

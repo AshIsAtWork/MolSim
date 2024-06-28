@@ -14,7 +14,9 @@
         <Dimension>2</Dimension>
     </ThermostatConfig>
     <GravityConfig>
-        <GravitationFactor>-12.44</GravitationFactor>
+        <X>0</X>
+        <Y>-12.44</Y>
+        <Z>0</Z>
     </GravityConfig>
     <model>
         <Name>LinkedCells</Name>

@@ -167,4 +167,6 @@ public:
     [[nodiscard]] ParticleContainer &getParticles() const {
         return particles;
     }
+
+    virtual void initializeForces() = 0;
 };

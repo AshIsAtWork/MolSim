@@ -3,21 +3,16 @@
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>Benchmark</OutputFileName>
-    <OutputFrequency>100</OutputFrequency>
-    <GravityConfig>
-        <X>0</X>
-        <Y>0</Y>
-        <Z>-0.001</Z>
-    </GravityConfig>
+    <OutputFrequency>10</OutputFrequency>
     <model>
         <Name>LinkedCells</Name>
-        <t_end>500</t_end>
-        <delta_t>0.001</delta_t>
+        <t_end>10</t_end>
+        <delta_t>0.01</delta_t>
         <force>LeonardJonesForce</force>
         <DomainSize>
-            <First>148</First>
-            <Second>148</Second>
-            <Third>148</Third>
+            <First>8</First>
+            <Second>8</Second>
+            <Third>4</Third>
         </DomainSize>
         <rCutOff>4</rCutOff>
         <BoundaryCondition>
