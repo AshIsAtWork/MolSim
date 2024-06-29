@@ -23,7 +23,7 @@ private:
      *
      * @param particles Particle container to which the particle structure is added.
      * @param corner The coordinates of the corner of the quadrant.
-     * @param initVelocity Initial velocity of the of the particles.
+     * @param initVelocity Initial velocity of the particles.
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
      * @param N Number of particles along the radius, including the particle in the center.
@@ -54,7 +54,7 @@ public:
      * @param N3 Number of particles in dimension N3.
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
-     * @param initVelocity Initial velocity of the of the particles.
+     * @param initVelocity Initial velocity of the particles.
      * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
      * @param epsilon Lennard Jones force parameter epsilon.
@@ -70,7 +70,7 @@ public:
      *
      * @param particles Particle container to which the particle structure is added.
      * @param center The coordinates of the center of the disc.
-     * @param initVelocity Initial velocity of the of the particles.
+     * @param initVelocity Initial velocity of the particles.
      * @param N Number of particles along the radius, including the particle in the center.
      * @param h Distance of the particles (mesh width of the grid).
      * @param mass Mass of one particle.
@@ -88,7 +88,7 @@ public:
    *
    * @param particles Particle container to which the particle structure is added.
    * @param center The coordinates of the center of the sphere.
-   * @param initVelocity Initial velocity of the of the particles.
+   * @param initVelocity Initial velocity of the the particles.
    * @param N Number of particles along the radius, including the particle in the center.
    * @param h Distance of the particles (mesh width of the grid).
    * @param mass Mass of one particle.
@@ -101,6 +101,20 @@ public:
                                const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
                                double brownianMotionAverageVelocity, double epsilon, double sigma);
 
+    /**
+     * @brief Generate a 2D membrane.
+     *
+     * @param particles Particle container to which the membrane is added.
+     * @param position The coordinates of the lower left corner.
+     * @param N1 Number of particles along the x-axis.
+     * @param N2 Number of particles along the y-axis.
+     * @param h Distance between the particles (mesh width of the membrane).
+     * @param mass Mass of one particle.
+     * @param initVelocity Initial velocity of the particles.
+     * @param isMarked Function that determines, if a particle should be marked.
+     * @param epsilon Lennard Jones force parameter epsilon.
+     * @param sigma Lennard Jones force parameter sigma.
+     */
     static void generateMembrane(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                  unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity, bool isMarked(unsigned, unsigned),
                                  double epsilon = 5, double sigma = 1);

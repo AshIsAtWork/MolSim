@@ -44,8 +44,14 @@ private:
      */
     void processHaloCells();
 
+    /**
+     * @brief Apply to all particles that are marked a constant force.
+     */
     void pullMarkedParticles();
 
+    /**
+     * @brief Calculate forces between particles in a membrane structure.
+     */
     void updateForcesMembrane();
 
 public:
@@ -79,5 +85,8 @@ public:
      */
     void updateForcesOptimized();
 
+    /**
+     * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
+     */
     void initializeForces() override;
 };

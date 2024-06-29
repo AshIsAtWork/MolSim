@@ -168,5 +168,8 @@ public:
         return particles;
     }
 
+    /**
+     * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
+     */
     virtual void initializeForces() = 0;
 };

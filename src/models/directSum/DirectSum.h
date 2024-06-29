@@ -36,5 +36,8 @@ public:
      */
     void step(int iteration) override;
 
+    /**
+     * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
+     */
     void initializeForces() override;
 };

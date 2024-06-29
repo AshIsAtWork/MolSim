@@ -31,6 +31,11 @@ public:
     */
     std::array<double, 3> compute(Particle &target, Particle &source) override;
 
+    /**
+    * @brief We needed this to integrate our optimization in our code to prevent breaking the inheritance hierachy.
+    *        Will be removed, when we integrated the optimization properly.
+    */
+
     std::array<double, 3> computeOptimized(Particle &target, Particle &source, std::array<double, 3> &difference,
     double distance) override;
 };

@@ -16,61 +16,71 @@
 class Particle {
 
 private:
-    static int nextId;
+    /**
+     * Id of the particle that is created next.
+     */
+ static int nextId;
 
     /**
-     * Position of the particle
+     * Position of the particle.
      */
     std::array<double, 3> x{};
 
     /**
-     * Velocity of the particle
+     * Velocity of the particle.
      */
     std::array<double, 3> v{};
 
     /**
-     * Force effective on this particle
+     * Force effective on this particle.
      */
     std::array<double, 3> f{};
 
     /**
-     * Force which was effective on this particle
+     * Force which was effective on this particle.
      */
     std::array<double, 3> old_f{};
 
     /**
-     * Mass of this particle
+     * Mass of this particle.
      */
     double m{};
 
     /**
      * Type of the particle. Use it for whatever you want (e.g. to separate
-     * molecules belonging to different bodies, matters, and so on)
+     * molecules belonging to different bodies, matters, and so on).
      */
     int type;
 
     /**
-     * Lennard-Jones-Parameter epsilon
+     * Lennard-Jones-Parameter epsilon.
      */
     double epsilon;
 
     /**
-     * Lennard-Jones-Parameter sigma
+     * Lennard-Jones-Parameter sigma.
      */
 
     double sigma;
 
+    /**
+     * Mark particles to which a special force should be applied.
+     */
+
     bool marked;
 
+    /**
+     * Id to set neighbor relationships between particles.
+     */
     int id;
 
     /**
-     * Direct neighbors within a membrane
+     * Direct neighbors within a membrane.
      */
     std::vector<int> directNeighbors;
 
     /**
-     * Diagonal neighbors within a membrane
+     * Diagonal neighbors within a membrane.
      */
     std::vector<int> diagonalNeighbors;
 
@@ -111,8 +121,20 @@ public:
      */
     void addDiagonalNeighbor(int idToAdd);
 
+    /**
+     * @brief Check, if particle neighbor is a direct neighbor of this particle.
+     *
+     * @param neighbor Particle to check.
+     * @return True, if the specified particle is a direct neighbor. False otherwise.
+     */
     bool isDirectNeighbor(Particle& neighbor);
 
+    /**
+     * @brief Check, if particle neighbor is a diagonal neighbor of this particle.
+     *
+     * @param neighbor Particle to check.
+     * @return True, if the specified particle is a diagonal neighbor. False otherwise.
+     */
     bool isDiagonalNeighbor(Particle& neighbor);
 
     virtual ~Particle();

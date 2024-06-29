@@ -141,8 +141,8 @@ int main(int argc, char *argsv[]) {
                     "Error while reading the XML file. Please check the file and try again. Exiting...");
             }
             MembraneParameters test{
-                true, true, 150000, {0, 0, 1},
-                2.2, 300, {0, 0, 0}, {15, 15, 1.5}, 50, 50,
+                true, true, 15000, {0, 0, 0.8},
+                2.2, 300, {0, 0, 0}, {1.5, 1.5, 1.5}, 50, 50,
                 1, 2.2, 1, 1
             };
             simulationSettings.membraneParameters = test;

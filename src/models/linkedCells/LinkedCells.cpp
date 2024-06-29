@@ -138,6 +138,7 @@ void LinkedCells::updateForcesMembrane() {
     });
     //Calculate new forces using Newtons third law of motion
     particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
+
         //Apply harmonic forces
         //1. Check, if they are direct neighbors
         if(p_i.isDirectNeighbor(p_j)) {

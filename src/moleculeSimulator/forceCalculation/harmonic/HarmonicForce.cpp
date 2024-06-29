@@ -10,7 +10,7 @@ std::array<double, 3> HarmonicForce::compute(Particle &target, Particle &source)
     auto difference = source.getX() - target.getX();
     double distance = ArrayUtils::L2Norm(difference);
     auto result = ((k * (distance - r0)) / distance) * difference;
-    return result;
+    return {1,1,1};
 };
 
 std::array<double, 3> HarmonicForce::computeOptimized(Particle &target, Particle &source, std::array<double, 3> &difference,
