@@ -1541,6 +1541,30 @@ Epsilon (::std::unique_ptr< Epsilon_type > x)
   this->Epsilon_.set (std::move (x));
 }
 
+const Cuboid::Fixed_optional& Cuboid::
+Fixed () const
+{
+  return this->Fixed_;
+}
+
+Cuboid::Fixed_optional& Cuboid::
+Fixed ()
+{
+  return this->Fixed_;
+}
+
+void Cuboid::
+Fixed (const Fixed_type& x)
+{
+  this->Fixed_.set (x);
+}
+
+void Cuboid::
+Fixed (const Fixed_optional& x)
+{
+  this->Fixed_ = x;
+}
+
 
 // Disc
 // 
@@ -1755,6 +1779,30 @@ Epsilon (::std::unique_ptr< Epsilon_type > x)
   this->Epsilon_.set (std::move (x));
 }
 
+const Disc::Fixed_optional& Disc::
+Fixed () const
+{
+  return this->Fixed_;
+}
+
+Disc::Fixed_optional& Disc::
+Fixed ()
+{
+  return this->Fixed_;
+}
+
+void Disc::
+Fixed (const Fixed_type& x)
+{
+  this->Fixed_.set (x);
+}
+
+void Disc::
+Fixed (const Fixed_optional& x)
+{
+  this->Fixed_ = x;
+}
+
 
 // Sphere
 // 
@@ -1967,6 +2015,30 @@ void Sphere::
 Epsilon (::std::unique_ptr< Epsilon_type > x)
 {
   this->Epsilon_.set (std::move (x));
+}
+
+const Sphere::Fixed_optional& Sphere::
+Fixed () const
+{
+  return this->Fixed_;
+}
+
+Sphere::Fixed_optional& Sphere::
+Fixed ()
+{
+  return this->Fixed_;
+}
+
+void Sphere::
+Fixed (const Fixed_type& x)
+{
+  this->Fixed_.set (x);
+}
+
+void Sphere::
+Fixed (const Fixed_optional& x)
+{
+  this->Fixed_ = x;
 }
 
 
@@ -5126,7 +5198,8 @@ Cuboid (const Position_type& Position,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5151,7 +5224,8 @@ Cuboid (::std::unique_ptr< Position_type > Position,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5170,7 +5244,8 @@ Cuboid (const Cuboid& x,
   Brownian_ (x.Brownian_, f, this),
   DimensionBrownian_ (x.DimensionBrownian_, f, this),
   Sigma_ (x.Sigma_, f, this),
-  Epsilon_ (x.Epsilon_, f, this)
+  Epsilon_ (x.Epsilon_, f, this),
+  Fixed_ (x.Fixed_, f, this)
 {
 }
 
@@ -5189,7 +5264,8 @@ Cuboid (const ::xercesc::DOMElement& e,
   Brownian_ (this),
   DimensionBrownian_ (this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -5362,6 +5438,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Fixed
+    //
+    if (n.name () == "Fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->Fixed_)
+      {
+        this->Fixed_.set (Fixed_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -5453,6 +5540,7 @@ operator= (const Cuboid& x)
     this->DimensionBrownian_ = x.DimensionBrownian_;
     this->Sigma_ = x.Sigma_;
     this->Epsilon_ = x.Epsilon_;
+    this->Fixed_ = x.Fixed_;
   }
 
   return *this;
@@ -5483,7 +5571,8 @@ Disc (const Center_type& Center,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5504,7 +5593,8 @@ Disc (::std::unique_ptr< Center_type > Center,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5521,7 +5611,8 @@ Disc (const Disc& x,
   Brownian_ (x.Brownian_, f, this),
   DimensionBrownian_ (x.DimensionBrownian_, f, this),
   Sigma_ (x.Sigma_, f, this),
-  Epsilon_ (x.Epsilon_, f, this)
+  Epsilon_ (x.Epsilon_, f, this),
+  Fixed_ (x.Fixed_, f, this)
 {
 }
 
@@ -5538,7 +5629,8 @@ Disc (const ::xercesc::DOMElement& e,
   Brownian_ (this),
   DimensionBrownian_ (this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -5674,6 +5766,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Fixed
+    //
+    if (n.name () == "Fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->Fixed_)
+      {
+        this->Fixed_.set (Fixed_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -5749,6 +5852,7 @@ operator= (const Disc& x)
     this->DimensionBrownian_ = x.DimensionBrownian_;
     this->Sigma_ = x.Sigma_;
     this->Epsilon_ = x.Epsilon_;
+    this->Fixed_ = x.Fixed_;
   }
 
   return *this;
@@ -5779,7 +5883,8 @@ Sphere (const Center_type& Center,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5800,7 +5905,8 @@ Sphere (::std::unique_ptr< Center_type > Center,
   Brownian_ (Brownian, this),
   DimensionBrownian_ (DimensionBrownian, this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
 }
 
@@ -5817,7 +5923,8 @@ Sphere (const Sphere& x,
   Brownian_ (x.Brownian_, f, this),
   DimensionBrownian_ (x.DimensionBrownian_, f, this),
   Sigma_ (x.Sigma_, f, this),
-  Epsilon_ (x.Epsilon_, f, this)
+  Epsilon_ (x.Epsilon_, f, this),
+  Fixed_ (x.Fixed_, f, this)
 {
 }
 
@@ -5834,7 +5941,8 @@ Sphere (const ::xercesc::DOMElement& e,
   Brownian_ (this),
   DimensionBrownian_ (this),
   Sigma_ (this),
-  Epsilon_ (this)
+  Epsilon_ (this),
+  Fixed_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -5970,6 +6078,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // Fixed
+    //
+    if (n.name () == "Fixed" && n.namespace_ ().empty ())
+    {
+      if (!this->Fixed_)
+      {
+        this->Fixed_.set (Fixed_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -6045,6 +6164,7 @@ operator= (const Sphere& x)
     this->DimensionBrownian_ = x.DimensionBrownian_;
     this->Sigma_ = x.Sigma_;
     this->Epsilon_ = x.Epsilon_;
+    this->Fixed_ = x.Fixed_;
   }
 
   return *this;
@@ -9174,6 +9294,18 @@ operator<< (::xercesc::DOMElement& e, const Cuboid& i)
 
     s << *i.Epsilon ();
   }
+
+  // Fixed
+  //
+  if (i.Fixed ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Fixed",
+        e));
+
+    s << *i.Fixed ();
+  }
 }
 
 void
@@ -9281,6 +9413,18 @@ operator<< (::xercesc::DOMElement& e, const Disc& i)
 
     s << *i.Epsilon ();
   }
+
+  // Fixed
+  //
+  if (i.Fixed ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Fixed",
+        e));
+
+    s << *i.Fixed ();
+  }
 }
 
 void
@@ -9387,6 +9531,18 @@ operator<< (::xercesc::DOMElement& e, const Sphere& i)
         e));
 
     s << *i.Epsilon ();
+  }
+
+  // Fixed
+  //
+  if (i.Fixed ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "Fixed",
+        e));
+
+    s << *i.Fixed ();
   }
 }
 

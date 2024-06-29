@@ -428,6 +428,9 @@
                                             </xs:simpleType>
                                         </xs:element>
 
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -515,6 +518,9 @@
                                             </xs:simpleType>
                                         </xs:element>
 
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -599,6 +605,9 @@
                                                     <xs:minInclusive value="0"/>
                                                 </xs:restriction>
                                             </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
                                         </xs:element>
 
                                     </xs:sequence>

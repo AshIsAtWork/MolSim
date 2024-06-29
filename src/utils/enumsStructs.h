@@ -78,6 +78,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     /**
@@ -93,6 +94,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     struct Sphere {
@@ -105,6 +107,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     /**

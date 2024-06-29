@@ -18,26 +18,36 @@ void Model::updateForces() const {
     //Calculate new forces using Newtons third law of motion
     particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
         auto f_ij{force.compute(p_i, p_j)};
-        p_i.setF(p_i.getF() + f_ij);
-        p_j.setF( p_j.getF() - f_ij);
+        if(!p_i.isFixed()) {
+            p_i.setF(p_i.getF() + f_ij);
+        }
+       if(!p_j.isFixed()) {
+           p_j.setF( p_j.getF() - f_ij);
+       }
     });
 }
 
 void Model::updatePositions() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
+        if(!p.isFixed()) {
+            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
+        }
     });
 }
 
 void Model::updateVelocities() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
+        if(!p.isFixed()) {
+            p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
+        }
     });
 }
 
 void Model::applyGravity() {
     particles.applyToEachParticleInDomain([this](Particle &p) {
-        p.setF(p.getF() + p.getM() * g);
+        if(!p.isFixed()) {
+            p.setF(p.getF() + p.getM() * g);
+        }
     });
 }
 

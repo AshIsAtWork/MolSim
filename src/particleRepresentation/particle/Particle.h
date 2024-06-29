@@ -84,6 +84,11 @@ private:
      */
     std::vector<int> diagonalNeighbors;
 
+    /**
+     * Fixed particles belong to a wall. Needed for study nanofluidics.
+     */
+    bool fixed;
+
 public:
 
     explicit Particle(int type = 0);
@@ -163,6 +168,7 @@ public:
 
     [[nodiscard]] std::vector<int> & getDiagonalNeighbors();
 
+    [[nodiscard]] bool isFixed() const;
 
     void setOldF(const std::array<double, 3> &oldF);
 
@@ -175,6 +181,8 @@ public:
     void setType(int type);
 
     void setMarked(bool status);
+
+    void setFixed(bool status);
 
     bool operator==(Particle &other) const;
 

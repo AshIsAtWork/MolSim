@@ -406,14 +406,16 @@ bool LinkedCellsContainer::isParticleInDomain(const std::array<double, 3>& posit
 void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSource,
                                                       std::array<double, 3> offsetSource) {
     for (auto &target: cells[cellTarget]) {
-        for (auto &source: cells[cellSource]) {
-            //Offset particle
-            source.setX(source.getX() + offsetSource);
-            if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
-                target.setF(target.getF() + lJF.compute(target, source));
+        if(!target.isFixed()) {
+            for (auto &source: cells[cellSource]) {
+                //Offset particle
+                source.setX(source.getX() + offsetSource);
+                if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
+                    target.setF(target.getF() + lJF.compute(target, source));
+                }
+                //Reset offset
+                source.setX(source.getX() - offsetSource);
             }
-            //Reset offset
-            source.setX(source.getX() - offsetSource);
         }
     }
 }

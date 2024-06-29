@@ -326,6 +326,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Cuboids().get().Cuboid().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
                                     i).Epsilon().get());
@@ -333,6 +334,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Cuboids().get().Cuboid().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Cuboids().get().Cuboid().at(i).Fixed().present()) {
+                            fixed = molecules.Cuboids().get().Cuboid().at(i).Fixed();
                         }
 
                         enumsStructs::Cuboid cuboid = {
@@ -362,7 +367,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.cuboids.push_back(cuboid);
                         spdlog::debug("Cuboid #{}: Position: {}, {}, {}",
@@ -399,6 +405,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                       epsilon);
                         spdlog::debug("Cuboid #{}: Sigma: {}", i + 1,
                                       sigma);
+                        spdlog::debug("Cuboid #{}: Fixed: {}", i + 1, fixed);
                     }
                 }
 
@@ -428,6 +435,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Discs().get().Disc().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Epsilon().get());
@@ -435,6 +443,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Discs().get().Disc().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Discs().get().Disc().at(i).Fixed().present()) {
+                            fixed = molecules.Discs().get().Disc().at(i).Fixed();
                         }
 
                         enumsStructs::Disc disc = {
@@ -460,7 +472,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.discs.push_back(disc);
                         spdlog::debug("Disc #{}: Center: {}, {}, {}",
@@ -492,6 +505,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                       static_cast<double>(molecules.Discs().get().Disc().at(i).DimensionBrownian()));
                         spdlog::debug("Disc #{}: Epsilon: {}", i + 1, epsilon);
                         spdlog::debug("Disc #{}: Sigma: {}", i + 1, sigma);
+                        spdlog::debug("Disc #{}: Fixed: {}", i + 1, fixed);
                     }
                 }
 
@@ -522,6 +536,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Spheres().get().Sphere().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Spheres().get().Sphere().at(
                                     i).Epsilon().get());
@@ -529,6 +544,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Spheres().get().Sphere().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Spheres().get().Sphere().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Spheres().get().Sphere().at(i).Fixed().present()) {
+                            fixed = molecules.Spheres().get().Sphere().at(i).Fixed();
                         }
 
                         enumsStructs::Sphere sphere = {
@@ -554,7 +573,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Spheres().get().Sphere().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Spheres().get().Sphere().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.spheres.push_back(sphere);
                         spdlog::debug("Sphere #{}: Center: {}, {}, {}",
@@ -587,6 +607,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                               i).DimensionBrownian()));
                         spdlog::debug("Sphere #{}: Epsilon: {}", i + 1, epsilon);
                         spdlog::debug("Sphere #{}: Sigma: {}", i + 1, sigma);
+                        spdlog::debug("Sphere #{}: Fixed: {}", i + 1, fixed);
                     }
                 }
 
