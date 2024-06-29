@@ -47,6 +47,11 @@ double Particle::calculateEKin() const {
     return 0.5 * m * (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
+double Particle::calculateEKinFlow(std::array<double, 3>& avgVelocity) const {
+    auto vHat = v - avgVelocity;
+    return 0.5 * m * (vHat[0] * vHat[0] + vHat[1] * vHat[1] + vHat[2] * vHat[2]);
+}
+
 void Particle::addDirectNeighbor(int idToAdd) {
     directNeighbors.push_back(idToAdd);
 }

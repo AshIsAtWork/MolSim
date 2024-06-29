@@ -10,7 +10,7 @@
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
 #include <memory>
-#include <moleculeSimulator/thermostat/Thermostat.h>
+#include <moleculeSimulator/thermostats/DefaultThermostat.h>
 #include "forceCalculation/gravity/Gravity.h"
 #include "forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "models/directSum/DirectSum.h"
@@ -26,7 +26,7 @@
 class Simulator {
 private:
  //thermostat
- std::unique_ptr<Thermostat> thermostat;
+ std::unique_ptr<DefaultThermostat> thermostat;
  int nThermostat;
  bool useThermostat;
  bool initialiseSystemWithBrownianMotion;

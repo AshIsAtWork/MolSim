@@ -2,24 +2,15 @@
 // Created by daniel on 08.06.24.
 //
 
-#include "Thermostat.h"
+#include "DefaultThermostat.h"
 
 
-Thermostat::Thermostat(Model &model, double temperatureInit, double temperatureTarget,
-                       double maxTemperatureChange, int dimensions) : model{model}, initTemperature{temperatureInit},
-                                                                      targetTemperature{temperatureTarget},
-                                                                      maxTemperatureChange{maxTemperatureChange},
-                                                                      dimensions{dimensions} {
-}
+DefaultThermostat::DefaultThermostat(Model &model, double temperatureInit, double temperatureTarget,
+                                     double maxTemperatureChange, int dimensions): Thermostat{
+    model, temperatureInit, temperatureTarget, maxTemperatureChange, dimensions
+} {}
 
-void Thermostat::initialiseSystem() {
-    model.particles.applyToEachParticleInDomain([this](Particle &p) {
-        double f_i = std::sqrt(initTemperature / p.getM());
-        p.setV(maxwellBoltzmannDistributedVelocity(f_i, dimensions));
-    });
-}
-
-double Thermostat::calculateKineticEnergy() {
+double DefaultThermostat::calculateKineticEnergy() {
     double eKin = 0;
     model.particles.applyToEachParticleInDomain([&eKin](Particle &p) {
         eKin += p.calculateEKin();
@@ -27,14 +18,14 @@ double Thermostat::calculateKineticEnergy() {
     return eKin;
 }
 
-double Thermostat::calculateTemperature() {
-    if(model.particles.size() == 0) {
+double DefaultThermostat::calculateTemperature() {
+    if (model.particles.size() == 0) {
         throw std::invalid_argument("Temperature given when none expected.");
     }
     return 2 * calculateKineticEnergy() / (static_cast<double>(model.particles.size()) * dimensions);
 }
 
-void Thermostat::setTemperatureOfTheSystemViaVelocityScaling() {
+void DefaultThermostat::setTemperatureOfTheSystemViaVelocityScaling() {
     double currentTemperature = calculateTemperature();
     if (currentTemperature == 0) {
         throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");
@@ -45,7 +36,7 @@ void Thermostat::setTemperatureOfTheSystemViaVelocityScaling() {
     });
 }
 
-void Thermostat::setTemperatureOfTheSystemViaGradualVelocityScaling() {
+void DefaultThermostat::setTemperatureOfTheSystemViaGradualVelocityScaling() {
     double currentTemperature = calculateTemperature();
     if (currentTemperature == 0) {
         throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");

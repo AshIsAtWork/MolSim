@@ -7,7 +7,7 @@
 
 #include "models/directSum/DirectSum.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
-#include "moleculeSimulator/thermostat/Thermostat.h"
+#include "moleculeSimulator/thermostats/DefaultThermostat.h"
 
 class ThermostatTest : public testing::Test {
 protected:
@@ -21,8 +21,7 @@ protected:
 };
 
 TEST_F(ThermostatTest, calculateKineticEnergy_BasicTest) {
-    Thermostat thermostat{dS, 10, 10, 10, 3};
-
+    DefaultThermostat thermostat{dS, 10, 10, 10, 3};
     //Kinetic energy should be 0 when there are no particles
     ASSERT_EQ(thermostat.calculateKineticEnergy(),0);
 
@@ -41,7 +40,7 @@ TEST_F(ThermostatTest, calculateKineticEnergy_BasicTest) {
 }
 
 TEST_F(ThermostatTest, calculateTemperature_BasicTest) {
-    Thermostat thermostat{dS, 10, 10, 10, 3};
+    DefaultThermostat thermostat{dS, 10, 10, 10, 3};
 
     //Add a couple of particles
     Particle p1{{0,0,0},{1,1,1},1};
@@ -58,12 +57,12 @@ TEST_F(ThermostatTest, calculateTemperature_BasicTest) {
 }
 
 TEST_F(ThermostatTest, calculateTemperature_UndefinedTemperature) {
-    Thermostat thermostat{dS, 10, 10, 10, 3};
+    DefaultThermostat thermostat{dS, 10, 10, 10, 3};
     EXPECT_THROW(thermostat.calculateTemperature(), std::exception);
 }
 
 TEST_F(ThermostatTest, initialiseSystem_BasicTest) {
-    Thermostat thermostat{dS, 100, 10, 100, 3};
+    DefaultThermostat thermostat{dS, 100, 10, 100, 3};
     //Add a bunch of particles
 
     for(int i = 0; i < 10000; i++) {
@@ -77,7 +76,7 @@ TEST_F(ThermostatTest, initialiseSystem_BasicTest) {
 }
 
 TEST_F(ThermostatTest, setTemperatureOfTheSystemViaVelocityScaling_BasisTest) {
-    Thermostat thermostat{dS, 1, 100, 100, 3};
+    DefaultThermostat thermostat{dS, 1, 100, 100, 3};
 
     //Add a bunch of particles
     for(int i = 0; i < 100; i++) {
@@ -98,7 +97,7 @@ TEST_F(ThermostatTest, setTemperatureOfTheSystemViaVelocityScaling_BasisTest) {
 }
 
 TEST_F(ThermostatTest, setTemperatureOfTheSystemViaGradualVelocityScaling_BasicTest) {
-    Thermostat thermostat{dS, 1, 10, 10, 3};
+    DefaultThermostat thermostat{dS, 1, 10, 10, 3};
 
 
     //Add a bunch of particles
@@ -130,7 +129,7 @@ TEST_F(ThermostatTest, setTemperatureOfTheSystemViaGradualVelocityScaling_BasicT
 
 TEST_F(ThermostatTest, cooling) {
 
-    Thermostat thermostat{dS, 1, 100, 1, 3};
+    DefaultThermostat thermostat{dS, 1, 100, 1, 3};
 
 
     //Add a bunch of particles
@@ -159,7 +158,7 @@ TEST_F(ThermostatTest, cooling) {
 
 TEST_F(ThermostatTest, heating) {
 
-    Thermostat thermostat{dS, 1, 1, 1, 3};
+    DefaultThermostat thermostat{dS, 1, 1, 1, 3};
 
 
     //Add a bunch of particles
@@ -188,7 +187,7 @@ TEST_F(ThermostatTest, heating) {
 
 TEST_F(ThermostatTest, holdingATemperature) {
 
-    Thermostat thermostat{dS, 100, 100, 1, 3};
+    DefaultThermostat thermostat{dS, 100, 100, 1, 3};
 
     //Add a bunch of particles
     for(int i = 0; i < 100; i++) {

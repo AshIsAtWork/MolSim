@@ -73,7 +73,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
         nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
         initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
-        thermostat = std::make_unique<Thermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
+        thermostat = std::make_unique<DefaultThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
                                                   simulationSettings.thermostatParameters.targetTemperature,
                                                   simulationSettings.thermostatParameters.maxTemperatureChange,
                                                   simulationSettings.thermostatParameters.dimensions);

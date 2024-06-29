@@ -35,7 +35,7 @@ Because the temperature of a system which particles do not move at all (having a
 
 **2. Implementation**    
 Having already been given these formulas and having derived the formula to calculate the temperature of the system using the velocities and masses of the particles the actual implementation of the thermostat was not a big challenge. Therefore, the configuration of the thermostat in the XML-file was much more annoying. There are many things the user can specify like whether the thermostat should be used at all whether the scaling should be applied gradually and so on. To see how the configuration works just have a look at one of our XML files, for example, [this](../../input/assignment-4/task3-gravity-equilibration.xml) here.   
-For the actual implementation we defined the new class [Thermostat](../../src/moleculeSimulator/thermostat/Thermostat.h) which provides several useful methods for initialising the system with Brownian Motion or setting the temperature of the system (directly or gradually). The [Simulator](../../src/moleculeSimulator/Simulator.h) uses these methods for controlling the temperature of the system.   
+For the actual implementation we defined the new class [Thermostat](../../src/moleculeSimulator/thermostats/Thermostat.h) which provides several useful methods for initialising the system with Brownian Motion or setting the temperature of the system (directly or gradually). The [Simulator](../../src/moleculeSimulator/Simulator.h) uses these methods for controlling the temperature of the system.   
 
 **3. Tests**   
 As required, we created three unit tests for heating cooling and holding a temperature. These tests can be found [here](../../tests/moleculeSimulatorTest/thermostatTest/ThermostatTest.cpp).

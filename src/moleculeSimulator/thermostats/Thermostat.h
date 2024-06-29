@@ -1,15 +1,18 @@
 //
-// Created by daniel on 08.06.24.
+// Created by daniel on 29.06.24.
 //
 
 #pragma once
+
 #include "models/Model.h"
 
 /**
- * @brief Class for controling the temperature of the simulated system.
+ * @brief Base class for controling the temperature of the simulated system.
  */
+
 class Thermostat {
-private:
+
+    protected:
     /**
      * Paramters used in this thermostat:
      *                                   -model: Model on which this thermostat is applied
@@ -31,14 +34,14 @@ public:
        *
        * @return Current kinetic energy of the system.
        */
-    double calculateKineticEnergy();
+    virtual double calculateKineticEnergy() = 0;
 
     /**
      * @brief Helper method to calculate the current temperature of the system.
      *
      * @return Current temperature of the system.
      */
-    double calculateTemperature();
+    virtual double calculateTemperature() = 0;
 
     /**
      * @brief Construct a thermostat for a model.
@@ -62,13 +65,13 @@ public:
     /**
      * @brief Set the temperature of the current system to targetTemperature.
      */
-    void setTemperatureOfTheSystemViaVelocityScaling();
+    virtual void setTemperatureOfTheSystemViaVelocityScaling() = 0;
 
     /**
      * @brief Set the temperature of the current system to targetTemperature, if the change in temperature does not
      *        exceed maxTemperatureChange. If it does, the temperature will only be adjusted by the value of maxTemperatureChange.
      */
-    void setTemperatureOfTheSystemViaGradualVelocityScaling();
+    virtual void setTemperatureOfTheSystemViaGradualVelocityScaling() = 0;
 
     /**
      * Setter for testing purposes
@@ -76,4 +79,9 @@ public:
     void setTargetTemperature(double targetTemperature) {
         this->targetTemperature = targetTemperature;
     }
+
+    virtual ~Thermostat() = default;
 };
+
+
+

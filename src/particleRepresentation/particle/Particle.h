@@ -113,16 +113,25 @@ public:
     double calculateEKin() const;
 
     /**
+     * @brief Calculate the current kinetic energy of the particle within a flow simulation.
+     *
+     * @param avgVelocity Average velocity of the particles within the system.
+     *
+     * @return kinetic energy of the particle.
+     */
+    double calculateEKinFlow(std::array<double, 3>& avgVelocity) const;
+
+    /**
      * Make particle p a direct neighbor of this particle.
      *
-     * @param p New direct neighbor of this particle.
+     * @param idToAdd New direct neighbor of this particle.
      */
     void addDirectNeighbor(int idToAdd);
 
     /**
      * Make particle p a diagonal neighbor of this particle.
      *
-     * @param p New diagonal neighbor of this particle.
+     * @param idToAdd New diagonal neighbor of this particle.
      */
     void addDiagonalNeighbor(int idToAdd);
 
