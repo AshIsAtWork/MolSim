@@ -155,7 +155,7 @@ void ParticleGenerator::generateSphere(ParticleContainer &particles, const std::
     id++;
 }
 
-void ParticleGenerator::generateMembrane(LinkedCellsContainer &particles, const std::array<double, 3> &position,
+void ParticleGenerator::generateMembrane(ParticleContainer &particles, const std::array<double, 3> &position,
     unsigned N1, unsigned N2, double h, double mass, const std::array<double, 3> &initVelocity, bool isMarked(unsigned x, unsigned y),
     double epsilon, double sigma) {
 

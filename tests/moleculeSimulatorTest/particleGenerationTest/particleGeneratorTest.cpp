@@ -219,60 +219,55 @@ TEST(ParticleGeneratorTest_Membrane, NumberOfParticlesCorrect) {
     EXPECT_EQ(lcc.size(), 100);
 }
 
-// TEST(ParticleGeneratorTest_Membrane, NeighborsCorrect) {
-//     LinkedCellsContainer lcc{{3, 3, 0}, 1, BoundarySet{}};
-//     ParticleGenerator::generateMembrane(lcc, {0.5, 0.5, 0}, 3, 3, 1, 1, {0, 0, 0},
-//                                         [](unsigned n1, unsigned n2) { return false; });
-//     ASSERT_EQ(lcc.size(), 9);
-//     //Check Particle bottom left (has no neighbors)
-//     EXPECT_EQ(lcc.getCells()[6][0]->getDirectNeighbors().size(), 0);
-//     EXPECT_EQ(lcc.getCells()[6][0]->getDiagonalNeighbors().size(), 0);
-//     //Check Particle bottom middle (has one direct neighbor and one diagonal neighbor)
-//     ASSERT_EQ(lcc.getCells()[7][0]->getDiagonalNeighbors().size(), 1);
-//     EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[7][0],*lcc.getCells()[7][0]->getDiagonalNeighbors()[0],1));
-//     ASSERT_EQ(lcc.getCells()[7][0]->getDirectNeighbors().size(), 1);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[7][0],*lcc.getCells()[7][0]->getDirectNeighbors()[0],1));
-//     //Check Particle bottom right (has one direct neighbor and one diagonal neighbor)
-//     ASSERT_EQ(lcc.getCells()[8][0]->getDiagonalNeighbors().size(), 1);
-//     EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[8][0],*lcc.getCells()[8][0]->getDiagonalNeighbors()[0],1));
-//     ASSERT_EQ(lcc.getCells()[8][0]->getDirectNeighbors().size(), 1);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[8][0],*lcc.getCells()[8][0]->getDirectNeighbors()[0],1));
-//     //Check Particle middle right (has one direct neighbor and zero diagonal neighbors)
-//     ASSERT_EQ(lcc.getCells()[11][0]->getDiagonalNeighbors().size(), 0);
-//     ASSERT_EQ(lcc.getCells()[11][0]->getDirectNeighbors().size(), 1);
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[11][0],*lcc.getCells()[11][0]->getDirectNeighbors()[0],1));
-//     //Check Particle middle middle (has two direct and diagonal neighbors)
-//     ASSERT_EQ(lcc.getCells()[12][0]->getDiagonalNeighbors().size(), 2);
-//     EXPECT_TRUE(
-//         isDiagonalBottomLeftNeighbor(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDiagonalNeighbors()[0],1));
-//     EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDiagonalNeighbors()[1],1));
-//     ASSERT_EQ(lcc.getCells()[12][0]->getDirectNeighbors().size(), 2);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDirectNeighbors()[0],1));
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[12][0],*lcc.getCells()[12][0]->getDirectNeighbors()[1],1));
-//     //Check Particle middle right (has two direct and diagonal neighbors)
-//     ASSERT_EQ(lcc.getCells()[13][0]->getDiagonalNeighbors().size(), 2);
-//     EXPECT_TRUE(
-//         isDiagonalBottomLeftNeighbor(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDiagonalNeighbors()[0],1));
-//     EXPECT_TRUE(isDiagonalTopLeftNeighbor(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDiagonalNeighbors()[1],1));
-//     ASSERT_EQ(lcc.getCells()[13][0]->getDirectNeighbors().size(), 2);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDirectNeighbors()[0],1));
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[13][0],*lcc.getCells()[13][0]->getDirectNeighbors()[1],1));
-//     //Check Particle top left (has no diagonal and one direct neighbor)
-//     ASSERT_EQ(lcc.getCells()[16][0]->getDiagonalNeighbors().size(), 0);
-//     ASSERT_EQ(lcc.getCells()[16][0]->getDirectNeighbors().size(), 1);
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[16][0],*lcc.getCells()[16][0]->getDirectNeighbors()[0],1));
-//     //Check Particle top middle (has one diagonal and two direct neighbors)
-//     ASSERT_EQ(lcc.getCells()[17][0]->getDiagonalNeighbors().size(), 1);
-//     EXPECT_TRUE(
-//         isDiagonalBottomLeftNeighbor(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDiagonalNeighbors()[0],1));
-//     ASSERT_EQ(lcc.getCells()[17][0]->getDirectNeighbors().size(), 2);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDirectNeighbors()[0],1));
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[17][0],*lcc.getCells()[17][0]->getDirectNeighbors()[1],1));
-//     //Check Particle top right (has one diagonal and two direct neighbors)
-//     ASSERT_EQ(lcc.getCells()[18][0]->getDiagonalNeighbors().size(), 1);
-//     EXPECT_TRUE(
-//         isDiagonalBottomLeftNeighbor(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDiagonalNeighbors()[0],1));
-//     ASSERT_EQ(lcc.getCells()[18][0]->getDirectNeighbors().size(), 2);
-//     EXPECT_TRUE(isDirectNeighborOnXAxis(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDirectNeighbors()[0],1));
-//     EXPECT_TRUE(isDirectNeighborOnYAxis(*lcc.getCells()[18][0],*lcc.getCells()[18][0]->getDirectNeighbors()[1],1));
-// }
+TEST(ParticleGeneratorTest_Membrane, NeighborsCorrect) {
+    DefaultParticleContainer ds;
+    ParticleGenerator::generateMembrane(ds, {0.5, 0.5, 0}, 3, 3, 1, 1, {0, 0, 0},
+                                        [](unsigned n1, unsigned n2) { return false; });
+    ASSERT_EQ(ds.at(0).getDirectNeighbors().size(), 0);
+    ASSERT_EQ(ds.at(0).getDiagonalNeighbors().size(), 0);
+
+    ASSERT_EQ(ds.at(1).getDirectNeighbors().size(), 1);
+    ASSERT_EQ(ds.at(1).getDiagonalNeighbors().size(), 0);
+    EXPECT_EQ(ds.at(1).getDirectNeighbors()[0], 1);
+
+    ASSERT_EQ(ds.at(2).getDirectNeighbors().size(), 1);
+    ASSERT_EQ(ds.at(2).getDiagonalNeighbors().size(), 0);
+    EXPECT_EQ(ds.at(2).getDirectNeighbors()[0], 2);
+
+    ASSERT_EQ(ds.at(3).getDirectNeighbors().size(), 1);
+    ASSERT_EQ(ds.at(3).getDiagonalNeighbors().size(), 1);
+    EXPECT_EQ(ds.at(3).getDirectNeighbors()[0], 1);
+    EXPECT_EQ(ds.at(3).getDiagonalNeighbors()[0], 2);
+
+    ASSERT_EQ(ds.at(4).getDirectNeighbors().size(), 2);
+    ASSERT_EQ(ds.at(4).getDiagonalNeighbors().size(), 2);
+    EXPECT_EQ(ds.at(4).getDirectNeighbors()[0], 2);
+    EXPECT_EQ(ds.at(4).getDirectNeighbors()[1], 4);
+    EXPECT_EQ(ds.at(4).getDiagonalNeighbors()[0], 1);
+    EXPECT_EQ(ds.at(4).getDiagonalNeighbors()[1], 3);
+
+    ASSERT_EQ(ds.at(5).getDirectNeighbors().size(), 2);
+    ASSERT_EQ(ds.at(5).getDiagonalNeighbors().size(), 1);
+    EXPECT_EQ(ds.at(5).getDirectNeighbors()[0], 3);
+    EXPECT_EQ(ds.at(5).getDirectNeighbors()[1], 5);
+    EXPECT_EQ(ds.at(5).getDiagonalNeighbors()[0], 2);
+
+    ASSERT_EQ(ds.at(6).getDirectNeighbors().size(), 1);
+    ASSERT_EQ(ds.at(6).getDiagonalNeighbors().size(), 1);
+    EXPECT_EQ(ds.at(6).getDirectNeighbors()[0], 4);
+    EXPECT_EQ(ds.at(6).getDiagonalNeighbors()[0], 5);
+
+    ASSERT_EQ(ds.at(7).getDirectNeighbors().size(), 2);
+    ASSERT_EQ(ds.at(7).getDiagonalNeighbors().size(), 2);
+    EXPECT_EQ(ds.at(7).getDirectNeighbors()[0], 5);
+    EXPECT_EQ(ds.at(7).getDirectNeighbors()[1], 7);
+    EXPECT_EQ(ds.at(7).getDiagonalNeighbors()[0], 4);
+    EXPECT_EQ(ds.at(7).getDiagonalNeighbors()[1], 6);
+
+    ASSERT_EQ(ds.at(8).getDirectNeighbors().size(), 2);
+    ASSERT_EQ(ds.at(8).getDiagonalNeighbors().size(), 1);
+    EXPECT_EQ(ds.at(8).getDirectNeighbors()[0], 6);
+    EXPECT_EQ(ds.at(8).getDirectNeighbors()[1], 8);
+    EXPECT_EQ(ds.at(8).getDiagonalNeighbors()[0], 5);
+
+}

@@ -107,6 +107,7 @@ void LinkedCells::processHaloCells() {
                 //Delete particles from outflow halo cells.
                 particles.clearHaloCells(setting.first);
             }
+            break;
 
             case BoundaryCondition::reflective:
             case BoundaryCondition::periodic: {
@@ -135,23 +136,20 @@ void LinkedCells::updateForcesMembrane() {
     particles.applyToEachParticleInDomain([](Particle &p) {
         p.resetForce();
     });
-    int count = 0;
     //Calculate new forces using Newtons third law of motion
-    particles.applyToAllUniquePairsInDomain([this, &count](Particle &p_i, Particle &p_j) {
+    particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
         //Apply harmonic forces
         //1. Check, if they are direct neighbors
         if(p_i.isDirectNeighbor(p_j)) {
             auto f = forceBetweenDirectNeighborsInMembrane->compute(p_i,p_j);
             p_i.setF(p_i.getF() + f);
             p_j.setF(p_j.getF() - f);
-            count++;
         }
         //2. Check, if they are diagonal neighbors
         else if(p_i.isDiagonalNeighbor(p_j)) {
             auto f = forceBetweenDiagonalNeighborsInMembrane->compute(p_i,p_j);
             p_i.setF(p_i.getF() + f);
             p_j.setF(p_j.getF() - f);
-            count++;
         }
 
         //If they are no direct or diagonal neighbors than truncated Lennard-Jones force is applied
@@ -162,7 +160,6 @@ void LinkedCells::updateForcesMembrane() {
             p_j.setF(p_j.getF() - f_ij);
         }
     });
-    std::cout << count << "\n";
 }
 
 void LinkedCells::step(int iteration) {
@@ -201,7 +198,14 @@ void LinkedCells::updateForcesOptimized() {
 void LinkedCells::initializeForces() {
     if(membraneSetting) {
        updateForcesMembrane();
+        if (pull) {
+            pullMarkedParticles();
+        }
     }else {
         updateForces();
     }
+    if (gravityOn) {
+        applyGravity();
+    }
+    processBoundaryForces();
 }

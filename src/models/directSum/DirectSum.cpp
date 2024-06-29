@@ -19,4 +19,7 @@ void DirectSum::step(int iteration) {
 
 void DirectSum::initializeForces() {
     updateForces();
+    if(gravityOn) {
+        applyGravity();
+    }
 }

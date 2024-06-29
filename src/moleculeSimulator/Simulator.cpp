@@ -83,11 +83,6 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         initialiseSystemWithBrownianMotion = false;
     }
 
-    //Set gravity
-
-    if (simulationSettings.gravityOn) {
-    }
-
     //Add particles and objects of particles
 
     //Particles
