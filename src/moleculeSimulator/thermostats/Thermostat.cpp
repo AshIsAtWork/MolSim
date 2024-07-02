@@ -12,8 +12,10 @@ Thermostat::Thermostat(Model &model, double temperatureInit, double temperatureT
 
 void Thermostat::initialiseSystem() {
     model.particles.applyToEachParticleInDomain([this](Particle &p) {
-        double f_i = std::sqrt(initTemperature / p.getM());
-        p.setV(maxwellBoltzmannDistributedVelocity(f_i, dimensions));
+        if(!p.isFixed()) {
+            double f_i = std::sqrt(initTemperature / p.getM());
+            p.setV(maxwellBoltzmannDistributedVelocity(f_i, dimensions));
+        }
     });
 }
 

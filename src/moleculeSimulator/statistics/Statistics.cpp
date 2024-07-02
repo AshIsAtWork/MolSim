@@ -25,7 +25,7 @@ void Statistics::calculateVelocityAndDensityProfile(ParticleContainer &particles
        }
        else {
            //Velocity along y-axis
-           avgVelocities[bin] += p.getX()[1];
+           avgVelocities[bin] += p.getV()[1];
            numbers[bin]++;
        }
     });
@@ -34,7 +34,7 @@ void Statistics::calculateVelocityAndDensityProfile(ParticleContainer &particles
         if(numbers[i] != 0) {
             avgVelocities[i] /= numbers[i];
         }else {
-            avgVelocities[i] = NAN;
+            avgVelocities[i] = 0;
         }
     }
     //Write to csv file

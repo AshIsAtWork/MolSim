@@ -94,10 +94,11 @@ public:
      * @param brownianMotionAverageVelocity
      * @param epsilon Leonard Jones parameter epsilon
      * @param sigma Leonard Jones parameter sigma
+     * @param fixed Fix particles.
      */
     void addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2, unsigned N3, double h, double mass,
                    const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity,
-                   double epsilon = 5, double sigma = 1);
+                   double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
     * @brief Add a 2D disc structure to this model.
@@ -111,10 +112,11 @@ public:
     * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
     * @param epsilon Leonard Jones parameter epsilon
     * @param sigma Leonard Jones parameter sigma
+    * @param fixed Fix particles.
     */
     void addDisc(const std::array<double, 3> &center,
                  const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                 double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
+                 double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
      * @brief Add a single particle to this model.

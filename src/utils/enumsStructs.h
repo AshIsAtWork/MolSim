@@ -44,6 +44,10 @@ namespace enumsStructs {
         BoundaryCondition bottom = BoundaryCondition::invalid;
     };
 
+    enum class TypeOfThermostat {
+        defaultThermostat, flowThermostat
+    };
+
     /**
      * Struct for passing parameters of the direct sum model.
      */
@@ -124,10 +128,10 @@ namespace enumsStructs {
     /**
      * Struct containing the specifications of the thermostat.
      */
-
     struct ThermostatParameters {
         //If set to false, all other parameters are ignored
         bool useThermostat;
+        TypeOfThermostat typeOfThermostat;
         bool initialiseSystemWithBrownianMotion;
         //If set to false, maxTemperatureChange will be ignored
         bool applyScalingGradually;
@@ -138,6 +142,9 @@ namespace enumsStructs {
         int dimensions;
     };
 
+    /**
+     * Struct containing the specifications of a membrane
+     */
     struct MembraneParameters {
         //Setting
         bool membraneSetting;
@@ -288,4 +295,23 @@ namespace enumsStructs {
         auto it = formatMap.find(boundaryCondition);
         return (it != formatMap.end()) ? it->second : "Invalid";
     }
+
+    /**
+     * @brief Convert string selection to corresponding enum value.
+     *
+     * @param typeOfThermostat String to convert.
+     *
+     * @return Corresponding enum value.
+     */
+
+    inline TypeOfThermostat setTypeOfThermostat(const std::string &typeOfThermostat) {
+        static const std::unordered_map<std::string, TypeOfThermostat> formatMap = {
+            {"Default", TypeOfThermostat::defaultThermostat},
+            {"Flow", TypeOfThermostat::flowThermostat}
+        };
+        auto it = formatMap.find(typeOfThermostat);
+        return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid thermostat selected!");
+    }
+
+
 }

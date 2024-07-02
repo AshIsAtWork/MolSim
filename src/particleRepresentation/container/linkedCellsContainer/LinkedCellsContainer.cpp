@@ -499,7 +499,7 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
     if (position[2] < 0) {
         z = 0;
     } else if (position[2] >= domainSize[2]) {
-        z = nY - 1;
+        z = nZ - 1;
     } else {
         z = static_cast<int>(floor(position[2] / cellSizeZ)) + 1;
     }
@@ -573,20 +573,24 @@ void LinkedCellsContainer::teleportParticlesToOppositeSide(Side sideStart) {
         case Side::front: {
             teleportParticlesToOppositeSideHelper(sideStart, 2, 0);
         }
+        break;
         case Side::right: {
             teleportParticlesToOppositeSideHelper(sideStart, 1, 1);
         }
+        break;
         case Side::back: {
             teleportParticlesToOppositeSideHelper(sideStart, 2, 1);
         }
+        break;
         case Side::left: {
             teleportParticlesToOppositeSideHelper(sideStart, 1, 0);
         }
+        break;
         case Side::top: {
             if(!twoD) {
                 teleportParticlesToOppositeSideHelper(sideStart, 3, 1);
             }
-
+        break;
         }
         case Side::bottom: {
             if(!twoD) {
@@ -837,6 +841,11 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
             }
         }
     }
+}
+
+void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelOne(
+    const std::function<void(Particle &, Particle &)> &function) {
+
 }
 
 void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(

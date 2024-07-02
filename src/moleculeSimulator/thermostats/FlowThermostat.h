@@ -50,7 +50,7 @@ public:
      * @brief Set the temperature of the current system to targetTemperature.
      */
 
-    void FlowThermostat::setTemperatureOfTheSystemViaVelocityScaling() override;
+    void setTemperatureOfTheSystemViaVelocityScaling() override;
 
     /**
      * @brief Set the temperature of the current system to targetTemperature, if the change in temperature does not

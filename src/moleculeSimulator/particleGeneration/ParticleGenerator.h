@@ -36,12 +36,13 @@ private:
      *                                                     [3]: direction along support axis d2 (0 for positive, 1 for negative)
      * @param epsilon Lennard Jones force parameter epsilon.
      * @param sigma Lennard Jones force parameter sigma.
+     * @param fixed Fix particles.
      */
     static void generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
                                      const std::array<double, 3> &initVelocity, double h, double mass, int N, double r,
                                      int dimensions,
                                      double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix,
-                                     double epsilon = 5, double sigma = 1);
+                                     double epsilon = 5, double sigma = 1, bool fixed = false);
 
 public:
     /**
@@ -59,11 +60,12 @@ public:
      * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
      * @param epsilon Lennard Jones force parameter epsilon.
      * @param sigma Lennard Jones force parameter sigma.
+     * @param fixed Fix particles.
      */
     static void generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                unsigned N2, unsigned N3,
                                double h, double mass, const std::array<double, 3> &initVelocity, int dimensions,
-                               double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
+                               double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
      * @brief Generate a 2D disc structure.
@@ -78,10 +80,11 @@ public:
      * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
      * @param epsilon Lennard Jones force parameter epsilon.
      * @param sigma Lennard Jones force parameter sigma.
+     * @param fixed Fix particles.
      */
     static void generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
                              const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                             double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
+                             double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
    * @brief Generate a 3D sphere structure.
@@ -96,10 +99,11 @@ public:
    * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
    * @param epsilon Lennard Jones force parameter epsilon.
    * @param sigma Lennard Jones force parameter sigma.
+   * @param fixed Fix particles.
    */
     static void generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
                                const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                               double brownianMotionAverageVelocity, double epsilon, double sigma);
+                               double brownianMotionAverageVelocity, double epsilon, double sigma, bool fixed = false);
 
     /**
      * @brief Generate a 2D membrane.

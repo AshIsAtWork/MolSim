@@ -300,6 +300,8 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
 
+    void applyToAllUniquePairsInDomainParallelOne(const std::function<void(Particle &, Particle &)> &function);
+
     void applyToAllUniquePairsInDomainOptimized(const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
 
     /**

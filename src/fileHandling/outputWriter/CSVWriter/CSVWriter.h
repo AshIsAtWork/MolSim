@@ -12,6 +12,7 @@
 class CSVWriter {
 private:
      std::ofstream file;
+     int numberOfBins;
 
 public:
      /**

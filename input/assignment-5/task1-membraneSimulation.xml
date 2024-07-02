@@ -2,8 +2,8 @@
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
-    <OutputFileName>Benchmark</OutputFileName>
-    <OutputFrequency>10</OutputFrequency>
+    <OutputFileName>Membrane</OutputFileName>
+    <OutputFrequency>100</OutputFrequency>
     <GravityConfig>
         <X>0</X>
         <Y>0</Y>
@@ -31,4 +31,31 @@
             </boundaries>
         </BoundaryCondition>
     </model>
+    <Membrane>
+        <Pull>true</Pull>
+        <PullingActiveUntil>15000</PullingActiveUntil>
+        <PullingForce>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>0.8</Z>
+        </PullingForce>
+        <r0>2.2</r0>
+        <k>300</k>
+        <Velocity>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>0</Z>
+        </Velocity>
+        <Position>
+            <X>15</X>
+            <Y>15</Y>
+            <Z>1.5</Z>
+        </Position>
+        <N1>50</N1>
+        <N2>50</N2>
+        <Mass>1</Mass>
+        <InterParticleDistance>2.2</InterParticleDistance>
+        <Sigma>1</Sigma>
+        <Epsilon>1</Epsilon>
+    </Membrane>
 </Molecules>

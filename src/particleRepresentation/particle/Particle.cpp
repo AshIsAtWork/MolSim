@@ -7,6 +7,8 @@
 
 #include "Particle.h"
 
+#include <iostream>
+
 int Particle::nextId = 1;
 
 Particle::Particle(int type_arg) : f{0., 0., 0.}, old_f{0., 0., 0.}, type{type_arg}, epsilon{5}, sigma{1} {
@@ -79,7 +81,7 @@ Particle::~Particle() { spdlog::trace("Particle destructed"); }
 
 const std::array<double, 3> &Particle::getX() const { return x; }
 
-const std::array<double, 3> &Particle::getV() const { return v; }
+const std::array<double, 3> &Particle::getV() const {return v;}
 
 const std::array<double, 3> &Particle::getF() const { return f; }
 

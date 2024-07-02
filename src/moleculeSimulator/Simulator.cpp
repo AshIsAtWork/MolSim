@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "thermostats/FlowThermostat.h"
+
 using namespace enumsStructs;
 
 Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::outputFormat outputFormat) {
@@ -59,6 +61,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                                                   simulationSettings.parametersLinkedCells.boundaryConditions,
                                                   simulationSettings.gravityOn,
                                                   simulationSettings.gravityVector, simulationSettings.membraneParameters);
+            x_length = simulationSettings.parametersLinkedCells.domainSize[0];
         }
         break;
         default: {
@@ -73,14 +76,26 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
         nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
         initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
-        thermostat = std::make_unique<DefaultThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
-                                                  simulationSettings.thermostatParameters.targetTemperature,
-                                                  simulationSettings.thermostatParameters.maxTemperatureChange,
-                                                  simulationSettings.thermostatParameters.dimensions);
+        if(simulationSettings.thermostatParameters.typeOfThermostat == TypeOfThermostat::defaultThermostat) {
+            thermostat = std::make_unique<DefaultThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
+                                                 simulationSettings.thermostatParameters.targetTemperature,
+                                                 simulationSettings.thermostatParameters.maxTemperatureChange,
+                                                 simulationSettings.thermostatParameters.dimensions);
+            computeProfiles = false;
+        }else {
+            thermostat = std::make_unique<FlowThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
+                                                 simulationSettings.thermostatParameters.targetTemperature,
+                                                 simulationSettings.thermostatParameters.maxTemperatureChange,
+                                                 simulationSettings.thermostatParameters.dimensions);
+            computeProfiles = true;
+            statistics = std::make_unique<Statistics>(50);
+        }
+
     } else {
         applyScalingGradually = false;
         nThermostat = INT32_MAX;
         initialiseSystemWithBrownianMotion = false;
+        computeProfiles = false;
     }
 
     //Add particles and objects of particles
@@ -94,12 +109,12 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
     for (auto cuboid: simulationSettings.cuboids) {
         model->addCuboid(cuboid.position, cuboid.dimensions[0], cuboid.dimensions[1], cuboid.dimensions[2], cuboid.h,
                          cuboid.mass, cuboid.initVelocity, cuboid.dimensionsBrownianMotion,
-                         cuboid.brownianMotionAverageVelocity, cuboid.epsilon, cuboid.sigma);
+                         cuboid.brownianMotionAverageVelocity, cuboid.epsilon, cuboid.sigma, cuboid.fixed);
     }
     //Discs
     for (auto disc: simulationSettings.discs) {
         model->addDisc(disc.center, disc.initVelocity, disc.N, disc.h, disc.mass, disc.dimensionsBrownianMotion,
-                       disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma);
+                       disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma, disc.fixed);
     }
 
     totalMoleculeUpdates = 0;
@@ -133,6 +148,8 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
     nThermostat = INT32_MAX;
     initialiseSystemWithBrownianMotion = false;
     totalMoleculeUpdates = 0;
+    computeProfiles = false;
+    x_length = 0;
 }
 
 void Simulator::run(bool benchmark) {
@@ -160,6 +177,11 @@ void Simulator::run(bool benchmark) {
             totalMoleculeUpdates += model->getParticles().size();
         }
 
+        //Compute profiles if specified
+        if(computeProfiles && iteration % 10000 == 0) {
+            statistics->calculateVelocityAndDensityProfile(model->getParticles(),x_length,current_time);
+        }
+
         //Do one simulation step
         model->step(iteration);
 
@@ -176,17 +198,16 @@ void Simulator::run(bool benchmark) {
         if (!benchmark && iteration % outputFrequency == 0) {
             model->plot(iteration, outputFileBaseName);
         }
-
-        spdlog::trace("Iteration {} finished.", iteration);
-
+        if(iteration % 1000 == 0) {
+            spdlog::info("Iteration {} finished.", iteration);
+        }
         current_time += deltaT;
     }
-
     spdlog::info("Output written. Terminating...");
 }
 
 void Simulator::loadState(std::string &pathToMolecules) {
-    int particlesBefore = model->getParticles().size();
+    size_t particlesBefore = model->getParticles().size();
     model->addViaFile(pathToMolecules,FileHandler::inputFormat::txt);
     spdlog::info("Loaded {} molecules into the simulation", model->getParticles().size() - particlesBefore);
 }
@@ -199,6 +220,6 @@ ParticleContainer &Simulator::getParticles() {
     return model->getParticles();
 }
 
-unsigned long long Simulator::getTotalMoleculeUpdates() {
+unsigned long long Simulator::getTotalMoleculeUpdates() const {
     return totalMoleculeUpdates;
 }

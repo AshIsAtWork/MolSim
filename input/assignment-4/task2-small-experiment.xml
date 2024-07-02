@@ -5,11 +5,11 @@
     <OutputFileName>SmallExperiment</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
     <ThermostatConfig>
+        <Type>Default</Type>
         <InitialTemperature>40</InitialTemperature>
         <TargetTemperature>40</TargetTemperature>
         <InitialBrownian>true</InitialBrownian>
         <ScalingGradually>false</ScalingGradually>
-        <MaximumTemperatureChange>1</MaximumTemperatureChange>
         <ApplyAfterHowManySteps>1000</ApplyAfterHowManySteps>
         <Dimension>2</Dimension>
     </ThermostatConfig>

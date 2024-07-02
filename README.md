@@ -82,6 +82,11 @@ You will need the following to compile the program:
   ```bash
   sudo apt-get install libboost-program-options-dev
   ```
+- Libomp (Only needed when you would like to use parallelization)
+
+  ```bash
+      sudo apt install libomp-dev
+  ```
 
 ---
 

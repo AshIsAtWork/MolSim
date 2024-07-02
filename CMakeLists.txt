@@ -58,6 +58,11 @@ target_compile_options(MolSim
 
 find_package(XercesC REQUIRED)
 find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(OpenMP)
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
+endif ()
 
 #TODO: Add to Report
 if (PARALLELISATION)

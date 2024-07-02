@@ -5,11 +5,11 @@
     <OutputFileName>Equilibration</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
     <ThermostatConfig>
+        <Type>Default</Type>
         <InitialTemperature>0.5</InitialTemperature>
         <TargetTemperature>0.5</TargetTemperature>
         <InitialBrownian>true</InitialBrownian>
         <ScalingGradually>false</ScalingGradually>
-        <MaximumTemperatureChange>1</MaximumTemperatureChange>
         <ApplyAfterHowManySteps>1000</ApplyAfterHowManySteps>
         <Dimension>2</Dimension>
     </ThermostatConfig>

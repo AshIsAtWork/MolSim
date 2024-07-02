@@ -15,6 +15,7 @@
 #include "forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "models/directSum/DirectSum.h"
 #include "../models/linkedCells/LinkedCells.h"
+#include "statistics/Statistics.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -25,8 +26,13 @@
 
 class Simulator {
 private:
+ //profiles
+ bool computeProfiles;
+ std::unique_ptr<Statistics> statistics;
+ double x_length;
+
  //thermostat
- std::unique_ptr<DefaultThermostat> thermostat;
+ std::unique_ptr<Thermostat> thermostat;
  int nThermostat;
  bool useThermostat;
  bool initialiseSystemWithBrownianMotion;
@@ -106,6 +112,6 @@ public:
 
  ParticleContainer &getParticles();
 
- unsigned long long getTotalMoleculeUpdates();
+ unsigned long long getTotalMoleculeUpdates() const;
 
 };

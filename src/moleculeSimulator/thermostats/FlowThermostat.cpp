@@ -46,7 +46,7 @@ std::array<double, 3> FlowThermostat::calculateAverageVelocity() {
     if(numberNonFixedParticles == 0) {
         throw std::invalid_argument("Average velocity for 0 particles is not defined!");
     }
-    return (1 / numberNonFixedParticles) * sum;
+    return (1.0 / numberNonFixedParticles) * sum;
 }
 
 void FlowThermostat::setTemperatureOfTheSystemViaVelocityScaling() {
