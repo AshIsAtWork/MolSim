@@ -48,6 +48,9 @@ namespace enumsStructs {
         defaultThermostat, flowThermostat
     };
 
+    enum class ParallelizationStrategy {
+        none, naive, sophisticated
+    };
     /**
      * Struct for passing parameters of the direct sum model.
      */
@@ -173,6 +176,9 @@ namespace enumsStructs {
         int outputFrequency;
         bool gravityOn;
         std::array<double, 3> gravityVector;
+
+        //parallelization strategy
+        ParallelizationStrategy parallelizationStrategy;
 
         //thermostat
         ThermostatParameters thermostatParameters;
@@ -311,6 +317,24 @@ namespace enumsStructs {
         };
         auto it = formatMap.find(typeOfThermostat);
         return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid thermostat selected!");
+    }
+
+    /**
+     * @brief Convert string selection to corresponding enum value.
+     *
+     * @param typeOfParallelizationStrategy String to convert.
+     *
+     * @return Corresponding enum value.
+     */
+
+    inline ParallelizationStrategy setTypeOfParallelizationStrategy(const std::string &typeOfParallelizationStrategy) {
+        static const std::unordered_map<std::string, ParallelizationStrategy> formatMap = {
+            {"None", ParallelizationStrategy::none},
+            {"Naive", ParallelizationStrategy::naive},
+            {"Sophisticated", ParallelizationStrategy::sophisticated}
+        };
+        auto it = formatMap.find(typeOfParallelizationStrategy);
+        return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid parallelizatin strategy selected!");
     }
 
 

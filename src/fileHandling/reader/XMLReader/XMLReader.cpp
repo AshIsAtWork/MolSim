@@ -52,6 +52,15 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     spdlog::debug("OutputFrequency: {}", static_cast<int>(molecules.OutputFrequency()));
                 }
 
+                if(molecules.ParallelizationStrategy().present()) {
+                    spdlog::debug("Parallelization strategy specified");
+                    simulationSettings.parallelizationStrategy = enumsStructs::setTypeOfParallelizationStrategy(molecules.ParallelizationStrategy().get());
+                    spdlog::debug("Type of parallelization strategy: {}", molecules.ParallelizationStrategy().get());
+                }else {
+                    simulationSettings.parallelizationStrategy = enumsStructs::ParallelizationStrategy::none;
+                    spdlog::debug("No parallelization strategy selected");
+                }
+
                 if (molecules.ThermostatConfig().present()) {
                     spdlog::debug("Thermostat is used");
 

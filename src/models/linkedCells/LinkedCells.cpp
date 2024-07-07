@@ -9,9 +9,12 @@
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, FileHandler::outputFormat outputFormat,
                          BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g,
-                         MembraneParameters membraneParameters) : Model(particles, force, deltaT,
-                                                                        outputFormat, gravityOn, g),
-                                                                  particles(domainSize, rCutOff, boundaryConditions) {
+                         MembraneParameters membraneParameters,
+                         enumsStructs::ParallelizationStrategy parallelizationStrategy) : Model(particles, force,
+        deltaT, outputFormat, gravityOn, g), parallelizationStrategy{
+        parallelizationStrategy
+    },
+    particles(domainSize, rCutOff, boundaryConditions) {
     std::pair<Side, BoundaryCondition> cFront{Side::front, boundaryConditions.front};
     boundarySettings.push_back(cFront);
     std::pair<Side, BoundaryCondition> cRight{Side::right, boundaryConditions.right};
@@ -42,28 +45,28 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
         //Generate membrane
         auto marking = [](unsigned x, unsigned y) {
             //Particle (17,24)
-             if (x == 16 and y == 23) {
-                 return true;
-             }
-             //Particle (17,25)
-             if (x == 16 and y == 24) {
-                 return true;
-             }
-             //Particle (18,24)
-             if (x == 17 and y == 23) {
-                 return true;
-             }
-             //Particle (18,25)
-             if (x == 17 and y == 24) {
-                 return true;
-             }
+            if (x == 16 and y == 23) {
+                return true;
+            }
+            //Particle (17,25)
+            if (x == 16 and y == 24) {
+                return true;
+            }
+            //Particle (18,24)
+            if (x == 17 and y == 23) {
+                return true;
+            }
+            //Particle (18,25)
+            if (x == 17 and y == 24) {
+                return true;
+            }
             return false;
         };
         ParticleGenerator::generateMembrane(particles, membraneParameters.position,
-                                                              membraneParameters.N1, membraneParameters.N2,
-                                                              membraneParameters.h, membraneParameters.mass,
-                                                              membraneParameters.initialVelocity, marking,
-                                                              membraneParameters.epsilon, membraneParameters.sigma);
+                                            membraneParameters.N1, membraneParameters.N2,
+                                            membraneParameters.h, membraneParameters.mass,
+                                            membraneParameters.initialVelocity, marking,
+                                            membraneParameters.epsilon, membraneParameters.sigma);
     } else {
         membraneSetting = false;
         pull = false;
@@ -81,7 +84,7 @@ void LinkedCells::processBoundaryForces() {
             case BoundaryCondition::reflective: {
                 particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
-                    if(!p.isFixed()) {
+                    if (!p.isFixed()) {
                         Particle ghostParticle = p;
                         ghostParticle.setX(ghostPosition);
                         std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
@@ -126,8 +129,8 @@ void LinkedCells::processHaloCells() {
 }
 
 void LinkedCells::pullMarkedParticles() {
-    particles.applyToEachParticleInDomain([this](Particle& p) {
-        if(p.isMarked()) {
+    particles.applyToEachParticleInDomain([this](Particle &p) {
+        if (p.isMarked()) {
             p.setF(p.getF() + pullingForce);
         }
     });
@@ -142,14 +145,14 @@ void LinkedCells::updateForcesMembrane() {
     particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
         //Apply harmonic forces
         //1. Check, if they are direct neighbors
-        if(p_i.isDirectNeighbor(p_j)) {
-            auto f = forceBetweenDirectNeighborsInMembrane->compute(p_i,p_j);
+        if (p_i.isDirectNeighbor(p_j)) {
+            auto f = forceBetweenDirectNeighborsInMembrane->compute(p_i, p_j);
             p_i.setF(p_i.getF() + f);
             p_j.setF(p_j.getF() - f);
         }
         //2. Check, if they are diagonal neighbors
-        else if(p_i.isDiagonalNeighbor(p_j)) {
-            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(p_i,p_j);
+        else if (p_i.isDiagonalNeighbor(p_j)) {
+            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(p_i, p_j);
             p_i.setF(p_i.getF() + f);
             p_j.setF(p_j.getF() - f);
         }
@@ -171,7 +174,17 @@ void LinkedCells::step(int iteration) {
             pullMarkedParticles();
         }
     } else {
-        updateForces();
+        switch (parallelizationStrategy) {
+            case ParallelizationStrategy::none: updateForces();
+                break;
+#ifdef _OPENMP
+            case ParallelizationStrategy::naive: updateForcesParallelNaive();
+                break;
+            case ParallelizationStrategy::sophisticated: updateForcesParallelSophisticated();
+                break;
+#endif
+            default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
+        }
     }
     if (gravityOn) {
         applyGravity();
@@ -197,14 +210,65 @@ void LinkedCells::updateForcesOptimized() {
         });
 }
 
+#ifdef _OPENMP
+void LinkedCells::updateForcesParallelSophisticated() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelSophisticated([this](Particle &p_i, Particle &p_j) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.setF(p_i.getF() + f_ij);
+        }
+        if (!p_j.isFixed()) {
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::updateForcesParallelNaive() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelNaive([this](Particle &p_i, Particle &p_j) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.setF(p_i.getF() + f_ij);
+        }
+        if (!p_j.isFixed()) {
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+#endif
+
 void LinkedCells::initializeForces() {
-    if(membraneSetting) {
-       updateForcesMembrane();
+    if (membraneSetting) {
+        updateForcesMembrane();
         if (pull) {
             pullMarkedParticles();
         }
-    }else {
-        updateForces();
+    } else {
+        switch (parallelizationStrategy) {
+            case ParallelizationStrategy::none: updateForces();
+                break;
+#ifdef _OPENMP
+            case ParallelizationStrategy::naive: updateForcesParallelNaive();
+                break;
+            case ParallelizationStrategy::sophisticated: updateForcesParallelSophisticated();
+                break;
+#endif
+            default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
+        }
     }
     if (gravityOn) {
         applyGravity();

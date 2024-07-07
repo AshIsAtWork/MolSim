@@ -23,6 +23,7 @@ private:
     std::array<double, 3> pullingForce{};
     std::unique_ptr<Force> forceBetweenDiagonalNeighborsInMembrane;
     std::unique_ptr<Force> forceBetweenDirectNeighborsInMembrane;
+    enumsStructs::ParallelizationStrategy parallelizationStrategy;
 
     /**
      * This model uses the LinkedCellsContainer to store its particles
@@ -31,7 +32,7 @@ private:
     /**
      * Definition of the boundary condition for each side.
      */
-    std::vector<std::pair<Side, enumsStructs::BoundaryCondition>> boundarySettings;
+    std::vector<std::pair<Side, enumsStructs::BoundaryCondition> > boundarySettings;
 
     /**
      * @brief Apply forces to all particles in boundary cells according to the specified boundary conditions.
@@ -67,9 +68,13 @@ public:
      * @param gravityOn Toggle gravity on or off.
      * @param g Gravitational factor.
      * @param membraneParameters Contains specification if a membrane is simulated
+     * @param parallelizationStrategy Strategy to use for parallelization.
      */
     LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize, double rCutOff,
-                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g = {}, MembraneParameters membraneParameters = MembraneParameters{});
+                FileHandler::outputFormat outputFormat, BoundarySet boundaryConditions, bool gravityOn,
+                std::array<double, 3> g = {}, MembraneParameters membraneParameters = MembraneParameters{},
+                enumsStructs::ParallelizationStrategy parallelizationStrategy =
+                        enumsStructs::ParallelizationStrategy::none);
 
     /**
      * @brief Perform one time step in the linked cells model.
@@ -84,6 +89,12 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
     void updateForcesOptimized();
+#ifdef _OPENMP
+    void updateForcesParallelSophisticated();
+
+    void updateForcesParallelNaive();
+#endif
+
 
     /**
      * @brief Calculate forces at the beginning of the simulation that the old force is not 0.

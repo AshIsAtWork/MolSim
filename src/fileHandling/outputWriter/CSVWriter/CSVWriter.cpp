@@ -7,7 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <sys/stat.h>
 
-CSVWriter::CSVWriter(int numberOfBins) : numberOfBins{numberOfBins} {
+CSVWriter::CSVWriter(int numberOfBins, std::string filename) : numberOfBins{numberOfBins} {
     struct stat info;
     if( stat( "statistics", &info ) != 0 ) {
         spdlog::info("Directory statistics does not exist. Creating directory...");
@@ -18,7 +18,7 @@ CSVWriter::CSVWriter(int numberOfBins) : numberOfBins{numberOfBins} {
         }
     }
     spdlog::info("Open csv file...");
-    file = std::ofstream{"statistics/Profile.csv"};
+    file = std::ofstream{"statistics/" + filename + ".csv"};
     if (!file.is_open()) {
         throw std::runtime_error("Unable to open csv file");
     }else {
@@ -43,10 +43,10 @@ CSVWriter::~CSVWriter() {
     file.close();
 }
 
-int CSVWriter::writeVelocityProfile(std::vector<double> &velocities, double time) {
+int CSVWriter::writeProfile(std::vector<double> &values, double time) {
     file << time << ",";
     for(int i = 0; i < numberOfBins; i++) {
-        file << velocities[i];
+        file << values[i];
         if(i < numberOfBins - 1) {
             file << ",";
         }

@@ -12,10 +12,6 @@ if (NOT CMAKE_BUILD_TYPE)
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-# set Optimisation flags for Release
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
-
 if (OPTIMISATION)
     message(STATUS "Further Optimisation flags enabled")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
@@ -64,14 +60,6 @@ if(OpenMP_CXX_FOUND)
     target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
 endif ()
 
-#TODO: Add to Report
-if (PARALLELISATION)
-    message(STATUS "Parallelisation with OpenMP enabled")
-    find_package(OpenMP REQUIRED)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-endif ()
-
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
@@ -80,10 +68,8 @@ target_link_libraries(MolSim
         spdlog::spdlog
         gtest_main
         gmock_main
-        $<$<BOOL:${PARALLELISATION}>:OpenMP::OpenMP_CXX>
 )
 
-#TODO: ADD TO REPORT
 if (PROFILING)
     message(STATUS "Profiling enabled")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")

@@ -221,8 +221,10 @@ TEST(ParticleGeneratorTest_Membrane, NumberOfParticlesCorrect) {
 
 TEST(ParticleGeneratorTest_Membrane, NeighborsCorrect) {
     DefaultParticleContainer ds;
+    Particle::resetID();
     ParticleGenerator::generateMembrane(ds, {0.5, 0.5, 0}, 3, 3, 1, 1, {0, 0, 0},
                                         [](unsigned n1, unsigned n2) { return false; });
+
     ASSERT_EQ(ds.at(0).getDirectNeighbors().size(), 0);
     ASSERT_EQ(ds.at(0).getDiagonalNeighbors().size(), 0);
 

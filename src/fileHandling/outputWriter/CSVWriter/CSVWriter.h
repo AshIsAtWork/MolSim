@@ -20,7 +20,7 @@ public:
       *
       * @param numberOfBins Number of bins to use.
       */
-     explicit CSVWriter(int numberOfBins);
+      CSVWriter(int numberOfBins, std::string filename);
 
      /**
       * @brief When this object is destructed, the csv file is closed.
@@ -34,6 +34,6 @@ public:
       * @param time Current time in the simulation.
       * @return 0 on success, on error some value unequal 0.
       */
-     int writeVelocityProfile(std::vector<double>& velocities, double time);
+     int writeProfile(std::vector<double>& velocities, double time);
 
 };

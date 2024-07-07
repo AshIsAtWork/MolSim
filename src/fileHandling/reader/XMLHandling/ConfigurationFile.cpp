@@ -91,6 +91,36 @@ OutputFrequency (::std::unique_ptr< OutputFrequency_type > x)
   this->OutputFrequency_.set (std::move (x));
 }
 
+const Molecules::ParallelizationStrategy_optional& Molecules::
+ParallelizationStrategy () const
+{
+  return this->ParallelizationStrategy_;
+}
+
+Molecules::ParallelizationStrategy_optional& Molecules::
+ParallelizationStrategy ()
+{
+  return this->ParallelizationStrategy_;
+}
+
+void Molecules::
+ParallelizationStrategy (const ParallelizationStrategy_type& x)
+{
+  this->ParallelizationStrategy_.set (x);
+}
+
+void Molecules::
+ParallelizationStrategy (const ParallelizationStrategy_optional& x)
+{
+  this->ParallelizationStrategy_ = x;
+}
+
+void Molecules::
+ParallelizationStrategy (::std::unique_ptr< ParallelizationStrategy_type > x)
+{
+  this->ParallelizationStrategy_.set (std::move (x));
+}
+
 const Molecules::ThermostatConfig_optional& Molecules::
 ThermostatConfig () const
 {
@@ -332,6 +362,51 @@ Membrane (::std::unique_ptr< Membrane_type > x)
 
 // OutputFrequency
 // 
+
+
+// ParallelizationStrategy
+// 
+
+ParallelizationStrategy::
+ParallelizationStrategy (value v)
+: ::xml_schema::string (_xsd_ParallelizationStrategy_literals_[v])
+{
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const char* v)
+: ::xml_schema::string (v)
+{
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ::std::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ::xml_schema::string& v)
+: ::xml_schema::string (v)
+{
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ParallelizationStrategy& v,
+                         ::xml_schema::flags f,
+                         ::xml_schema::container* c)
+: ::xml_schema::string (v, f, c)
+{
+}
+
+ParallelizationStrategy& ParallelizationStrategy::
+operator= (value v)
+{
+  static_cast< ::xml_schema::string& > (*this) = 
+  ::xml_schema::string (_xsd_ParallelizationStrategy_literals_[v]);
+
+  return *this;
+}
 
 
 // ThermostatConfig
@@ -3183,6 +3258,7 @@ Molecules (const OutputFileName_type& OutputFileName,
 : ::xml_schema::type (),
   OutputFileName_ (OutputFileName, this),
   OutputFrequency_ (OutputFrequency, this),
+  ParallelizationStrategy_ (this),
   ThermostatConfig_ (this),
   GravityConfig_ (this),
   model_ (model, this),
@@ -3201,6 +3277,7 @@ Molecules (const OutputFileName_type& OutputFileName,
 : ::xml_schema::type (),
   OutputFileName_ (OutputFileName, this),
   OutputFrequency_ (OutputFrequency, this),
+  ParallelizationStrategy_ (this),
   ThermostatConfig_ (this),
   GravityConfig_ (this),
   model_ (std::move (model), this),
@@ -3219,6 +3296,7 @@ Molecules (const Molecules& x,
 : ::xml_schema::type (x, f, c),
   OutputFileName_ (x.OutputFileName_, f, this),
   OutputFrequency_ (x.OutputFrequency_, f, this),
+  ParallelizationStrategy_ (x.ParallelizationStrategy_, f, this),
   ThermostatConfig_ (x.ThermostatConfig_, f, this),
   GravityConfig_ (x.GravityConfig_, f, this),
   model_ (x.model_, f, this),
@@ -3237,6 +3315,7 @@ Molecules (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   OutputFileName_ (this),
   OutputFrequency_ (this),
+  ParallelizationStrategy_ (this),
   ThermostatConfig_ (this),
   GravityConfig_ (this),
   model_ (this),
@@ -3287,6 +3366,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!OutputFrequency_.present ())
       {
         this->OutputFrequency_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // ParallelizationStrategy
+    //
+    if (n.name () == "ParallelizationStrategy" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< ParallelizationStrategy_type > r (
+        ParallelizationStrategy_traits::create (i, f, this));
+
+      if (!this->ParallelizationStrategy_)
+      {
+        this->ParallelizationStrategy_.set (::std::move (r));
         continue;
       }
     }
@@ -3443,6 +3536,7 @@ operator= (const Molecules& x)
     static_cast< ::xml_schema::type& > (*this) = x;
     this->OutputFileName_ = x.OutputFileName_;
     this->OutputFrequency_ = x.OutputFrequency_;
+    this->ParallelizationStrategy_ = x.ParallelizationStrategy_;
     this->ThermostatConfig_ = x.ThermostatConfig_;
     this->GravityConfig_ = x.GravityConfig_;
     this->model_ = x.model_;
@@ -3586,6 +3680,76 @@ OutputFrequency::
 ~OutputFrequency ()
 {
 }
+
+// ParallelizationStrategy
+//
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ::xercesc::DOMElement& e,
+                         ::xml_schema::flags f,
+                         ::xml_schema::container* c)
+: ::xml_schema::string (e, f, c)
+{
+  _xsd_ParallelizationStrategy_convert ();
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ::xercesc::DOMAttr& a,
+                         ::xml_schema::flags f,
+                         ::xml_schema::container* c)
+: ::xml_schema::string (a, f, c)
+{
+  _xsd_ParallelizationStrategy_convert ();
+}
+
+ParallelizationStrategy::
+ParallelizationStrategy (const ::std::string& s,
+                         const ::xercesc::DOMElement* e,
+                         ::xml_schema::flags f,
+                         ::xml_schema::container* c)
+: ::xml_schema::string (s, e, f, c)
+{
+  _xsd_ParallelizationStrategy_convert ();
+}
+
+ParallelizationStrategy* ParallelizationStrategy::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ParallelizationStrategy (*this, f, c);
+}
+
+ParallelizationStrategy::value ParallelizationStrategy::
+_xsd_ParallelizationStrategy_convert () const
+{
+  ::xsd::cxx::tree::enum_comparator< char > c (_xsd_ParallelizationStrategy_literals_);
+  const value* i (::std::lower_bound (
+                    _xsd_ParallelizationStrategy_indexes_,
+                    _xsd_ParallelizationStrategy_indexes_ + 2,
+                    *this,
+                    c));
+
+  if (i == _xsd_ParallelizationStrategy_indexes_ + 2 || _xsd_ParallelizationStrategy_literals_[*i] != *this)
+  {
+    throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
+  }
+
+  return *i;
+}
+
+const char* const ParallelizationStrategy::
+_xsd_ParallelizationStrategy_literals_[2] =
+{
+  "Naive",
+  "Sophisticated"
+};
+
+const ParallelizationStrategy::value ParallelizationStrategy::
+_xsd_ParallelizationStrategy_indexes_[2] =
+{
+  ::ParallelizationStrategy::Naive,
+  ::ParallelizationStrategy::Sophisticated
+};
 
 // ThermostatConfig
 //
@@ -9682,6 +9846,18 @@ operator<< (::xercesc::DOMElement& e, const Molecules& i)
     s << i.OutputFrequency ();
   }
 
+  // ParallelizationStrategy
+  //
+  if (i.ParallelizationStrategy ())
+  {
+    ::xercesc::DOMElement& s (
+      ::xsd::cxx::xml::dom::create_element (
+        "ParallelizationStrategy",
+        e));
+
+    s << *i.ParallelizationStrategy ();
+  }
+
   // ThermostatConfig
   //
   if (i.ThermostatConfig ())
@@ -9814,6 +9990,25 @@ operator<< (::xml_schema::list_stream& l,
             const OutputFrequency& i)
 {
   l << static_cast< const ::xsd::cxx::tree::fundamental_base< ::xml_schema::integer, char, ::xml_schema::simple_type >& > (i);
+}
+
+void
+operator<< (::xercesc::DOMElement& e, const ParallelizationStrategy& i)
+{
+  e << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xercesc::DOMAttr& a, const ParallelizationStrategy& i)
+{
+  a << static_cast< const ::xml_schema::string& > (i);
+}
+
+void
+operator<< (::xml_schema::list_stream& l,
+            const ParallelizationStrategy& i)
+{
+  l << static_cast< const ::xml_schema::string& > (i);
 }
 
 void

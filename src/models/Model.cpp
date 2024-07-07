@@ -40,7 +40,7 @@ void Model::updatePositions() const {
 void Model::updateVelocities() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
         if(!p.isFixed()) {
-            p.setV(p.getV() + (deltaT / (2 * p.getM())) * (p.getOldF() + p.getF()));
+            p.setV(p.getV() + (deltaT / (2.0 * p.getM())) * (p.getOldF() + p.getF()));
         }
     });
 }

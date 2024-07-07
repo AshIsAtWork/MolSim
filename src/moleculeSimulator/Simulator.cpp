@@ -60,8 +60,10 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                                                   outputFormat,
                                                   simulationSettings.parametersLinkedCells.boundaryConditions,
                                                   simulationSettings.gravityOn,
-                                                  simulationSettings.gravityVector, simulationSettings.membraneParameters);
-            x_length = simulationSettings.parametersLinkedCells.domainSize[0];
+                                                  simulationSettings.gravityVector,
+                                                  simulationSettings.membraneParameters,
+                                                  simulationSettings.parallelizationStrategy);
+            domainSize = simulationSettings.parametersLinkedCells.domainSize;
         }
         break;
         default: {
@@ -76,21 +78,22 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
         applyScalingGradually = simulationSettings.thermostatParameters.applyScalingGradually;
         nThermostat = simulationSettings.thermostatParameters.applyAfterHowManySteps;
         initialiseSystemWithBrownianMotion = simulationSettings.thermostatParameters.initialiseSystemWithBrownianMotion;
-        if(simulationSettings.thermostatParameters.typeOfThermostat == TypeOfThermostat::defaultThermostat) {
-            thermostat = std::make_unique<DefaultThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
-                                                 simulationSettings.thermostatParameters.targetTemperature,
-                                                 simulationSettings.thermostatParameters.maxTemperatureChange,
-                                                 simulationSettings.thermostatParameters.dimensions);
+        if (simulationSettings.thermostatParameters.typeOfThermostat == TypeOfThermostat::defaultThermostat) {
+            thermostat = std::make_unique<DefaultThermostat>(
+                *model, simulationSettings.thermostatParameters.initialTemperature,
+                simulationSettings.thermostatParameters.targetTemperature,
+                simulationSettings.thermostatParameters.maxTemperatureChange,
+                simulationSettings.thermostatParameters.dimensions);
             computeProfiles = false;
-        }else {
-            thermostat = std::make_unique<FlowThermostat>(*model, simulationSettings.thermostatParameters.initialTemperature,
-                                                 simulationSettings.thermostatParameters.targetTemperature,
-                                                 simulationSettings.thermostatParameters.maxTemperatureChange,
-                                                 simulationSettings.thermostatParameters.dimensions);
+        } else {
+            thermostat = std::make_unique<FlowThermostat>(
+                *model, simulationSettings.thermostatParameters.initialTemperature,
+                simulationSettings.thermostatParameters.targetTemperature,
+                simulationSettings.thermostatParameters.maxTemperatureChange,
+                simulationSettings.thermostatParameters.dimensions);
             computeProfiles = true;
             statistics = std::make_unique<Statistics>(50);
         }
-
     } else {
         applyScalingGradually = false;
         nThermostat = INT32_MAX;
@@ -102,7 +105,7 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
 
     //Particles
     for (auto pT: simulationSettings.particles) {
-        Particle p{pT.x, pT.v, pT.m, 1,pT.epsilon, pT.sigma};
+        Particle p{pT.x, pT.v, pT.m, 1, pT.epsilon, pT.sigma};
         model->addParticle(p);
     }
     //Cuboids
@@ -149,7 +152,7 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
     initialiseSystemWithBrownianMotion = false;
     totalMoleculeUpdates = 0;
     computeProfiles = false;
-    x_length = 0;
+    domainSize = {0, 0, 0};
 }
 
 void Simulator::run(bool benchmark) {
@@ -171,15 +174,14 @@ void Simulator::run(bool benchmark) {
 
 
     while (current_time < endT) {
-
         //Count, how much molecules will be updated in total.
-        if(benchmark) {
+        if (benchmark) {
             totalMoleculeUpdates += model->getParticles().size();
         }
 
         //Compute profiles if specified
-        if(computeProfiles && iteration % 10000 == 0) {
-            statistics->calculateVelocityAndDensityProfile(model->getParticles(),x_length,current_time);
+        if (!benchmark && computeProfiles && iteration % 10000 == 0) {
+            statistics->calculateVelocityAndDensityProfile(model->getParticles(), domainSize, current_time);
         }
 
         //Do one simulation step
@@ -198,7 +200,7 @@ void Simulator::run(bool benchmark) {
         if (!benchmark && iteration % outputFrequency == 0) {
             model->plot(iteration, outputFileBaseName);
         }
-        if(iteration % 1000 == 0) {
+        if (iteration % 1000 == 0) {
             spdlog::info("Iteration {} finished.", iteration);
         }
         current_time += deltaT;
@@ -208,7 +210,7 @@ void Simulator::run(bool benchmark) {
 
 void Simulator::loadState(std::string &pathToMolecules) {
     size_t particlesBefore = model->getParticles().size();
-    model->addViaFile(pathToMolecules,FileHandler::inputFormat::txt);
+    model->addViaFile(pathToMolecules, FileHandler::inputFormat::txt);
     spdlog::info("Loaded {} molecules into the simulation", model->getParticles().size() - particlesBefore);
 }
 

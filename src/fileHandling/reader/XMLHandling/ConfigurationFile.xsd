@@ -23,6 +23,15 @@
                     </xs:simpleType>
                 </xs:element>
 
+                <xs:element minOccurs="0" maxOccurs="1" name="ParallelizationStrategy">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Naive"/>
+                            <xs:enumeration value="Sophisticated"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+
                 <xs:element minOccurs="0" maxOccurs="1" name="ThermostatConfig">
 
                     <xs:complexType mixed="true">

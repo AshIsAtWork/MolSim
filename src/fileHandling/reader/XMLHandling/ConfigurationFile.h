@@ -619,6 +619,7 @@ namespace xml_schema
 class Molecules;
 class OutputFileName;
 class OutputFrequency;
+class ParallelizationStrategy;
 class ThermostatConfig;
 class GravityConfig;
 class model;
@@ -808,6 +809,82 @@ class Molecules: public ::xml_schema::type
    */
   void
   OutputFrequency (::std::unique_ptr< OutputFrequency_type > p);
+
+  //@}
+
+  /**
+   * @name ParallelizationStrategy
+   *
+   * @brief Accessor and modifier functions for the %ParallelizationStrategy
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::ParallelizationStrategy ParallelizationStrategy_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< ParallelizationStrategy_type > ParallelizationStrategy_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< ParallelizationStrategy_type, char > ParallelizationStrategy_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const ParallelizationStrategy_optional&
+  ParallelizationStrategy () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  ParallelizationStrategy_optional&
+  ParallelizationStrategy ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  ParallelizationStrategy (const ParallelizationStrategy_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  ParallelizationStrategy (const ParallelizationStrategy_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  ParallelizationStrategy (::std::unique_ptr< ParallelizationStrategy_type > p);
 
   //@}
 
@@ -1498,6 +1575,7 @@ class Molecules: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< OutputFileName_type > OutputFileName_;
   ::xsd::cxx::tree::one< OutputFrequency_type > OutputFrequency_;
+  ParallelizationStrategy_optional ParallelizationStrategy_;
   ThermostatConfig_optional ThermostatConfig_;
   GravityConfig_optional GravityConfig_;
   ::xsd::cxx::tree::one< model_type > model_;
@@ -1714,6 +1792,151 @@ class OutputFrequency: public ::xsd::cxx::tree::fundamental_base< ::xml_schema::
    */
   virtual 
   ~OutputFrequency ();
+};
+
+/**
+ * @brief Enumeration class corresponding to the %ParallelizationStrategy
+ * schema type.
+ */
+class ParallelizationStrategy: public ::xml_schema::string
+{
+  public:
+
+  /**
+   * @brief Underlying enum type.
+   */
+  enum value
+  {
+    Naive,
+    Sophisticated
+  };
+
+  /**
+   * @brief Create an instance from the underlying enum value.
+   *
+   * @param v A enum value.
+   */
+  ParallelizationStrategy (value v);
+
+  /**
+   * @brief Create an instance from a C string.
+   *
+   * @param v A string value.
+   */
+  ParallelizationStrategy (const char* v);
+
+  /**
+   * @brief Create an instance from a string.
+   *
+   * @param v A string value.
+   */
+  ParallelizationStrategy (const ::std::string& v);
+
+  /**
+   * @brief Create an instance from the base value.
+   *
+   * @param v A base value.
+   */
+  ParallelizationStrategy (const ::xml_schema::string& v);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ParallelizationStrategy (const ::xercesc::DOMElement& e,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a DOM attribute.
+   *
+   * @param a A DOM attribute to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ParallelizationStrategy (const ::xercesc::DOMAttr& a,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a string fragment.
+   *
+   * @param s A string fragment to extract the data from.
+   * @param e A pointer to DOM element containing the string fragment.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  ParallelizationStrategy (const ::std::string& s,
+                           const ::xercesc::DOMElement* e,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  ParallelizationStrategy (const ParallelizationStrategy& x,
+                           ::xml_schema::flags f = 0,
+                           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual ParallelizationStrategy*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  /**
+   * @brief Assign the underlying enum value.
+   *
+   * @param v A enum value.
+   * @return A reference to the instance.
+   */
+  ParallelizationStrategy&
+  operator= (value v);
+
+  /**
+   * @brief Implicit conversion operator to the underlying
+   * enum value.
+   *
+   * @return A enum value.
+   */
+  virtual
+  operator value () const
+  {
+    return _xsd_ParallelizationStrategy_convert ();
+  }
+
+  //@cond
+
+  protected:
+  value
+  _xsd_ParallelizationStrategy_convert () const;
+
+  public:
+  static const char* const _xsd_ParallelizationStrategy_literals_[2];
+  static const value _xsd_ParallelizationStrategy_indexes_[2];
+
+  //@endcond
 };
 
 /**
@@ -13535,6 +13758,16 @@ operator<< (::xercesc::DOMAttr&, const OutputFrequency&);
 void
 operator<< (::xml_schema::list_stream&,
             const OutputFrequency&);
+
+void
+operator<< (::xercesc::DOMElement&, const ParallelizationStrategy&);
+
+void
+operator<< (::xercesc::DOMAttr&, const ParallelizationStrategy&);
+
+void
+operator<< (::xml_schema::list_stream&,
+            const ParallelizationStrategy&);
 
 void
 operator<< (::xercesc::DOMElement&, const ThermostatConfig&);

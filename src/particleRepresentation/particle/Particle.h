@@ -196,6 +196,11 @@ public:
     bool operator==(Particle &other) const;
 
     [[nodiscard]] std::string toString() const;
+
+    /**
+     * @brief Reset Id for testing purposes.
+     */
+    static void resetID();
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

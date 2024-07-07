@@ -154,6 +154,10 @@ std::string Particle::toString() const {
     return stream.str();
 }
 
+void Particle::resetID() {
+    nextId = 1;
+}
+
 bool Particle::operator==(Particle &other) const {
     return (x == other.x) && (v == other.v) && (f == other.f) &&
            (type == other.type) && (m == other.m) && (old_f == other.old_f) &&

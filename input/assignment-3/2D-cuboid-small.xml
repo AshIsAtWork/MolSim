@@ -2,7 +2,7 @@
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
-    <OutputFileName>Collision</OutputFileName>
+    <OutputFileName>CollisionTwo</OutputFileName>
     <OutputFrequency>50</OutputFrequency>
     <model>
         <Name>LinkedCells</Name>

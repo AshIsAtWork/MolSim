@@ -194,6 +194,7 @@ TEST(LinkedCellsTest, Periodic_PostionUpdates) {
 
 
 TEST(LinkedCellsTest, Periodic_Force_Calculation) {
+    FileHandler file_handler;
     LeonardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
@@ -219,7 +220,7 @@ TEST(LinkedCellsTest, Periodic_Force_Calculation) {
 
     linkedCellModel.updateForces();
     std::string testName = "TestPeriodic";
-    while (current_time < 5) {
+    while (current_time < 10){
         linkedCellModel.getParticles().applyToEachParticle([](Particle& p) {
             //Y and Z coordinates should not change for both particles:
             ASSERT_TRUE(p.getX()[1] == 4.5);
@@ -235,6 +236,9 @@ TEST(LinkedCellsTest, Periodic_Force_Calculation) {
 
         });
         linkedCellModel.step(1);
+        if(iteration % 100 == 0) {
+            file_handler.writeToFile(linkedCellModel.getParticles(),iteration,FileHandler::outputFormat::vtk,testName);
+        }
         iteration++;
         current_time += 0.0005;
     }
