@@ -3,7 +3,7 @@
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>NanoScaleFlow</OutputFileName>
-    <OutputFrequency>10000</OutputFrequency>
+    <OutputFrequency>100</OutputFrequency>
     <ParallelizationStrategy>Sophisticated</ParallelizationStrategy>
     <ThermostatConfig>
         <Type>Flow</Type>
