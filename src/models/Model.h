@@ -119,6 +119,24 @@ public:
                  double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
+    * @brief Add a 3D sphere structure to this model.
+    *
+    * @param center The coordinates of the center of the disc.
+    * @param initVelocity Initial velocity of the of the particles.
+    * @param N Number of particles along the radius, including the particle in the center.
+    * @param h Distance of the particles (mesh width of the grid).
+    * @param mass Mass of one particle.
+    * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
+    * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+    * @param epsilon Leonard Jones parameter epsilon
+    * @param sigma Leonard Jones parameter sigma
+    * @param fixed Fix particles.
+    */
+    void addSphere(const std::array<double, 3> &center, const std::array<double, 3> &initVelocity, int N, double h,
+                   double mass, int dimensions, double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1,
+                   bool fixed = false);
+
+    /**
      * @brief Add a single particle to this model.
      *
      * @param p Particle to add to this model.
@@ -134,9 +152,9 @@ public:
      */
     void addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat);
 
-   /**
-    * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
-    */
+    /**
+     * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
+     */
 
     void saveState();
 

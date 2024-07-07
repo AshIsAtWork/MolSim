@@ -120,6 +120,12 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                        disc.brownianMotionAverageVelocity, disc.epsilon, disc.sigma, disc.fixed);
     }
 
+    //Spheres
+    for (auto sphere: simulationSettings.spheres) {
+        model->addSphere(sphere.center, sphere.initVelocity, sphere.N, sphere.h, sphere.mass, sphere.dimensionsBrownianMotion,
+                       sphere.brownianMotionAverageVelocity, sphere.epsilon, sphere.sigma, sphere.fixed);
+    }
+
     totalMoleculeUpdates = 0;
 }
 
