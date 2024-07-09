@@ -19,11 +19,89 @@ Members:
 
 ---
 
-## Task 2: Parallelization ##
+## Task 2: Parallelization ##   
+**1. Introduction**   
+Changing from two-dimensional scenarios to three-dimensional scenarios comes along with a surge on required computation time as the number of molecules increases exponentially. A square with 10 molecules in each dimension comprises 100 molecules. A cuboid with 100 molecules in each dimension comprises 1000 molecules. As the Linked Cell algorithm locally exhibits a quadratic running time in the number of molecules, the computational effort increases dramatically.Because from an algorithmic perspective we cannot improve the asymptotic running time any further the only way to end up with acceptable running times is parallelization. Nevertheless, parallelization will only speed up the program by a constant factor, in the perfect case by the number of cores we have available. Therefore, simulating huge scenarios is still not possible if waiting centuries for the result is no option for you.   
+
+**2. Setup**   
+In this course we are using the OpenMP API for parallelization for it is comparably easy to get started with and to include it in your project. OpenMP parallelizes programs by distributing the work of loops (as evenly as possible) on multiple threads. This is achieved by defining parallel regions using #pragma directives.   
+
+To add OpenMP to you our project we just needed to add three lines to our `CMakeLists.txt` file:   
+
+1. Searching for the package: `find_package(OpenMP)`
+2. If the package is found, link it to our project target MolSim: `target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)`   
+
+If you do not want to use any parallelization, it is still possible to use our program without OpenMP. All code that depends on this library is nested in precompiler statements and ignored if OpenMP is not available. To install OpenMP on your Linux machine, have a look at our [Readme](../../README.md).   
+
+**3. Parallelization Strategies**   
+As required we developed two different parallelization strategies which can be selected through the xml input file. An example you can find [here](../../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml). For reasons of backward compatability, specifying the parallelization strategy is optional. If it is left out, the program will run sequentially. If specified, there are three possible values:
+* `None`: No parallelization, program will run sequentially.
+* `Naive`: Use parallelization, the naive scheduling is used.
+* `Sophisticated`: Use parallelization, the sophisticated scheduling is used. 
+
+Both strategies parallelize the main part of the force calculation happening in the function `applyToAllUniquePairsInDomain` as profiling shows that the program spends over 90% of the time in this part of the program. Furthermore, we have parallelized the velocity and position updates, not because they are contributing a lot to the overall running time of the program but because its parallelization is quite easy as all iterations in the loop are independent and have equal costs. Therefore, a single OpenMP directive does the job. What also would have made sense to parallelize is the force calculation part of the periodic boundary condition. However, we decided against it because our current code structure does not provide an elegant solution to parallelize the function `applyForcesFromOppositeSide` in the class [LinkedCellContainer](../../src/particleRepresentation/container/linkedCellsContainer/LinkedCellsContainer.h), without losing the option to turn parallelization off which is required. Because this function comprises a lot of code, we did not want to copy it and have one parallel and one non-parallel version as we have done it for all other functions, we parallelized, being by far not that complex.   
+
+Parallelizing the function `applyToAllUniquePairsInDomain` is not as simple as it seems at the first glance, because iterations are not independent. Therefore, adding just one OpenMP directive would lead to race conditions. One race condition that could happen is when two threads are processing the same cell and are updating the force of the same molecule simultaneously. The following order of operations could happen:   
+
+1. Thread 1 reads the force of molecule 1.
+2. Thread 2 reads the force of molecule 1.
+3. Thread 1 adds the new calculated force to the force value it has read.  
+4. Thread 2 adds the new calculated force to the force value it has read. 
+5. Thread 1 updates the force of molecule 1.
+6. Thread 2 updates the force of molecule 1.
+
+The problem is here that the force that thread 1 has calculated is lost, because thread 2 works with an outdated force value. We have to avoid somehow that threads update the same molecule simultaneously. We had two ideas to prevent this:   
+
+1. Make access to each molecule exclusive. 
+2. Make access to each cell exclusive.   
+
+As big simulations contain a lot of molecules, assigning a lock to each molecule would be too much overhead. Better is option two and prevent threads operating on the same cells simultaneously. Making access to each cell exclusive is a good trade-off between the number of required locks and the goal to assign as least resources as possible exclusively to one thread. Of course, in a perfect world, the work is distributed over all threads in such a way that at no time two threads want to access the same exclusive resource. This is exactly what we are trying to achieve with our second parallelization strategy.
+
+Maybe first a few words how the work is assigned to each thread. This happens in the method `applyToAllUniquePairsInDomainParallelHelper` in the class LinkedCellContainer. The shared variable `nextCellToSchedule` keeps track of the index of the vector that contains the schedule prescribing the order in which the cells should be processed. As all available threads execute this code concurrently, the access to this shared variable has to be synchronized, so that no cell is processed twice. The processing of one cell consists of processing the cell itself and all neighbors that this cell owns. Therefore, the work is distributed dynamically to whatever thread that is idle. This approach ensures that the work is distributed over all threads more or less evenly even if the particle distribution is inhomogeneous. A disadvantage of dynamic scheduling compared to a static assignment of the work is that it has a little overhead at runtime because it requires additional synchronization. Nevertheless, we think it being the right approach as a static distribution only makes sense when the cost of processing each cell is almost identical, which is definitely not the case when particles are concentrated on only a tiny fraction of all available cells. A few last words why we did not use the scheduling provided by OpenMP but did it implement it by ourselves. OpenMPs scheduler is more efficient than our approach, but as we want to compare two different schedules, we want to have full control over the scheduling to make the comparison as meaningful as possible and not only assume what happens under the hood of OpenMP.   
+
+The first schedule used by our first parallelizing strategy we called `naive`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 1000 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times: 
+
 
 ---
 
-## Task 3: Rayleigh-Taylor instability in 3D ##
+## Task 3: Rayleigh-Taylor instability in 3D ##   
+
+**1. Introduction**   
+This simulation is by now the largest one we ever conducted. The two liquids comprise overall 100.000 molecules. It is startling how fast the number of molecules grows when you add an additional dimension and conduct the simulation in 3D. Before running the simulation we parallelized the main force calculation loop which speed up our program a lot. Nevertheless, the calculation of forces occurring at periodic boundaries is in 3D computational-heavy as well, because there are existing much more boundary cells. At the time at which we ran the simulation the calculation of periodic boundaries was still sequential, which lead to a long running-time of about 20 hours on our Linux machine with an Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz processor with 4 cores.
+
+**2. Implementation**    
+As we already implemented periodic boundaries in three dimensions as part of the last worksheet, there was nothing to do except creating the scenario and execute it. Information on the implementation of periodic boundaries (especially in 3D) can be found in the [previous report](../assignment-4/Report.md).   
+
+**3. Experiment**   
+Let's see the results of the simulation:    
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-around; ">
+    <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/RTI3D-1.png">
+      [1] Starting point of the simulation.
+    </div>
+    <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/RTI3D-2.png">
+      [2] The first signs of the Rayleigh-Taylor instability become visible as the lighter liquid pushes the heavier liquid.
+    </div>
+   <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/RTI3D-3.png">
+      [3] Some molecules of the lighter liquid have finally traversed the heavier liquid and reached the top.
+   </div>
+   <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/RTI3D-4.png">
+      [4] End of the simulation: Both liquids have almost swapped their positions.
+   </div>
+</div>
+
+* If you want to watch the video of the simulation, click [here](Rayleigh-Taylor-Instability-3D.mp4).
+
+* If you want to run the simulation on your own machine (takes a really long time), change into your build folder and run:
+  ```bash
+  OMP_NUM_THREADS=<#threads> ./MolSim -f ../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml -i xml
+  ``` 
+  ,where `<#threads>` is the number of threads you want to use.
+
 
 ## Task 4: Nano-scale flow simulation (Option A) ##
 

@@ -93,6 +93,10 @@ public:
     void updateForcesParallelSophisticated();
 
     void updateForcesParallelNaive();
+
+    void updateVelocitiesParallel();
+
+    void updatePositionsParallel();
 #endif
 
 

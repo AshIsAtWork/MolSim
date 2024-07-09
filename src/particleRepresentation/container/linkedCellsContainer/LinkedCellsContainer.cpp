@@ -883,6 +883,10 @@ void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(
     }
 }
 
+#ifdef _OPENMP
+
+#endif
+
 void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) {
     for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
@@ -909,6 +913,15 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 }
 
 #ifdef _OPENMP
+
+void LinkedCellsContainer::applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function) {
+#pragma omp parallel for schedule(static)
+    for (auto &cellGroup: domainCellIterationScheme) {
+        for (auto &p: cells[cellGroup[0]]) {
+            function(p);
+        }
+    }
+}
 
 void LinkedCellsContainer::
 applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling) {

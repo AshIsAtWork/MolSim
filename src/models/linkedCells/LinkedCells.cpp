@@ -190,8 +190,14 @@ void LinkedCells::step(int iteration) {
         applyGravity();
     }
     processBoundaryForces();
-    updateVelocities();
-    updatePositions();
+    if(parallelizationStrategy != ParallelizationStrategy::none) {
+        updateVelocitiesParallel();
+        updatePositionsParallel();
+    }
+    else {
+        updateVelocities();
+        updatePositions();
+    }
     particles.updateCells();
     processHaloCells();
 }
@@ -245,6 +251,22 @@ void LinkedCells::updateForcesParallelNaive() {
         }
         if (!p_j.isFixed()) {
             p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::updateVelocitiesParallel() {
+    particles.applyToEachParticleInDomainParallel([this](Particle &p) {
+        if (!p.isFixed()) {
+            p.setV(p.getV() + (deltaT / (2.0 * p.getM())) * (p.getOldF() + p.getF()));
+        }
+    });
+}
+
+void LinkedCells::updatePositionsParallel() {
+    particles.applyToEachParticleInDomainParallel([this](Particle &p) {
+        if (!p.isFixed()) {
+            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
         }
     });
 }
