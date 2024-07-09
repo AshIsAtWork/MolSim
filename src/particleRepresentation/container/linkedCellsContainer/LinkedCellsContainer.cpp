@@ -1023,7 +1023,7 @@ void LinkedCellsContainer::applyToAllBoundaryParticles(
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
         for (auto &p: cells[cell]) {
             double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
-            double threshold = pow(2.0, 1.0 / 6.0) * p.getSigma();
+            double threshold = 0.5 * pow(2.0, 1.0 / 6.0) * p.getSigma();
             if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
                 auto ghostPosition = calcGhostParticle(p, boundary);
                 function(p, ghostPosition);

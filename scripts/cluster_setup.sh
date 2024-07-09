@@ -131,11 +131,15 @@ else
 fi
 
 # Load the necessary modules
+
+module unload intel-mpi
+module load openmpi/4.1.2-gcc11
 module load slurm_setup
 module load cmake/3.21.4
 module load gcc/11.2.0
 module load boost/1.75.0-gcc11
 module load xerces-c/3.2.1
+module load
 
 # List all the loaded modules
 module list

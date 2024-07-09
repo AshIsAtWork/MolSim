@@ -33,7 +33,7 @@ void Model::updateForces() const {
 void Model::updatePositions() const {
     particles.applyToEachParticleInDomain([this](Particle &p) {
         if (!p.isFixed()) {
-            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
+            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getF());
         }
     });
 }

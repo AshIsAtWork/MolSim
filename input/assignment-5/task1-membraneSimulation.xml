@@ -7,12 +7,12 @@
     <GravityConfig>
         <X>0</X>
         <Y>0</Y>
-        <Z>-0.006</Z>
+        <Z>-0.001</Z>
     </GravityConfig>
     <model>
         <Name>LinkedCells</Name>
         <t_end>500</t_end>
-        <delta_t>0.001</delta_t>
+        <delta_t>0.01</delta_t>
         <force>LeonardJonesForce</force>
         <DomainSize>
             <First>148</First>
@@ -33,11 +33,11 @@
     </model>
     <Membrane>
         <Pull>true</Pull>
-        <PullingActiveUntil>150000</PullingActiveUntil>
+        <PullingActiveUntil>15000</PullingActiveUntil>
         <PullingForce>
             <X>0</X>
             <Y>0</Y>
-            <Z>7</Z>
+            <Z>0.8</Z>
         </PullingForce>
         <r0>2.2</r0>
         <k>300</k>
