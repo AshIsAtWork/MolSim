@@ -30,10 +30,11 @@ function display_help() {
     echo
     echo "Parameters:"
     echo -e "${YELLOW}NAME${NC}              The name of the job"
-    echo -e "${YELLOW}CLUSTER${NC}            Possible values: serial or inter"
+    echo -e "${YELLOW}CLUSTER${NC}            Possible values: serial, inter or cm2_tiny"
     echo -e "${YELLOW}PARTITION${NC}          Possible values: serial_std, serial_long, teramem_inter or cm2_tiny"
     echo -e "${YELLOW}MAIL_TYPE${NC}          Possible values: BEGIN, END, FAIL, REQUEUE, ALL or NONE"
     echo -e "${YELLOW}MAIL_USER${NC}          The email address to send the notifications. IMPORTANT: mail cannot be gmail, so use your university email"
+    echo -e "${YELLOW}Nodes${NC}              Number of nodes to use (should be between 1 and 2)"
     echo -e "${YELLOW}CPUS_PER_TASK${NC}      The number of CPUs per task"
     echo -e "${YELLOW}TIME${NC}               The time limit for the job in format \"HH:MM:SS\""
     echo -e "${YELLOW}INPUT_FILE_PATH${NC}    The path to the input file"
@@ -44,7 +45,7 @@ function display_help() {
     echo -e "${YELLOW}OPTIMISATION${NC}       Optional flag -O for optimisation"
     echo
     echo "Example:"
-    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p -O${NC}"
+    echo -e "${YELLOW}  $0 MolSim_Group_A serial serial_std ALL your_university_email@example.com 1 4 02:00:00 ../input/assignment-3/2d-cuboid-collision.xml xml vtk -t -p -O${NC}"
     echo
 }
 
@@ -69,7 +70,7 @@ fi
 
 # Check if the third parameter is either "serial_std", "serial_long" or "teramem_inter"
 if [ "${3}" != "serial_std" ] && [ "${3}" != "serial_long" ] && [ "${3}" != "teramem_inter" ] && [ "${3}" != "cm2_tiny" ]; then
-    echo -e "${RED}Error: The third parameter must be either 'serial_std', 'serial_long' or 'teramem_inter'.${NC}"
+    echo -e "${RED}Error: The third parameter must be either 'serial_std', 'serial_long', 'teramem_inter' or cm2_tiny.${NC}"
     exit 1
 fi
 
@@ -85,26 +86,32 @@ if ! [[ "${6}" =~ ^[0-9]+$ ]]; then
     exit 1
 fi
 
-# Check if the seventh parameter is in format "HH:MM:SS"
-if ! [[ "${7}" =~ ^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]$ ]]; then
+# Check if the seventh parameter is a number
+if ! [[ "${7}" =~ ^[0-9]+$ ]]; then
+    echo -e "${RED}Error: The sixth parameter must be a number.${NC}"
+    exit 1
+fi
+
+# Check if the ninth parameter is in format "HH:MM:SS"
+if ! [[ "${9}" =~ ^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]$ ]]; then
     echo -e "${RED}Error: The seventh parameter must be in format 'HH:MM:SS'.${NC}"
     exit 1
 fi
 
-# Check if the ninth parameter is a valid file format
-if [ "${9}" != "xml" ] && [ "${8}" != "txt" ]; then
+# Check if the tenth parameter is a valid file format
+if [ "${10}" != "xml" ] && [ "${8}" != "txt" ]; then
     echo -e "${RED}Error: The ninth parameter must be either 'xml' or 'txt'.${NC}"
     exit 1
 fi
 
-# Check if the tenth parameter is a valid file format
-if [ "${10}" != "xyz" ] && [ "${10}" != "vtk" ]; then
+# Check if the eleventh parameter is a valid file format
+if [ "${11}" != "xyz" ] && [ "${10}" != "vtk" ]; then
     echo -e "${RED}Error: The tenth parameter must be either 'xyz' or 'vtk'.${NC}"
     exit 1
 fi
 
 # Check if the user provided the optional flags for benchmarking
-if [ "${11}" == "-t" ] || [ "${12}" == "-t" ] || [ "${13}" == "-t" ]; then
+if [ "${12}" == "-t" ] || [ "${13}" == "-t" ] || [ "${14}" == "-t" ]; then
     echo -e "${YELLOW}BENCHMARKING flag is set${NC}"
     FLAG_T="-t"
 else
@@ -113,7 +120,7 @@ else
 fi
 
 # Check if the user provided the optional flags for profiling
-if [ "${11}" == "-p" ] || [ "${12}" == "-p" ] || [ "${13}" == "-p" ]; then
+if [ "${12}" == "-p" ] || [ "${13}" == "-p" ] || [ "${14}" == "-p" ]; then
     echo -e "${YELLOW}PROFILING flag is set${NC}"
     FLAG_P="-DPROFILING=ON"
 else
@@ -122,7 +129,7 @@ else
 fi
 
 # Check if the user provided the optional flags for optimisation
-if [ "${11}" == "-O" ] || [ "${12}" == "-O" ] || [ "${13}" == "-O" ]; then
+if [ "${12}" == "-O" ] || [ "${13}" == "-O" ] || [ "${14}" == "-O" ]; then
     echo -e "${YELLOW}OPTIMISATION flag is set${NC}"
     OPTIMISATION="-DOPTIMISATION=ON"
 else
@@ -139,7 +146,6 @@ module load cmake/3.21.4
 module load gcc/11.2.0
 module load boost/1.75.0-gcc11
 module load xerces-c/3.2.1
-module load
 
 # List all the loaded modules
 module list
@@ -155,11 +161,12 @@ echo -e "${GREEN}CLUSTER: ${YELLOW}${2}${NC}"
 echo -e "${GREEN}PARTITION: ${YELLOW}${3}${NC}"
 echo -e "${GREEN}MAIL_TYPE: ${YELLOW}${4}${NC}"
 echo -e "${GREEN}MAIL_USER: ${YELLOW}${5}${NC}"
-echo -e "${GREEN}CPUS_PER_TASK: ${YELLOW}${6}${NC}"
-echo -e "${GREEN}TIME: ${YELLOW}${7}${NC}"
-echo -e "${GREEN}INPUT_FILE_PATH: ${YELLOW}${8}${NC}"
-echo -e "${GREEN}INPUT_FILE_FORMAT: ${YELLOW}${9}${NC}"
-echo -e "${GREEN}OUTPUT_FILE_FORMAT: ${YELLOW}${10}${NC}"
+echo -e "${GREEN}NUMBER_NODES: ${YELLOW}${6}${NC}"
+echo -e "${GREEN}CPUS_PER_TASK: ${YELLOW}${7}${NC}"
+echo -e "${GREEN}TIME: ${YELLOW}${8}${NC}"
+echo -e "${GREEN}INPUT_FILE_PATH: ${YELLOW}${9}${NC}"
+echo -e "${GREEN}INPUT_FILE_FORMAT: ${YELLOW}${10}${NC}"
+echo -e "${GREEN}OUTPUT_FILE_FORMAT: ${YELLOW}${11}${NC}"
 echo -e "${GREEN}BENCHMARKING: ${YELLOW}${FLAG_T}${NC}"
 echo -e "${GREEN}PROFILING: ${YELLOW}${FLAG_P}${NC}"
 echo -e "${GREEN}OPTIMISATION: ${YELLOW}${OPTIMISATION}${NC}"
@@ -178,12 +185,15 @@ cat <<EOL > cluster_start.cmd
 #SBATCH --partition=${3}
 #SBATCH --mail-type=${4}
 #SBATCH --mail-user=${5}
+#SBATCH --nodes=${6}
 #SBATCH --mem=1000mb
-#SBATCH --cpus-per-task=${6}
+#SBATCH --cpus-per-task=${7}
 #SBATCH --export=NONE
-#SBATCH --time=${7}
+#SBATCH --time=${8}
 
-./MolSim -f ${8} -i ${9} -o ${10} ${FLAG_T}
+export OMP_NUM_THREADS=${7}
+
+./MolSim -f ${9} -i ${10} -o ${11} ${FLAG_T}
 EOL
 
 # Add the benchmarking flag if it was provided
