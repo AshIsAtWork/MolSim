@@ -56,13 +56,13 @@ if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
 fi
 
 # Check if the number of parameters is correct
-if [ "$#" -lt 10 ]; then
-    echo -e "${RED}Error: You need to provide at least 10 parameters.${NC}"
+if [ "$#" -lt 11 ]; then
+    echo -e "${RED}Error: You need to provide at least 11 parameters.${NC}"
     echo -e "${RED}Run the script with -h or --help to see the usage.${NC}"
     exit 1
 fi
 
-# Check if the second parameter is either "serial" or "inter"
+# Check if the second parameter is either "serial", "inter" or cm2_tiny
 if [ "${2}" != "serial" ] && [ "${2}" != "inter" ] && [ "${2}" != "cm2_tiny" ]; then
     echo -e "${RED}Error: The second parameter must be either 'serial' or 'inter'.${NC}"
     exit 1
@@ -88,25 +88,25 @@ fi
 
 # Check if the seventh parameter is a number
 if ! [[ "${7}" =~ ^[0-9]+$ ]]; then
-    echo -e "${RED}Error: The sixth parameter must be a number.${NC}"
+    echo -e "${RED}Error: The seventh parameter must be a number.${NC}"
     exit 1
 fi
 
 # Check if the ninth parameter is in format "HH:MM:SS"
-if ! [[ "${9}" =~ ^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]$ ]]; then
-    echo -e "${RED}Error: The seventh parameter must be in format 'HH:MM:SS'.${NC}"
+if ! [[ "${8}" =~ ^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]$ ]]; then
+    echo -e "${RED}Error: The eighth parameter must be in format 'HH:MM:SS'.${NC}"
     exit 1
 fi
 
 # Check if the tenth parameter is a valid file format
-if [ "${10}" != "xml" ] && [ "${8}" != "txt" ]; then
-    echo -e "${RED}Error: The ninth parameter must be either 'xml' or 'txt'.${NC}"
+if [ "${10}" != "xml" ] && [ "${10}" != "txt" ]; then
+    echo -e "${RED}Error: The tenth parameter must be either 'xml' or 'txt'.${NC}"
     exit 1
 fi
 
 # Check if the eleventh parameter is a valid file format
-if [ "${11}" != "xyz" ] && [ "${10}" != "vtk" ]; then
-    echo -e "${RED}Error: The tenth parameter must be either 'xyz' or 'vtk'.${NC}"
+if [ "${11}" != "xyz" ] && [ "${11}" != "vtk" ]; then
+    echo -e "${RED}Error: The eleventh parameter must be either 'xyz' or 'vtk'.${NC}"
     exit 1
 fi
 
