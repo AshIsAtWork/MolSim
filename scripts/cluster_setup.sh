@@ -63,7 +63,7 @@ if [ "$#" -lt 10 ]; then
 fi
 
 # Check if the second parameter is either "serial" or "inter"
-if [ "${2}" != "serial" ] && [ "${2}" != "inter" ]; then
+if [ "${2}" != "serial" ] && [ "${2}" != "inter" ] && [ "${2}" != "cm2_tiny" ]; then
     echo -e "${RED}Error: The second parameter must be either 'serial' or 'inter'.${NC}"
     exit 1
 fi
