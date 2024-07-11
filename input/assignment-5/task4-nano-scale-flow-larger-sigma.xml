@@ -4,7 +4,7 @@
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>NanoScaleFlow</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
-    <ParallelizationStrategy>Sophisticated</ParallelizationStrategy>
+    <ParallelizationStrategy>Skipping</ParallelizationStrategy>
     <ThermostatConfig>
         <Type>Flow</Type>
         <InitialTemperature>40</InitialTemperature>

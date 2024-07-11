@@ -4,7 +4,7 @@
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>RayleighTaylorThreeD</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
-    <ParallelizationStrategy>Sophisticated</ParallelizationStrategy>
+    <ParallelizationStrategy>Skipping</ParallelizationStrategy>
     <ThermostatConfig>
         <Type>Default</Type>
         <InitialTemperature>40</InitialTemperature>
