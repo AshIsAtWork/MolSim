@@ -97,6 +97,8 @@ public:
     void updateVelocitiesParallel();
 
     void updatePositionsParallel();
+
+    void processBoundaryForcesParallel();
 #endif
 
 

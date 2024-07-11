@@ -434,6 +434,14 @@ bool LinkedCellsContainer::isParticleInDomain(const std::array<double, 3> &posit
 
 void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSource,
                                                       std::array<double, 3> offsetSource) {
+#ifdef _OPENMP
+#pragma omp critical
+    {
+        //Lock target and source cell
+        omp_set_lock(&locks[cellTarget]);
+        omp_set_lock(&locks[cellSource]);
+    }
+#endif
     for (auto &target: cells[cellTarget]) {
         if (!target.isFixed()) {
             for (auto &source: cells[cellSource]) {
@@ -447,6 +455,10 @@ void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSo
             }
         }
     }
+#ifdef _OPENMP
+    omp_unset_lock(&locks[cellTarget]);
+    omp_unset_lock(&locks[cellSource]);
+#endif
 }
 
 LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff,
@@ -883,10 +895,6 @@ void LinkedCellsContainer::applyToEachParticleInDomain(const std::function<void(
     }
 }
 
-#ifdef _OPENMP
-
-#endif
-
 void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<void(Particle &, Particle &)> &function) {
     for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
@@ -1021,6 +1029,10 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
 void LinkedCellsContainer::applyToAllBoundaryParticles(
     const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
     for (auto cell: boundaries[static_cast<int>(boundary)]) {
+#ifdef _OPENMP
+        //Lock cell
+        omp_set_lock(&locks[cell]);
+#endif
         for (auto &p: cells[cell]) {
             double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
             double threshold = 0.5 * pow(2.0, 1.0 / 6.0) * p.getSigma();
@@ -1029,5 +1041,9 @@ void LinkedCellsContainer::applyToAllBoundaryParticles(
                 function(p, ghostPosition);
             }
         }
+#ifdef _OPENMP
+        //Unlock cell
+        omp_unset_lock(&locks[cell]);
+#endif
     }
 }

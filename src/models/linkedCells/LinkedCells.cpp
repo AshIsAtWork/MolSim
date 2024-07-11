@@ -189,7 +189,12 @@ void LinkedCells::step(int iteration) {
     if (gravityOn) {
         applyGravity();
     }
-    processBoundaryForces();
+#ifdef _OPENMP
+    if(parallelizationStrategy == ParallelizationStrategy::none) {
+        processBoundaryForces();
+    }else {
+        processBoundaryForcesParallel();
+    }
     if(parallelizationStrategy != ParallelizationStrategy::none) {
         updateVelocitiesParallel();
         updatePositionsParallel();
@@ -198,6 +203,13 @@ void LinkedCells::step(int iteration) {
         updateVelocities();
         updatePositions();
     }
+#endif
+#ifndef _OPENMP
+    processBoundaryForces();
+    updateVelocities();
+    updatePositions();
+#endif
+
     particles.updateCells();
     processHaloCells();
 }
@@ -271,6 +283,37 @@ void LinkedCells::updatePositionsParallel() {
     });
 }
 
+void LinkedCells::processBoundaryForcesParallel() {
+    //Periodic and reflective boundaries apply forces on the particles
+#pragma omp parallel for schedule(dynamic)
+    for (auto setting: boundarySettings) {
+        switch (setting.second) {
+            case BoundaryCondition::outflow: //Outflow boundaries do not apply forces
+                break;
+            case BoundaryCondition::reflective: {
+                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
+                    //Add force from an imaginary ghost particle to particle p
+                    if (!p.isFixed()) {
+                        Particle ghostParticle = p;
+                        ghostParticle.setX(ghostPosition);
+                        std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
+                        p.setF(p.getF() + ghostForce);
+                    }
+                }, setting.first);
+            };
+            break;
+            case BoundaryCondition::periodic: {
+                //Add forces from particles of adjacent boundary cells from the opposite side.
+                particles.applyForcesFromOppositeSide(setting.first);
+            }
+            break;
+            case BoundaryCondition::invalid: {
+                throw std::invalid_argument("Invalid Boundary Condition was selected.");
+            }
+        }
+    }
+}
+
 #endif
 
 void LinkedCells::initializeForces() {
@@ -295,5 +338,16 @@ void LinkedCells::initializeForces() {
     if (gravityOn) {
         applyGravity();
     }
+#ifdef _OPENMP
+    if(parallelizationStrategy == ParallelizationStrategy::none) {
+        processBoundaryForces();
+
+    }else {
+        processBoundaryForcesParallel();
+    }
+#endif
+#ifndef _OPENMP
     processBoundaryForces();
+#endif
+
 }

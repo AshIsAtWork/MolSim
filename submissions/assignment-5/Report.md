@@ -15,7 +15,57 @@ Members:
 
 ---
 
-## Task 1: Simulation of a membrane ##
+## Task 1: Simulation of a membrane ##   
+**1. Introduction**   
+This task has driven us crazy. After we implemented everything, the simulation exploded always after ca. 1000 iterations. We tried to debug our code for days and weren't able to find the error. Everything seems correct, but there still had to be an error skillfully hiding from us. Asking our supervisor Markus for help was then the only option which was left. Thankfully, Markus found the issue which had nothing to do with the implementation of the membrane itself but with the position updates. This mistake was in our code from week one on, because we interpreted the formula for the position updates that was given on the slides wrongly and used the old force instead of the current one. For simulations only using Lennard-Jones forces this mistake was so small that it was not observable with ParaView. Because the harmonic force acting between adjacent particles in the membrane responds strongly to minor inaccuracies, small errors quickly added up and messed up the simulation. After correcting the error, finally, everything worked as expected.   
+
+**2. Implementation**   
+To simulate a membrane we had to add some new features to our program:
+
+- **Specification of neighbors**   
+In a membrane, each molecule has up to four direct and four diagonal neighbors which have to be stored somehow. To do this, we first assigned to each particle a unique identifier. Additionally, each particle administers two vectors in which all direct and diagonal neighbors are stored. Well, to be accurate, not all neighbors. Because we are still trying to use Newton's third law of motion for force calculations, it is only necessary that only one of two adjacent particles knows that they are neighbors. Therefore, on average, each particle only stores up to two direct and diagonal neighbors saving memory and computation time. All this takes place in the method `generateMembrane` in the class [ParticleGenerator](../../src/moleculeSimulator/particleGeneration/ParticleGenerator.h).   
+
+
+- **Harmonic force**   
+The harmonic force acts between adjacent particles in a membrane. We added this new type of force as new class [HarmonicForce](../../src/moleculeSimulator/forceCalculation/harmonic/HarmonicForce.h) that derives from our abstract base class [Force](../../src/moleculeSimulator/forceCalculation/Force.h) thus being elegantly integrated into our code base. 
+
+
+- **Preventing self-penetration of the membrane**   
+To prevent self-penetration of the membrane that happens when non-adjacent particles come close to each other (e.g. when the membrane folds), we have to apply the reflective part of the Lennard-Jones force to them. Forces within the membrane are handled by the following method: `updateForcesMembrane` in the class [LinkedCells](../../src/models/linkedCells/LinkedCells.h). 
+
+
+- **Pulling chosen particles**   
+To observe the dynamic behaviour of the membrane, we apply a constant pulling force to a subset of the particles. To do this, we added a small routine called `pullMarkedParticles` to our method `updatedForces` in the class [LinkedCells](../../src/models/linkedCells/LinkedCells.h). It iterates over all particles, checks if they are marked and if this is the case applies a constant force to them. We hardcoded which particles should be pulled, because there is no need to change this, and we were too lazy to make this configurable through the xml file. 
+
+**3. The Experiment**   
+Observing the dynamic behaviour of a membrane is fascinating and for us the coolest experiment in this course. It actually looks like a napkin that is lifted from a table.   
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-around; ">
+    <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/Membrane1.png">
+      [1] Starting point of the simulation.
+    </div>
+    <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/Membrane2.png">
+      [2] As four particles are pulled up, the membrane starts folding.
+    </div>
+   <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/Membrane3.png">
+      [3] Turning point. As the pulling stops, gravity starts to pull the membrane down. 
+   </div>
+   <div style="padding-bottom: 50px; text-align: center; width: 45%;">
+      <img src="images/Membrane4.png">
+      [4] End of the simulation: Membrane is about to resume its starting position.
+   </div>
+</div>
+
+The corresponding video can be found [here](Membrane.mp4).   
+
+For reproducing our results, run in your build folder the following command:   
+
+```bash
+./MolSim -f ../input/assignment-5/task1-membraneSimulation.xml -i xml
+```
 
 ---
 
@@ -59,8 +109,18 @@ As big simulations contain a lot of molecules, assigning a lock to each molecule
 
 Maybe first a few words how the work is assigned to each thread. This happens in the method `applyToAllUniquePairsInDomainParallelHelper` in the class LinkedCellContainer. The shared variable `nextCellToSchedule` keeps track of the index of the vector that contains the schedule prescribing the order in which the cells should be processed. As all available threads execute this code concurrently, the access to this shared variable has to be synchronized, so that no cell is processed twice. The processing of one cell consists of processing the cell itself and all neighbors that this cell owns. Therefore, the work is distributed dynamically to whatever thread that is idle. This approach ensures that the work is distributed over all threads more or less evenly even if the particle distribution is inhomogeneous. A disadvantage of dynamic scheduling compared to a static assignment of the work is that it has a little overhead at runtime because it requires additional synchronization. Nevertheless, we think it being the right approach as a static distribution only makes sense when the cost of processing each cell is almost identical, which is definitely not the case when particles are concentrated on only a tiny fraction of all available cells. A few last words why we did not use the scheduling provided by OpenMP but did it implement it by ourselves. OpenMPs scheduler is more efficient than our approach, but as we want to compare two different schedules, we want to have full control over the scheduling to make the comparison as meaningful as possible and not only assume what happens under the hood of OpenMP.   
 
-The first schedule used by our first parallelizing strategy we called `naive`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 1000 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times: 
+The first schedule used by our first parallelizing strategy we called `naive`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 1000 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times:   
 
+| **Number of threads** | **Running time** | **MUps** | **Speed up** |
+|-----------------------|------------------|----------|--------------|
+| 1                     | 36.00s           | 277784   | -            |
+| 2                     |                  |          |              |
+| 4                     |                  |          |              |
+| 8                     |                  |          |              |
+| 14                    |                  |          |              |
+| 16                    |                  |          |              |
+| 28                    |                  |          |              |
+| 56                    |                  |          |              |
 
 ---
 
