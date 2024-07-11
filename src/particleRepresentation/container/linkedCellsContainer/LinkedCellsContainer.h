@@ -330,6 +330,8 @@ public:
      */
 
 #ifdef _OPENMP
+    void applyToAllUniquePairsInDomainParallelReduction(const std::function<void(Particle &, Particle &, int)> &function);
+
     void applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function);
 
     void applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling);

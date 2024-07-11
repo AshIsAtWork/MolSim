@@ -185,6 +185,7 @@ void LinkedCells::step(int iteration) {
 #endif
             default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
         }
+        //updateForcesParallelReduction();
     }
     if (gravityOn) {
         applyGravity();
@@ -226,6 +227,29 @@ void LinkedCells::updateForcesOptimized() {
             p_i.setF(p_i.getF() + f_ij);
             p_j.setF(p_j.getF() - f_ij);
         });
+}
+
+void LinkedCells::updateForcesParallelReduction() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelReduction([this](Particle &p_i, Particle &p_j, int threadId) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.addForceToAccumulator(f_ij, threadId);
+        }
+        if (!p_j.isFixed()) {
+            p_j.subForceFromAccumulator(f_ij, threadId);
+        }
+    });
+    //Sum up force values
+    particles.applyToEachParticleInDomainParallel([](Particle& p) {
+        p.reduceForce();
+    });
 }
 
 #ifdef _OPENMP
@@ -333,7 +357,11 @@ void LinkedCells::initializeForces() {
                 break;
 #endif
             default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
-        }
+       }
+        // particles.applyToEachParticleInDomain([](Particle& p) {
+        //    p.initializeForceAccumulator(4);
+        // });
+        // updateForcesParallelReduction();
     }
     if (gravityOn) {
         applyGravity();

@@ -90,6 +90,8 @@ public:
      */
     void updateForcesOptimized();
 #ifdef _OPENMP
+    void updateForcesParallelReduction();
+
     void updateForcesParallelSophisticated();
 
     void updateForcesParallelNaive();

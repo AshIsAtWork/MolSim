@@ -922,91 +922,18 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
 
 #ifdef _OPENMP
 
-void LinkedCellsContainer::applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function) {
+void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelReduction(
+    const std::function<void(Particle &, Particle &, int)> &function) {
 #pragma omp parallel for schedule(static)
     for (auto &cellGroup: domainCellIterationScheme) {
-        for (auto &p: cells[cellGroup[0]]) {
-            function(p);
-        }
-    }
-}
-
-void LinkedCellsContainer::
-applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling) {
-    size_t nextCellToSchedule = 0;
-    bool goOn = true;
-#pragma omp parallel
-    {
-        size_t currentPosition;
-        while (goOn) {
-#pragma omp critical
-            {
-                if (nextCellToSchedule >= scheduling.size()) {
-                    goOn = false;
-                }
-                currentPosition = nextCellToSchedule++;
-            }
-            if (goOn) {
-                int cellIndex = scheduling[currentPosition];
-
-                //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
-
-                //Lock current cell
-                omp_set_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
-
-                for (auto p_i = cells[domainCellIterationScheme[cellIndex][0]].begin();
-                     p_i != cells[domainCellIterationScheme[cellIndex][0]].end(); std::advance(p_i, 1)) {
-                    for (auto p_j = std::next(p_i); p_j != cells[domainCellIterationScheme[cellIndex][0]].
-                                                    end(); std::advance(p_j, 1)) {
-                        if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
-                            function(*p_i, *p_j);
-                        }
-                    }
-                }
-                //Then, consider all relevant neighbour cells
-
-                for (auto neighbour = domainCellIterationScheme[cellIndex].begin() + 1;
-                     neighbour != domainCellIterationScheme[cellIndex].end(); std::advance(neighbour, 1)) {
-                    //Lock neighbor cell
-                    omp_set_lock(&locks[*neighbour]);
-                    for (auto &p_i: cells[domainCellIterationScheme[cellIndex][0]]) {
-                        for (auto &p_j: cells[*neighbour]) {
-                            if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
-                                function(p_i, p_j);
-                            }
-                        }
-                    }
-                    //Unlock neighbor cell
-                    omp_unset_lock(&locks[*neighbour]);
-                }
-
-                //Unlock current cell
-                omp_unset_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
-            }
-        }
-    }
-}
-
-void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelSophisticated(const std::function<void(Particle &, Particle &)> &function){
-    applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelSophisticated);
-}
-
-void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelNaive(const std::function<void(Particle &, Particle &)> &function){
-    applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelNaive);
-}
-#endif
-
-void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
-    const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function) {
-    for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
-
+        int threadId = omp_get_thread_num();
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
                 auto difference = p_j->getX() - p_i->getX();
                 auto distance = ArrayUtils::L2Norm(difference);
                 if (distance <= rCutOff) {
-                    function(*p_i, *p_j, difference, distance);
+                    function(*p_i, *p_j, threadId);
                 }
             }
         }
@@ -1018,7 +945,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
                     auto difference = p_j.getX() - p_i.getX();
                     auto distance = ArrayUtils::L2Norm(difference);
                     if (distance <= rCutOff) {
-                        function(p_i, p_j, difference, distance);
+                        function(p_i, p_j, threadId);
                     }
                 }
             }
@@ -1026,24 +953,133 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
     }
 }
 
-void LinkedCellsContainer::applyToAllBoundaryParticles(
-    const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
-    for (auto cell: boundaries[static_cast<int>(boundary)]) {
-#ifdef _OPENMP
-        //Lock cell
-        omp_set_lock(&locks[cell]);
-#endif
-        for (auto &p: cells[cell]) {
-            double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
-            double threshold = 0.5 * pow(2.0, 1.0 / 6.0) * p.getSigma();
-            if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
-                auto ghostPosition = calcGhostParticle(p, boundary);
-                function(p, ghostPosition);
+    void LinkedCellsContainer::applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function) {
+#pragma omp parallel for schedule(static)
+        for (auto &cellGroup: domainCellIterationScheme) {
+            for (auto &p: cells[cellGroup[0]]) {
+                function(p);
             }
         }
-#ifdef _OPENMP
-        //Unlock cell
-        omp_unset_lock(&locks[cell]);
-#endif
     }
-}
+
+    void LinkedCellsContainer::
+
+
+            applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function,
+                                                        std::vector<int> &scheduling) {
+        size_t nextCellToSchedule = 0;
+        bool goOn = true;
+#pragma omp parallel
+        {
+            size_t currentPosition;
+            while (goOn) {
+#pragma omp critical
+                {
+                    if (nextCellToSchedule >= scheduling.size()) {
+                        goOn = false;
+                    }
+                    currentPosition = nextCellToSchedule++;
+                }
+                if (goOn) {
+                    int cellIndex = scheduling[currentPosition];
+
+                    //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
+                    //Lock current cell
+                    omp_set_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
+
+                    for (auto p_i = cells[domainCellIterationScheme[cellIndex][0]].begin();
+                         p_i != cells[domainCellIterationScheme[cellIndex][0]].end(); std::advance(p_i, 1)) {
+                        for (auto p_j = std::next(p_i); p_j != cells[domainCellIterationScheme[cellIndex][0]].
+                                                        end(); std::advance(p_j, 1)) {
+                            if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                                function(*p_i, *p_j);
+                            }
+                        }
+                    }
+                    //Then, consider all relevant neighbour cells
+
+                    for (auto neighbour = domainCellIterationScheme[cellIndex].begin() + 1;
+                         neighbour != domainCellIterationScheme[cellIndex].end(); std::advance(neighbour, 1)) {
+                        //Lock neighbor cell
+                        omp_set_lock(&locks[*neighbour]);
+                        for (auto &p_i: cells[domainCellIterationScheme[cellIndex][0]]) {
+                            for (auto &p_j: cells[*neighbour]) {
+                                if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                                    function(p_i, p_j);
+                                }
+                            }
+                        }
+                        //Unlock neighbor cell
+                        omp_unset_lock(&locks[*neighbour]);
+                    }
+
+                    //Unlock current cell
+                    omp_unset_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
+                }
+            }
+        }
+    }
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelSophisticated(
+        const std::function<void(Particle &, Particle &)> &function) {
+        applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelSophisticated);
+    }
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelNaive(
+        const std::function<void(Particle &, Particle &)> &function) {
+        applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelNaive);
+    }
+#endif
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
+        const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function) {
+        for (auto &cellGroup: domainCellIterationScheme) {
+            //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
+            for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
+                for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
+                    auto difference = p_j->getX() - p_i->getX();
+                    auto distance = ArrayUtils::L2Norm(difference);
+                    if (distance <= rCutOff) {
+                        function(*p_i, *p_j, difference, distance);
+                    }
+                }
+            }
+            //Then, consider all relevant neighbour cells
+
+            for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
+                for (auto &p_i: cells[cellGroup[0]]) {
+                    for (auto &p_j: cells[*neighbour]) {
+                        auto difference = p_j.getX() - p_i.getX();
+                        auto distance = ArrayUtils::L2Norm(difference);
+                        if (distance <= rCutOff) {
+                            function(p_i, p_j, difference, distance);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void LinkedCellsContainer::applyToAllBoundaryParticles(
+        const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
+        for (auto cell: boundaries[static_cast<int>(boundary)]) {
+#ifdef _OPENMP
+            //Lock cell
+            omp_set_lock(&locks[cell]);
+#endif
+            for (auto &p: cells[cell]) {
+                double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
+                double threshold = 0.5 * pow(2.0, 1.0 / 6.0) * p.getSigma();
+                if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
+                    auto ghostPosition = calcGhostParticle(p, boundary);
+                    function(p, ghostPosition);
+                }
+            }
+#ifdef _OPENMP
+            //Unlock cell
+            omp_unset_lock(&locks[cell]);
+#endif
+        }
+    }
