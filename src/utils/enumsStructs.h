@@ -49,7 +49,7 @@ namespace enumsStructs {
     };
 
     enum class ParallelizationStrategy {
-        none, naive, sophisticated
+        none, linear, skipping, reduction
     };
     /**
      * Struct for passing parameters of the direct sum model.
@@ -176,6 +176,7 @@ namespace enumsStructs {
         int outputFrequency;
         bool gravityOn;
         std::array<double, 3> gravityVector;
+        int maxNumThreads;
 
         //parallelization strategy
         ParallelizationStrategy parallelizationStrategy;
@@ -330,8 +331,9 @@ namespace enumsStructs {
     inline ParallelizationStrategy setTypeOfParallelizationStrategy(const std::string &typeOfParallelizationStrategy) {
         static const std::unordered_map<std::string, ParallelizationStrategy> formatMap = {
             {"None", ParallelizationStrategy::none},
-            {"Naive", ParallelizationStrategy::naive},
-            {"Sophisticated", ParallelizationStrategy::sophisticated}
+            {"Linear", ParallelizationStrategy::linear},
+            {"Skipping", ParallelizationStrategy::skipping},
+              {"Reduction", ParallelizationStrategy::reduction}
         };
         auto it = formatMap.find(typeOfParallelizationStrategy);
         return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid parallelizatin strategy selected!");

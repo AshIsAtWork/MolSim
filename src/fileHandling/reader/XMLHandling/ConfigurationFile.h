@@ -1807,8 +1807,9 @@ class ParallelizationStrategy: public ::xml_schema::string
    */
   enum value
   {
-    Naive,
-    Sophisticated
+    Linear,
+    Skipping,
+    Reduction
   };
 
   /**
@@ -1933,8 +1934,8 @@ class ParallelizationStrategy: public ::xml_schema::string
   _xsd_ParallelizationStrategy_convert () const;
 
   public:
-  static const char* const _xsd_ParallelizationStrategy_literals_[2];
-  static const value _xsd_ParallelizationStrategy_indexes_[2];
+  static const char* const _xsd_ParallelizationStrategy_literals_[3];
+  static const value _xsd_ParallelizationStrategy_indexes_[3];
 
   //@endcond
 };

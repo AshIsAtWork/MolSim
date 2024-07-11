@@ -92,15 +92,17 @@ public:
 #ifdef _OPENMP
     void updateForcesParallelReduction();
 
-    void updateForcesParallelSophisticated();
+    void updateForcesParallelSkipping();
 
-    void updateForcesParallelNaive();
+    void updateForcesParallelLinear();
 
     void updateVelocitiesParallel();
 
     void updatePositionsParallel();
 
     void processBoundaryForcesParallel();
+
+    void initializeReductionVectors(int maxNumThreads);
 #endif
 
 

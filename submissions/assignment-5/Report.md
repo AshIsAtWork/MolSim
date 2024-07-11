@@ -86,8 +86,8 @@ If you do not want to use any parallelization, it is still possible to use our p
 **3. Parallelization Strategies**   
 As required we developed two different parallelization strategies which can be selected through the xml input file. An example you can find [here](../../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml). For reasons of backward compatability, specifying the parallelization strategy is optional. If it is left out, the program will run sequentially. If specified, there are three possible values:
 * `None`: No parallelization, program will run sequentially.
-* `Naive`: Use parallelization, the naive scheduling is used.
-* `Sophisticated`: Use parallelization, the sophisticated scheduling is used. 
+* `Linear`: Use parallelization, the naive scheduling is used.
+* `Skipping`: Use parallelization, the sophisticated scheduling is used. 
 
 Both strategies parallelize the main part of the force calculation happening in the function `applyToAllUniquePairsInDomain` as profiling shows that the program spends over 90% of the time in this part of the program. Furthermore, we have parallelized the velocity and position updates, not because they are contributing a lot to the overall running time of the program but because its parallelization is quite easy as all iterations in the loop are independent and have equal costs. Therefore, a single OpenMP directive does the job. Additionally, we parallelized the processing of boundary conditions, for the computation in three dimensions is quite costly. Because we have chosen in the previous weeks to strictly separate the handling of boundary conditions from the other force calculations for the sake of a clear code structure, parallelizing this was not that easy. From the perspective of parallelization, it would have been better to include it in the method `updateForces`, because then, parallelizing only this function would have been sufficient. For boundary conditions, we are using a dynamic schedule, because the costs of different types of boundary conditions differ a lot. Summarizing, we have parallelized everything that contributes significantly to the overall running time of the program. Therefore, we expect a great benefit from parallelization. But let's not rejoice too soon. There may be various problems that reduce performance. Time measurements in the following sections will provide clarity.  
 ß
@@ -109,7 +109,7 @@ As big simulations contain a lot of molecules, assigning a lock to each molecule
 
 Maybe first a few words how the work is assigned to each thread. This happens in the method `applyToAllUniquePairsInDomainParallelHelper` in the class LinkedCellContainer. The shared variable `nextCellToSchedule` keeps track of the index of the vector that contains the schedule prescribing the order in which the cells should be processed. As all available threads execute this code concurrently, the access to this shared variable has to be synchronized, so that no cell is processed twice. The processing of one cell consists of processing the cell itself and all neighbors that this cell owns. Therefore, the work is distributed dynamically to whatever thread that is idle. This approach ensures that the work is distributed over all threads more or less evenly even if the particle distribution is inhomogeneous. A disadvantage of dynamic scheduling compared to a static assignment of the work is that it has a little overhead at runtime because it requires additional synchronization. Nevertheless, we think it being the right approach as a static distribution only makes sense when the cost of processing each cell is almost identical, which is definitely not the case when particles are concentrated on only a tiny fraction of all available cells. A few last words why we did not use the scheduling provided by OpenMP but did it implement it by ourselves. OpenMPs scheduler is more efficient than our approach, but as we want to compare two different schedules, we want to have full control over the scheduling to make the comparison as meaningful as possible and not only assume what happens under the hood of OpenMP.   
 
-The first schedule, used by our first parallelizing strategy, we called `naive`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 100 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times:   
+The first schedule, used by our first parallelizing strategy, we called `linear`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 100 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times:   
 
 | **Number of threads** | **Running time** | **MUps** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
@@ -144,6 +144,17 @@ As measurements show, the new schedule improves running time significantly but r
 
 Even if the improvement of this strategy compared to the old one is pretty good, we think we can do a lot better. Therefore, we developed a third strategy. The schedule of this strategy divides the domain into coherent, evenly sized blocks of cells.   
 Because it is now known in advance which thread will process which cell, this strategy is no longer dynamic compared to the others, but static. The two previous strategies have the great advantage that their performance is largely independent of the distribution of the molecules. This is not the case with this strategy. Nevertheless, we expect good results because the molecules in our test scenario are distributed more or less homogeneously.
+
+| **Number of threads** | **Running time** | **MUps** | **Speedup** |
+|-----------------------|------------------|----------|-------------|
+| 1                     |                  |          | -           |
+| 2                     |                  |          | -           |
+| 4                     |                  |          | -           |
+| 8                     |                  |          | -           |
+| 14                    |                  |          | -           |
+| 16                    |                  |          | -           |
+| 28                    |                  |          | -           |
+| 56                    |                  |          | -           |
 
 ---
 

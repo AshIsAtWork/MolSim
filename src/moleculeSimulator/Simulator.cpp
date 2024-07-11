@@ -126,6 +126,14 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                        sphere.brownianMotionAverageVelocity, sphere.epsilon, sphere.sigma, sphere.fixed);
     }
 
+#ifdef _OPENMP
+    //Initialize reduction vectors if parallelization strategy reduction is used.
+    if(simulationSettings.parallelizationStrategy == ParallelizationStrategy::reduction && simulationSettings.model == TypeOfModel::linkedCells) {
+        auto *lC = dynamic_cast<LinkedCells*> (model.get());
+        lC->initializeReductionVectors(simulationSettings.maxNumThreads);
+    }
+#endif
+
     totalMoleculeUpdates = 0;
 }
 

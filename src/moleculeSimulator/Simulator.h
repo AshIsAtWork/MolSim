@@ -30,7 +30,7 @@ private:
  //profiles
  bool computeProfiles;
  std::unique_ptr<Statistics> statistics;
- std::array<double, 3> domainSize;
+ std::array<double, 3> domainSize{};
 
  //thermostat
  std::unique_ptr<Thermostat> thermostat;

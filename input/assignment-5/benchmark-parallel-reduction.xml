@@ -4,7 +4,7 @@
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
     <OutputFileName>Benchmark</OutputFileName>
     <OutputFrequency>100</OutputFrequency>
-    <ParallelizationStrategy>Sophisticated</ParallelizationStrategy>
+    <ParallelizationStrategy>Reduction</ParallelizationStrategy>
     <ThermostatConfig>
         <Type>Default</Type>
         <InitialTemperature>40</InitialTemperature>

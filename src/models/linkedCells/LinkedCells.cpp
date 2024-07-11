@@ -10,7 +10,8 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
                          double rCutOff, FileHandler::outputFormat outputFormat,
                          BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g,
                          MembraneParameters membraneParameters,
-                         enumsStructs::ParallelizationStrategy parallelizationStrategy) : Model(particles, force,
+                         enumsStructs::ParallelizationStrategy parallelizationStrategy) : Model(
+        particles, force,
         deltaT, outputFormat, gravityOn, g), parallelizationStrategy{
         parallelizationStrategy
     },
@@ -178,29 +179,29 @@ void LinkedCells::step(int iteration) {
             case ParallelizationStrategy::none: updateForces();
                 break;
 #ifdef _OPENMP
-            case ParallelizationStrategy::naive: updateForcesParallelNaive();
+            case ParallelizationStrategy::linear: updateForcesParallelLinear();
                 break;
-            case ParallelizationStrategy::sophisticated: updateForcesParallelSophisticated();
+            case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
+                break;
+            case ParallelizationStrategy::reduction: updateForcesParallelReduction();
                 break;
 #endif
             default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
         }
-        //updateForcesParallelReduction();
     }
     if (gravityOn) {
         applyGravity();
     }
 #ifdef _OPENMP
-    if(parallelizationStrategy == ParallelizationStrategy::none) {
+    if (parallelizationStrategy == ParallelizationStrategy::none) {
         processBoundaryForces();
-    }else {
+    } else {
         processBoundaryForcesParallel();
     }
-    if(parallelizationStrategy != ParallelizationStrategy::none) {
+    if (parallelizationStrategy != ParallelizationStrategy::none) {
         updateVelocitiesParallel();
         updatePositionsParallel();
-    }
-    else {
+    } else {
         updateVelocities();
         updatePositions();
     }
@@ -247,13 +248,13 @@ void LinkedCells::updateForcesParallelReduction() {
         }
     });
     //Sum up force values
-    particles.applyToEachParticleInDomainParallel([](Particle& p) {
+    particles.applyToEachParticleInDomainParallel([](Particle &p) {
         p.reduceForce();
     });
 }
 
 #ifdef _OPENMP
-void LinkedCells::updateForcesParallelSophisticated() {
+void LinkedCells::updateForcesParallelSkipping() {
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         if (!p.isFixed()) {
@@ -272,7 +273,7 @@ void LinkedCells::updateForcesParallelSophisticated() {
     });
 }
 
-void LinkedCells::updateForcesParallelNaive() {
+void LinkedCells::updateForcesParallelLinear() {
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         if (!p.isFixed()) {
@@ -325,7 +326,7 @@ void LinkedCells::processBoundaryForcesParallel() {
                     }
                 }, setting.first);
             };
-            break;
+                break;
             case BoundaryCondition::periodic: {
                 //Add forces from particles of adjacent boundary cells from the opposite side.
                 particles.applyForcesFromOppositeSide(setting.first);
@@ -336,6 +337,12 @@ void LinkedCells::processBoundaryForcesParallel() {
             }
         }
     }
+}
+
+void LinkedCells::initializeReductionVectors(int maxNumThreads) {
+    particles.applyToEachParticleInDomain([maxNumThreads](Particle &p) {
+        p.initializeForceAccumulator(maxNumThreads);
+    });
 }
 
 #endif
@@ -351,31 +358,27 @@ void LinkedCells::initializeForces() {
             case ParallelizationStrategy::none: updateForces();
                 break;
 #ifdef _OPENMP
-            case ParallelizationStrategy::naive: updateForcesParallelNaive();
+            case ParallelizationStrategy::linear: updateForcesParallelLinear();
                 break;
-            case ParallelizationStrategy::sophisticated: updateForcesParallelSophisticated();
+            case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
+                break;
+            case ParallelizationStrategy::reduction: updateForcesParallelReduction();
                 break;
 #endif
             default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
-       }
-        // particles.applyToEachParticleInDomain([](Particle& p) {
-        //    p.initializeForceAccumulator(4);
-        // });
-        // updateForcesParallelReduction();
+        }
     }
     if (gravityOn) {
         applyGravity();
     }
 #ifdef _OPENMP
-    if(parallelizationStrategy == ParallelizationStrategy::none) {
+    if (parallelizationStrategy == ParallelizationStrategy::none) {
         processBoundaryForces();
-
-    }else {
+    } else {
         processBoundaryForcesParallel();
     }
 #endif
 #ifndef _OPENMP
     processBoundaryForces();
 #endif
-
 }

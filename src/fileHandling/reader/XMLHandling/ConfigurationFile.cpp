@@ -3725,11 +3725,11 @@ _xsd_ParallelizationStrategy_convert () const
   ::xsd::cxx::tree::enum_comparator< char > c (_xsd_ParallelizationStrategy_literals_);
   const value* i (::std::lower_bound (
                     _xsd_ParallelizationStrategy_indexes_,
-                    _xsd_ParallelizationStrategy_indexes_ + 2,
+                    _xsd_ParallelizationStrategy_indexes_ + 3,
                     *this,
                     c));
 
-  if (i == _xsd_ParallelizationStrategy_indexes_ + 2 || _xsd_ParallelizationStrategy_literals_[*i] != *this)
+  if (i == _xsd_ParallelizationStrategy_indexes_ + 3 || _xsd_ParallelizationStrategy_literals_[*i] != *this)
   {
     throw ::xsd::cxx::tree::unexpected_enumerator < char > (*this);
   }
@@ -3738,17 +3738,19 @@ _xsd_ParallelizationStrategy_convert () const
 }
 
 const char* const ParallelizationStrategy::
-_xsd_ParallelizationStrategy_literals_[2] =
+_xsd_ParallelizationStrategy_literals_[3] =
 {
-  "Naive",
-  "Sophisticated"
+  "Linear",
+  "Skipping",
+  "Reduction"
 };
 
 const ParallelizationStrategy::value ParallelizationStrategy::
-_xsd_ParallelizationStrategy_indexes_[2] =
+_xsd_ParallelizationStrategy_indexes_[3] =
 {
-  ::ParallelizationStrategy::Naive,
-  ::ParallelizationStrategy::Sophisticated
+  ::ParallelizationStrategy::Linear,
+  ::ParallelizationStrategy::Reduction,
+  ::ParallelizationStrategy::Skipping
 };
 
 // ThermostatConfig

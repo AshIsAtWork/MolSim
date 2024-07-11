@@ -27,6 +27,7 @@ int main(int argc, char *argsv[]) {
         bool saveState = false;
         bool loadState = false;
         int outputFrequency;
+        int maxNumThreads = 0;
 
         //Parsing of the command line arguments
 
@@ -55,7 +56,9 @@ int main(int argc, char *argsv[]) {
                  "Base name of the output files.")
                 ("loadState", po::value<std::string>(&pathToMolecules),
                  "Load molecules from a checkpoint into your program")
-                ("saveState", "Save state of molecules to a txt file after the simulation is done");;
+                ("saveState", "Save state of molecules to a txt file after the simulation is done")
+                ("threads", po::value<int>(&maxNumThreads),
+                 "Maximum number of threads that are used. (Only needed for parallelization strategy reduction)");
 
         po::variables_map vm;
 
@@ -139,6 +142,14 @@ int main(int argc, char *argsv[]) {
             if (returnedErrorHandlingInt != 0) {
                 throw std::invalid_argument(
                     "Error while reading the XML file. Please check the file and try again. Exiting...");
+            }
+            if (simulationSettings.parallelizationStrategy == enumsStructs::ParallelizationStrategy::reduction) {
+                if (maxNumThreads <= 0) {
+                    throw std::runtime_error(
+                        "Maximum number of threads must be specified, when reduction is used! Additionally, it should be at least 1");
+                } else {
+                    simulationSettings.maxNumThreads = maxNumThreads;
+                }
             }
             simulator = std::make_unique<Simulator>(simulationSettings, outputFormat);
         }
