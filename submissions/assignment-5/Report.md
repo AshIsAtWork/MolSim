@@ -84,14 +84,16 @@ To add OpenMP to you our project we just needed to add three lines to our `CMake
 If you do not want to use any parallelization, it is still possible to use our program without OpenMP. All code that depends on this library is nested in precompiler statements and ignored if OpenMP is not available. To install OpenMP on your Linux machine, have a look at our [Readme](../../README.md).   
 
 **3. Parallelization Strategies**   
-As required we developed two different parallelization strategies which can be selected through the xml input file. An example you can find [here](../../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml). For reasons of backward compatability, specifying the parallelization strategy is optional. If it is left out, the program will run sequentially. If specified, there are three possible values:
+As required we developed two different parallelization strategies and out of curiosity a third one which can be selected through the xml input file. An example you can find [here](../../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml). For reasons of backward compatability, specifying the parallelization strategy is optional. If it is left out, the program will run sequentially. If specified, there are three possible values:
 * `None`: No parallelization, program will run sequentially.
-* `Linear`: Use parallelization, the naive scheduling is used.
-* `Skipping`: Use parallelization, the sophisticated scheduling is used. 
+* `Linear`: Use parallelization, the linear scheduling is used.
+* `Skipping`: Use parallelization, the skipping scheduling is used. 
+* `Reduction`: Use parallelization, no scheduling, reduction is used to avoid race conditions.
 
-Both strategies parallelize the main part of the force calculation happening in the function `applyToAllUniquePairsInDomain` as profiling shows that the program spends over 90% of the time in this part of the program. Furthermore, we have parallelized the velocity and position updates, not because they are contributing a lot to the overall running time of the program but because its parallelization is quite easy as all iterations in the loop are independent and have equal costs. Therefore, a single OpenMP directive does the job. Additionally, we parallelized the processing of boundary conditions, for the computation in three dimensions is quite costly. Because we have chosen in the previous weeks to strictly separate the handling of boundary conditions from the other force calculations for the sake of a clear code structure, parallelizing this was not that easy. From the perspective of parallelization, it would have been better to include it in the method `updateForces`, because then, parallelizing only this function would have been sufficient. For boundary conditions, we are using a dynamic schedule, because the costs of different types of boundary conditions differ a lot. Summarizing, we have parallelized everything that contributes significantly to the overall running time of the program. Therefore, we expect a great benefit from parallelization. But let's not rejoice too soon. There may be various problems that reduce performance. Time measurements in the following sections will provide clarity.  
-ß
-Parallelizing the function `applyToAllUniquePairsInDomain` is not as simple as it seems at the first glance, because iterations are not independent. Therefore, adding just one OpenMP directive would lead to race conditions. One race condition that could happen is when two threads are processing the same cell and are updating the force of the same molecule simultaneously. The following order of operations could happen:   
+All three strategies parallelize the main part of the force calculation happening in the function `applyToAllUniquePairsInDomain` as profiling shows that the program spends over 90% of the time in this part of the program. Furthermore, we have parallelized the velocity and position updates, not because they are contributing a lot to the overall running time of the program but because its parallelization is quite easy as all iterations in the loop are independent and have equal costs. Therefore, a single OpenMP directive does the job. Additionally, we parallelized the processing of boundary conditions, for the computation in three dimensions is quite costly. Because we have chosen in the previous weeks to strictly separate the handling of boundary conditions from the other force calculations for the sake of a clear code structure, parallelizing this was not that easy. From the perspective of parallelization, it would have been better to include it in the method `updateForces`, because then, parallelizing only this function would have been sufficient. For boundary conditions, we are using a dynamic schedule, because the costs of different types of boundary conditions differ a lot. Summarizing, we have parallelized everything that contributes significantly to the overall running time of the program. Therefore, we expect a great benefit from parallelization. But let's not rejoice too soon. There may be various problems that reduce performance. Time measurements in the following sections will provide clarity.
+
+
+Parallelizing the function `applyToAllUniquePairsInDomain` is not as simple as it seems at the first glance, because iterations are not independent. Therefore, adding just one OpenMP directive would lead to race conditions. One race condition that could happen is when two threads are processing the same cell and are updating the force of the same molecule simultaneously. We could imagine the following order of operations:   
 
 1. Thread 1 reads the force of molecule 1.
 2. Thread 2 reads the force of molecule 1.
@@ -105,11 +107,13 @@ The problem is here that the force that thread 1 has calculated is lost, because
 1. Make access to each molecule exclusive. 
 2. Make access to each cell exclusive.   
 
-As big simulations contain a lot of molecules, assigning a lock to each molecule would be too much overhead. Better is option two and prevent threads operating on the same cells simultaneously. Making access to each cell exclusive is a good trade-off between the number of required locks and the goal to assign as least resources as possible exclusively to one thread. Of course, in a perfect world, the work is distributed over all threads in such a way that at no time two threads want to access the same exclusive resource. This is exactly what we are trying to achieve with our second parallelization strategy.
+As big simulations contain a lot of molecules, assigning a lock to each molecule would be too much overhead. Better is option two that prevents threads operating on the same cells simultaneously. Making access to each cell exclusive is a good trade-off between the number of required locks and the goal to assign as least resources as possible exclusively to one thread. Of course, in a perfect world, the work is distributed over all threads in such a way that at no time two threads want to access the same exclusive resource. This is exactly what we are trying to achieve with our second parallelization strategy.
 
-Maybe first a few words how the work is assigned to each thread. This happens in the method `applyToAllUniquePairsInDomainParallelHelper` in the class LinkedCellContainer. The shared variable `nextCellToSchedule` keeps track of the index of the vector that contains the schedule prescribing the order in which the cells should be processed. As all available threads execute this code concurrently, the access to this shared variable has to be synchronized, so that no cell is processed twice. The processing of one cell consists of processing the cell itself and all neighbors that this cell owns. Therefore, the work is distributed dynamically to whatever thread that is idle. This approach ensures that the work is distributed over all threads more or less evenly even if the particle distribution is inhomogeneous. A disadvantage of dynamic scheduling compared to a static assignment of the work is that it has a little overhead at runtime because it requires additional synchronization. Nevertheless, we think it being the right approach as a static distribution only makes sense when the cost of processing each cell is almost identical, which is definitely not the case when particles are concentrated on only a tiny fraction of all available cells. A few last words why we did not use the scheduling provided by OpenMP but did it implement it by ourselves. OpenMPs scheduler is more efficient than our approach, but as we want to compare two different schedules, we want to have full control over the scheduling to make the comparison as meaningful as possible and not only assume what happens under the hood of OpenMP.   
+Maybe first a few words how the work is assigned to each thread in the first two strategies. This happens in the method `applyToAllUniquePairsInDomainParallelHelper` in the class LinkedCellContainer. The shared variable `nextCellToSchedule` keeps track of the index of the vector that contains the schedule prescribing the order in which the cells should be processed. As all available threads execute this code concurrently, the access to this shared variable has to be synchronized, so that no cell is processed twice. The processing of one cell consists of processing the cell itself and all neighbors that this cell owns. Therefore, the work is distributed dynamically to whatever thread that is idle. This approach ensures that the work is distributed over all threads more or less evenly even if the particle distribution is inhomogeneous. A disadvantage of dynamic scheduling compared to a static assignment of the work is that it has a little overhead at runtime because it requires additional synchronization. Nevertheless, we think it being the right approach as a static distribution only makes sense when the cost of processing each cell is almost identical, which is definitely not the case when particles are concentrated on only a tiny fraction of all available cells. A few last words why we did not use the scheduling provided by OpenMP but did implement it by ourselves. OpenMPs scheduler is more efficient than our approach, but as we want to compare two different schedules, we want to have full control over the scheduling to make the comparison as meaningful as possible and not only assume what happens under the hood of OpenMP.   
 
-The first schedule, used by our first parallelizing strategy, we called `linear`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 100 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times:   
+The first schedule, used by our first parallelizing strategy, we call `linear`, as it traverses each cell in the linked cells container in order by first processing cells along the x-axis, followed by the y-axis and finally the z-axis. For the first 100 iterations of the three-dimensional Rayleigh-Taylor instability, the first parallelization strategy exhibits the following running times:   
+
+Note: All time measurements have been conducted on Linux cluster `cm2_inter`.  
 
 | **Number of threads** | **Running time** | **MUps** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
@@ -125,36 +129,43 @@ The first schedule, used by our first parallelizing strategy, we called `linear`
 The corresponding graph can be found at the end of this section.   
 The time measurement shows that the performance of this parallelization strategy is everything else but good. The speedup for adding more threads is low right at the beginning. It improves when adding more threads, but the gain for adding another thread decreases as the number of threads already in use increases. This can only mean that threads are blocking each other as a result of synchronization of the cells. An analysis with VTune confirms that hypothesis. Threads spent a lot of time waiting that cells they want to access become available. By having a closer look at the order in which cells are scheduled, this is not a big surprise. Cells that are processed in parallel are adjacent to each other, which means that the set of neighbors the threads trying to process in parallel overlaps, leading to resource allocation conflicts and waiting times.   
 
-Our next strategy tries to solve this problem by scheduling cells in an order that minimizes resource allocation conflicts. This is achieved by skipping every second cell along each axis. The following sketch shows a visualization.   
+Our next strategy tries to solve this problem by scheduling cells in an order that minimizes resource allocation conflicts. This is achieved by skipping every second cell along each axis. The following sketches show a visualization of the old and the enhanced schedule.  
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-around">
+    <img src="images/LinearSchedule.png" width = 45%></img> 
+    <img src="images/SkippingSchedule.png" width = 45%></img> 
+</div>
 
 Let's see then if this strategy performs better.   
 
 | **Number of threads** | **Running time** | **MUps** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
 | 1                     | 83.02s           | 120447   | -           |
-| 2                     | 46.34s           | 215802   | -           |
-| 4                     | 26.08s           | 384212   | -           |
-| 8                     | 18.64s           | 536626   | -           |
-| 14                    | 15.14s           | 660706   | -           |
-| 16                    | 14.63s           | 683749   | -           |
-| 28                    | 13.42s           | 745432   | -           |
-| 56                    | 13.72s           | 728797   | -           |
+| 2                     | 46.34s           | 215802   | 1.79        |
+| 4                     | 26.08s           | 384212   | 3.19        |
+| 8                     | 18.64s           | 536626   | 4.46        |
+| 14                    | 15.14s           | 660706   | 5.49        |
+| 16                    | 14.63s           | 683749   | 5.68        |
+| 28                    | 13.42s           | 745432   | 6.19        |
+| 56                    | 13.72s           | 728797   | 6.05        |
 
-As measurements show, the new schedule improves running time significantly but reaches its limits when the number of threads reaches double-digits. As the number of threads increases, the schedule cannot ensure anymore that adjacent cells are processed concurrently leading to resource conflicts.
+As measurements show, the new schedule improves running time significantly but reaches its limits when the number of threads reaches double-digits. As the number of threads increases, the schedule cannot ensure that adjacent cells are processed concurrently leading to resource conflicts.
 
-Even if the improvement of this strategy compared to the old one is pretty good, we think we can do a lot better. Therefore, we developed a third strategy. The schedule of this strategy divides the domain into coherent, evenly sized blocks of cells.   
-Because it is now known in advance which thread will process which cell, this strategy is no longer dynamic compared to the others, but static. The two previous strategies have the great advantage that their performance is largely independent of the distribution of the molecules. This is not the case with this strategy. Nevertheless, we expect good results because the molecules in our test scenario are distributed more or less homogeneously.
+Even if the improvement of this strategy compared to the old one is not bad, out of curiosity, we want to test a third strategy approaching the problem differently. Making access to cells exclusive will always lead at some point to lock contentions when the number of threads gets high enough. There is no way of traversing the cells to avoid this. If we want to get faster, we have to get rid of the locks and find some other way to circumvent race conditions. An alternative way is to use reduction on the force of each particle. Each thread gets its own copy of the force variable in which they store their results. At the end of each iteration, all intermediate values are summed up and form the final result. Because now, each thread operates on its own force copy, race conditions cannot happen, and therefore we can do without locks.   
+Even if we do not need any type of synchronization between the threads, we are afraid that the overhead that comes along with reduction is too high and destroys performance. The following time measurements will show:     
 
 | **Number of threads** | **Running time** | **MUps** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
-| 1                     |                  |          | -           |
-| 2                     |                  |          | -           |
-| 4                     |                  |          | -           |
-| 8                     |                  |          | -           |
-| 14                    |                  |          | -           |
-| 16                    |                  |          | -           |
-| 28                    |                  |          | -           |
-| 56                    |                  |          | -           |
+| 1                     | 85.77s           | 116585   | -           |
+| 2                     | 47.12s           | 212202   | -           |
+| 4                     | 26.48s           | 377628   | -           |
+| 8                     | 19.11s           | 523236   | -           |
+| 14                    | 16.00s           | 625170   | -           |
+| 16                    | 15.44s           | 647585   | -           |
+| 28                    | 15.04s           | 664777   | -           |
+| 56                    | 14.74s           | 678487   | -           |
+
+Alas, as we have already suspected, this strategy is subjected to failure because the overhead of the reduction is too big. However, it was worth a try and we learned something new.   
 
 ---
 

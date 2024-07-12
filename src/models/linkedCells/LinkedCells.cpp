@@ -231,6 +231,7 @@ void LinkedCells::updateForcesOptimized() {
 }
 
 void LinkedCells::updateForcesParallelReduction() {
+    std::cout << "Reduce"<< "\n";
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         if (!p.isFixed()) {
