@@ -157,15 +157,26 @@ Even if we do not need any type of synchronization between the threads, we are a
 | **Number of threads** | **Running time** | **MUps** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
 | 1                     | 85.77s           | 116585   | -           |
-| 2                     | 47.12s           | 212202   | -           |
-| 4                     | 26.48s           | 377628   | -           |
-| 8                     | 19.11s           | 523236   | -           |
-| 14                    | 16.00s           | 625170   | -           |
-| 16                    | 15.44s           | 647585   | -           |
-| 28                    | 15.04s           | 664777   | -           |
-| 56                    | 14.74s           | 678487   | -           |
+| 2                     | 47.12s           | 212202   | 1.82        |
+| 4                     | 26.48s           | 377628   | 3.24        |
+| 8                     | 19.11s           | 523236   | 4.49        |
+| 14                    | 16.00s           | 625170   | 5.36        |
+| 16                    | 15.44s           | 647585   | 5.55        |
+| 28                    | 15.04s           | 664777   | 5.70        |
+| 56                    | 14.74s           | 678487   | 5.82        |
 
 Alas, as we have already suspected, this strategy is subjected to failure because the overhead of the reduction is too big. However, it was worth a try and we learned something new.   
+
+Here you can see a direct comparison of the speedup each strategy achieved.
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-around">
+    <img src="images/Speedup-Linear.png" width = 30%></img> 
+    <img src="images/Speedup-Skipping.png" width = 30%></img> 
+<img src="images/Speedup-Reduction.png" width = 30%></img>
+</div>
+
+**4. Contest**   
+
 
 ---
 
