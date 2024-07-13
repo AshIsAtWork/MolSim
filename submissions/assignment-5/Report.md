@@ -115,7 +115,7 @@ The first schedule, used by our first parallelizing strategy, we call `linear`, 
 
 Note: All time measurements have been conducted on Linux cluster `cm2_inter`.  
 
-| **Number of threads** | **Running time** | **MUps** | **Speedup** |
+| **Number of threads** | **Running time** | **MUPS** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
 | 1                     | 82.36s           | 121412   | -           |
 | 2                     | 62.59s           | 159774   | 1.32        |
@@ -138,7 +138,7 @@ Our next strategy tries to solve this problem by scheduling cells in an order th
 
 Let's see then if this strategy performs better.   
 
-| **Number of threads** | **Running time** | **MUps** | **Speedup** |
+| **Number of threads** | **Running time** | **MUPS** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
 | 1                     | 83.02s           | 120447   | -           |
 | 2                     | 46.34s           | 215802   | 1.79        |
@@ -154,7 +154,7 @@ As measurements show, the new schedule improves running time significantly but r
 Even if the improvement of this strategy compared to the old one is not bad, out of curiosity, we want to test a third strategy approaching the problem differently. Making access to cells exclusive will always lead at some point to lock contentions when the number of threads gets high enough. There is no way of traversing the cells to avoid this. If we want to get faster, we have to get rid of the locks and find some other way to circumvent race conditions. An alternative way is to use reduction on the force of each particle. Each thread gets its own copy of the force variable in which they store their results. At the end of each iteration, all intermediate values are summed up and form the final result. Because now, each thread operates on its own force copy, race conditions cannot happen, and therefore we can do without locks.   
 Even if we do not need any type of synchronization between the threads, we are afraid that the overhead that comes along with reduction is too high and destroys performance. The following time measurements will show:     
 
-| **Number of threads** | **Running time** | **MUps** | **Speedup** |
+| **Number of threads** | **Running time** | **MUPS** | **Speedup** |
 |-----------------------|------------------|----------|-------------|
 | 1                     | 85.77s           | 116585   | -           |
 | 2                     | 47.12s           | 212202   | 1.82        |
@@ -172,12 +172,91 @@ Here you can see a direct comparison of the speedup each strategy achieved.
 <div style="display: flex; flex-wrap: wrap; justify-content: space-around">
     <img src="images/Speedup-Linear.png" width = 30%></img> 
     <img src="images/Speedup-Skipping.png" width = 30%></img> 
-<img src="images/Speedup-Reduction.png" width = 30%></img>
+    <img src="images/Speedup-Reduction.png" width = 30%></img>
 </div>
 
 **4. Contest**   
+In all likelihood, we have no chance of being in the top half of the competition with our strategy, as the performance gain is marginal, especially in 2D simulation. There are definitely other strategies whose performance is significantly better. Since this is the first time we have worked with OpenMP, it's probably no shame if not everything works the way you want it to right at the beginning. 
+
+***2D***   
+
+| **Compiler**                    | g++                      |                     icpc |
+|---------------------------------|--------------------------|-------------------------:|
+| **Running time**                | 7.04 s                   |                   3.36 s |
+| **Molecule updates per second** | 1422340 MUPS/s           |           2967860 MUPS/s |
+| **#Threads used**               | 4                        |                        7 |
+| **Corresponding input file**    | benchmark-contest-2D.xml | benchmark-contest-2D.xml |
+
+***3D***   
+
+| **Compiler**                    | g++                      |                     icpc |
+|---------------------------------|--------------------------|-------------------------:|
+| **Running time**                | 143.60 s                 |                 141.06 s |
+| **Molecule updates per second** | 696399 MUPS/s            |            708941 MUPS/s |
+| **#Threads used**               | 28                       |                       28 |
+| **Corresponding input file**    | benchmark-contest-3D.xml | benchmark-contest-3D.xml |
 
 
+What is fascinating is that the code compiled with icpc performs better, even much better in the 2D scenario. For both compilers, we used the O3 flag and for g++ some additional flags we have been using in the last sprint as well to enable further optimisation.    
+
+Here you can find some instructions on how you can reproduce our results:   
+
+* Login into the linux cluster.
+* Clone our repository and change into the directory `MolSim`.
+    ```bash
+    git clone https://github.com/AshIsAtWork/MolSim.git
+    ```
+* Checkout the commit we used for our time measurements.
+
+    ```bash
+    git checkout 475c110b
+    ```
+* For the g++ compiler you can use our script:
+  * Change into the `scripts` directory, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step.   
+    * 2D scenario:
+    ```bash
+    ./cluster_setup.sh MolSim_A inter inter_cm2 ALL <your email> 1 4 00:01:00 ../input/assignment-5/benchmark-contest-2D.xml xml vtk -t -O
+    ```
+    * 3D scenario:
+    ```bash
+    ./cluster_setup.sh MolSim_A inter inter_cm2 ALL <your email> 1 28 00:01:00 ../input/assignment-5/benchmark-contest-3D.xml xml vtk -t -O
+    ```
+  * Submit the bash script to the scheduler to queue our program for execution.
+      ```bash
+      sbatch ../cluster_start.cmd
+      ```
+  * Wait until your program is scheduled for execution. You can check the status of your jobs with the following command:
+      ```bash
+      squeue --cluster inter --me
+      ```
+  * When your job has finished, there should be an output file in the build folder. This contains the performance measurements.
+
+
+* For the icpc compiler you have to do the setup manually as our script only works with gcc:
+  * Change into your build folder.
+  * Load all necessary modules.
+    ```bash
+    module load openmpi/4.1.2-intel21 && module load slurm_setup && module load cmake/3.21.4 && module load boost/1.75.0-intel21 && module load xerces-c/3.2.1
+    ```
+  * Build the code.
+    ```bash
+      cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=icpc -DCMAKE_C_COMPILER=icc ../ && make
+    ```
+  * Submit the script.
+    * 2D scenario
+    ```bash
+    sbatch ../scripts/bash_icpc_2D.sh
+    ```
+    * 3D scenario
+    ```bash
+    sbatch ../scripts/bash_icpc_3D.sh
+    ```
+  * Wait until your program is scheduled for execution. You can check the status of your jobs with the following command.
+      ```bash
+      squeue --cluster inter --me
+      ```
+  * When your job has finished, there should be an output file in the build folder. This contains the performance measurements.
+  
 ---
 
 ## Task 3: Rayleigh-Taylor instability in 3D ##   
