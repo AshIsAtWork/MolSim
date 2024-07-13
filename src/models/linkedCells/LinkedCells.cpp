@@ -230,8 +230,9 @@ void LinkedCells::updateForcesOptimized() {
         });
 }
 
+#ifdef _OPENMP
+
 void LinkedCells::updateForcesParallelReduction() {
-    std::cout << "Reduce"<< "\n";
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {
         if (!p.isFixed()) {
@@ -254,7 +255,7 @@ void LinkedCells::updateForcesParallelReduction() {
     });
 }
 
-#ifdef _OPENMP
+
 void LinkedCells::updateForcesParallelSkipping() {
     //Before calculating the new forces, the current forces have to be reset.
     particles.applyToEachParticleInDomain([](Particle &p) {

@@ -176,7 +176,7 @@ Here you can see a direct comparison of the speedup each strategy achieved.
 </div>
 
 **4. Contest**   
-In all likelihood, we have no chance of being in the top half of the competition with our strategy, as the performance gain is marginal, especially in 2D simulation. There are definitely other strategies whose performance is significantly better. Since this is the first time we have worked with OpenMP, it's probably no shame if not everything works the way you want it to right at the beginning. 
+In all likelihood, we have no chance of being in the top half of the competition with our strategy, as the performance gain is marginal, especially in 2D simulation. There are definitely other strategies whose performance is significantly better. Since this is the first time we have worked with OpenMP, it is probably no shame if not everything works the way you want it to right at the beginning. 
 
 ***2D***   
 
@@ -209,17 +209,17 @@ Here you can find some instructions on how you can reproduce our results:
 * Checkout the commit we used for our time measurements.
 
     ```bash
-    git checkout 475c110b
+    git checkout faa618ad
     ```
 * For the g++ compiler you can use our script:
-  * Change into the `scripts` directory, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step.   
+  * Change into the `scripts` directory, run our script that automatically loads all required modules into the environment, builds the program and prepares the bash script you will have to submit to the scheduler in the next step. Note that you have to substitute <your email> with your email address.    
     * 2D scenario:
     ```bash
-    ./cluster_setup.sh MolSim_A inter inter_cm2 ALL <your email> 1 4 00:01:00 ../input/assignment-5/benchmark-contest-2D.xml xml vtk -t -O
+    ./cluster_setup.sh MolSim_A inter cm2_inter ALL <your email> 1 4 00:01:00 ../input/assignment-5/benchmark-contest-2D.xml xml vtk -t -O
     ```
     * 3D scenario:
     ```bash
-    ./cluster_setup.sh MolSim_A inter inter_cm2 ALL <your email> 1 28 00:01:00 ../input/assignment-5/benchmark-contest-3D.xml xml vtk -t -O
+    ./cluster_setup.sh MolSim_A inter cm2_inter ALL <your email> 1 28 00:05:00 ../input/assignment-5/benchmark-contest-3D.xml xml vtk -t -O
     ```
   * Submit the bash script to the scheduler to queue our program for execution.
       ```bash
@@ -232,15 +232,15 @@ Here you can find some instructions on how you can reproduce our results:
   * When your job has finished, there should be an output file in the build folder. This contains the performance measurements.
 
 
-* For the icpc compiler you have to do the setup manually as our script only works with gcc:
+* For the icpc compiler you have to do the setup manually as our script is only designed for g++:
   * Change into your build folder.
   * Load all necessary modules.
     ```bash
-    module load openmpi/4.1.2-intel21 && module load slurm_setup && module load cmake/3.21.4 && module load boost/1.75.0-intel21 && module load xerces-c/3.2.1
+    module unload intel-mpi && module load openmpi/4.1.2-intel21 && module load slurm_setup && module load cmake/3.21.4 && module load boost/1.75.0-intel21 && module load xerces-c/3.2.1
     ```
-  * Build the code.
+  * Create a build folder, change into it, and build your code.
     ```bash
-      cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=icpc -DCMAKE_C_COMPILER=icc ../ && make
+      mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=icpc -DCMAKE_C_COMPILER=icc ../ && make
     ```
   * Submit the script.
     * 2D scenario
@@ -404,10 +404,4 @@ Last but not least, we want to study what happens when obstacles are placed with
 The profiles look as expected. The velocity in y-direction is smaller where the obstacle blocks the flow. Which is interesting is that the overall velocity of the fluid is pretty low compared to all previous simulations which indicates that turbulences occurred, meaning that particles are flowing not straight down but also in other directions. To study this further, computing velocity profiles on the other two axes would give valuable insights.   
 
 ***3.5 Conclusion***   
-We only did cover a tiny fraction of all influences you could possibly study. The results of some simulations turned out as expected, but some other effects like the velocity distribution in the first experiment we cannot explain properly so far. We only can presume what might be reasons for this behaviour. Nevertheless, it was fascinating to test various scenarios, compare them and think of a possible explanation. The main reason why we did not carry out more experiments is that the calculation of each simulation took a very long time. We executed it on our own machine (with only four cores available), because the Linux cluster is always crowded and therefore did not help much to get results faster.   
-
-
-
-
-
-
+We only did cover a tiny fraction of all influences you could possibly study. The results of some simulations turned out as expected, but some other effects like the velocity distribution in the first experiment we cannot explain properly so far. We only can presume what might be reasons for this behaviour. Nevertheless, it was fascinating to test various scenarios, compare them and think of a possible explanation. The main reason why we did not carry out more experiments is that the calculation of each simulation took a very long time. We executed it on our own machine (with only four cores available), because the Linux cluster is always crowded and therefore did not help much to get results faster.
