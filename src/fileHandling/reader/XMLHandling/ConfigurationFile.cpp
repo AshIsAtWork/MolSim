@@ -5786,14 +5786,14 @@ const char* const force::
 _xsd_force_literals_[2] =
 {
   "Gravity",
-  "LeonardJonesForce"
+  "LennardJonesForce"
 };
 
 const force::value force::
 _xsd_force_indexes_[2] =
 {
   ::force::Gravity,
-  ::force::LeonardJonesForce
+  ::force::LennardJonesForce
 };
 
 // DomainSize

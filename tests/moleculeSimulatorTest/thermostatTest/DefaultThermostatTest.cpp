@@ -6,12 +6,12 @@
 #include <gtest/gtest.h>
 
 #include "models/directSum/DirectSum.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 #include "moleculeSimulator/thermostats/defaultThermostat/DefaultThermostat.h"
 
 class DefaultThermostatTest : public testing::Test {
 protected:
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     DirectSum dS = {lJF, 0.1, FileHandler::outputFormat::vtk, false};
 
     void SetUp() override {

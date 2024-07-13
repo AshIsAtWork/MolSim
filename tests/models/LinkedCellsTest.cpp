@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/models/linkedCells/LinkedCells.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 using namespace enumsStructs;
 
@@ -44,7 +44,7 @@ bool isParticleOnTrack(Particle &p) {
  */
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective,
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective
@@ -82,7 +82,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
  */
 
 TEST(LinkedCellsTest, Outflow) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow,
         BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow
@@ -140,7 +140,7 @@ TEST(LinkedCellsTest, Outflow) {
 
 
 TEST(LinkedCellsTest, Periodic_PostionUpdates) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic
@@ -195,7 +195,7 @@ TEST(LinkedCellsTest, Periodic_PostionUpdates) {
 
 TEST(LinkedCellsTest, Periodic_Force_Calculation) {
     FileHandler file_handler;
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic

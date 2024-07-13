@@ -158,7 +158,7 @@ int main(int argc, char *argsv[]) {
             if (selectedForce == "gravity") {
                 force = TypeOfForce::gravity;
             } else if (selectedForce == "ljf") {
-                force = TypeOfForce::leonardJonesForce;
+                force = TypeOfForce::lennardJonesForce;
             } else {
                 std::cout << "Please specify a valid force option!\n";
                 std::cout << desc << "\n";

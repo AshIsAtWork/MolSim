@@ -342,7 +342,7 @@ What catches the eye immediately is that the downward velocity and density of th
 At the moment, we cannot tell what is exactly happening; maybe both presumptions are wrong. We need to conduct more experiments.    
 
 ***3.2. Increasing sigma of the particles within the walls***   
-As starting point we want to study the effect when changing the Leonard-Jones parameter sigma of the particles belonging to the walls. As sigma controls mathematically the distance of the particles at which the Leonard-Jones potential exhibits its minimum and therefore the distance to which the force is repulsive we expect that increasing sigma will increase the gap between the wall and the fluid, because repulsive forces are getting stronger earlier and apply within a larger interval. We increased sigma from 1.1 to 3.0. Our simulation yields the following results for the first 45 seconds.    
+As starting point we want to study the effect when changing the Lennard-Jones parameter sigma of the particles belonging to the walls. As sigma controls mathematically the distance of the particles at which the Lennard-Jones potential exhibits its minimum and therefore the distance to which the force is repulsive we expect that increasing sigma will increase the gap between the wall and the fluid, because repulsive forces are getting stronger earlier and apply within a larger interval. We increased sigma from 1.1 to 3.0. Our simulation yields the following results for the first 45 seconds.    
 
 <div style="display: flex; flex-wrap: wrap; justify-content: space-around">
     <img src="nano-scale-flow/larger-sigma-walls/Velocity-Profile-Larger-Sigma-Walls.png" width = 45%></img> 

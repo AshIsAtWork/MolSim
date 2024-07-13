@@ -6032,7 +6032,7 @@ class force: public ::xml_schema::string
   enum value
   {
     Gravity,
-    LeonardJonesForce
+    LennardJonesForce
   };
 
   /**

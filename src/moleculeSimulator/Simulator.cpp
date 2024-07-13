@@ -20,8 +20,8 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                     force = std::make_unique<Gravity>();
                 }
                 break;
-                case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>();
+                case TypeOfForce::lennardJonesForce: {
+                    force = std::make_unique<LennardJonesForce>();
                 }
                 break;
                 default: {
@@ -40,8 +40,8 @@ Simulator::Simulator(SimulationSettings &simulationSettings, FileHandler::output
                     force = std::make_unique<Gravity>();
                 }
                 break;
-                case TypeOfForce::leonardJonesForce: {
-                    force = std::make_unique<LeonardJonesForce>();
+                case TypeOfForce::lennardJonesForce: {
+                    force = std::make_unique<LennardJonesForce>();
                 }
                 break;
                 default: {
@@ -145,8 +145,8 @@ Simulator::Simulator(DirectSumSimulationParameters &parameters, std::string &inp
             force = std::make_unique<Gravity>();
         }
         break;
-        case TypeOfForce::leonardJonesForce: {
-            force = std::make_unique<LeonardJonesForce>();
+        case TypeOfForce::lennardJonesForce: {
+            force = std::make_unique<LennardJonesForce>();
         }
         break;
         default: {

@@ -13,7 +13,7 @@
 #include <moleculeSimulator/thermostats/defaultThermostat/DefaultThermostat.h>
 #include "thermostats/flowThermostat/FlowThermostat.h"
 #include "forceCalculation/gravity/Gravity.h"
-#include "forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "forceCalculation/lennardJones/LennardJonesForce.h"
 #include "models/directSum/DirectSum.h"
 #include "../models/linkedCells/LinkedCells.h"
 #include "statistics/Statistics.h"

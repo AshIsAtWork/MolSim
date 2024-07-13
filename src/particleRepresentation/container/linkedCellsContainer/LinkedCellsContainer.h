@@ -12,7 +12,7 @@
 #include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 #include "utils/enumsStructs.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 using namespace enumsStructs;
 
@@ -124,7 +124,7 @@ private:
 
     outputWriter::VTKWriter vtk_writer;
 
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
 
     BoundarySet boundariesSet;
 

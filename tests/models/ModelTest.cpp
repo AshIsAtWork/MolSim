@@ -5,14 +5,14 @@
 #include <gtest/gtest.h>
 
 #include "../../src/models/linkedCells/LinkedCells.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 /**
  * If gravity is toggled off, no gravity should be applied.
  * --> We use here the linked cells model for testing, but it works with all models.
  */
 TEST(ModelTest, applyGravityOff) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective,
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective
@@ -34,7 +34,7 @@ TEST(ModelTest, applyGravityOff) {
  * --> We use here the linked cells model for testing, but it works with all models.
  */
 TEST(ModelTest, applyGravityOn) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective,
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective

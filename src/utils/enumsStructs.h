@@ -18,7 +18,7 @@ namespace enumsStructs {
      * Enum to specify the type of force used in the simulation.
      */
     enum class TypeOfForce {
-        gravity, leonardJonesForce, invalid
+        gravity, lennardJonesForce, invalid
     };
 
     /**
@@ -213,7 +213,7 @@ namespace enumsStructs {
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
             {"Gravity", TypeOfForce::gravity},
-            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
+            {"LennardJonesForce", TypeOfForce::lennardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
@@ -230,7 +230,7 @@ namespace enumsStructs {
     inline std::string getForce(TypeOfForce &force) {
         static const std::unordered_map<TypeOfForce, std::string> formatMap = {
             {TypeOfForce::gravity, "Gravity"},
-            {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
+            {TypeOfForce::lennardJonesForce, "LennardJonesForce"}
         };
         auto it = formatMap.find(force);
         return (it != formatMap.end()) ? it->second : "Invalid";

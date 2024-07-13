@@ -22,7 +22,7 @@
         <Name>LinkedCells</Name>
         <t_end>0.5</t_end>
         <delta_t>0.0005</delta_t>
-        <force>LeonardJonesForce</force>
+        <force>LennardJonesForce</force>
         <DomainSize>
             <First>300</First>
             <Second>54</Second>

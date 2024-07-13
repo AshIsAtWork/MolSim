@@ -5,20 +5,20 @@
 #pragma once
 #include "../Force.h"
 
-class LeonardJonesForce : public Force {
+class LennardJonesForce : public Force {
 
 public:
 
-    LeonardJonesForce();
+    LennardJonesForce();
 
     /**
-    * @brief Actual computation of the Leonard-Jones force occurring.
+    * @brief Actual computation of the Lennard-Jones force occurring.
     *
-    * @param target Particle on which the Leonard-Jones force acts.
-    * @param source Particle which exerts the Leonard-Jones force on the target.
+    * @param target Particle on which the Lennard-Jones force acts.
+    * @param source Particle which exerts the Lennard-Jones force on the target.
     * @return 3 dimensional force vector.
     *
-    * Computation of the Leonard-Jones force which exerts the source on the target.
+    * Computation of the Lennard-Jones force which exerts the source on the target.
     */
     std::array<double, 3> compute(Particle &target, Particle &source) override;
 

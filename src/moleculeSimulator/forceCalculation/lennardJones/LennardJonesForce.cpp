@@ -2,12 +2,12 @@
 // Created by daniel on 04.05.24.
 //
 
-#include "LeonardJonesForce.h"
+#include "LennardJonesForce.h"
 
 
-LeonardJonesForce::LeonardJonesForce()= default;
+LennardJonesForce::LennardJonesForce()= default;
 
-std::array<double, 3> LeonardJonesForce::compute(Particle &target, Particle &source) {
+std::array<double, 3> LennardJonesForce::compute(Particle &target, Particle &source) {
     //compute mixing constants
     double sigma_ij = (target.getSigma() + source.getSigma()) / 2;
     double epsilon_ij = std::sqrt(target.getEpsilon() * source.getEpsilon());
@@ -18,7 +18,7 @@ std::array<double, 3> LeonardJonesForce::compute(Particle &target, Particle &sou
     return ((24 * epsilon_ij) / squared_distance) * (c1 - c2) * difference;
 }
 
-std::array<double, 3> LeonardJonesForce::computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) {
+std::array<double, 3> LennardJonesForce::computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) {
     //compute mixing constants
     double sigma_ij = (target.getSigma() + source.getSigma()) / 2;
     double epsilon_ij = std::sqrt(target.getEpsilon()* source.getEpsilon());
