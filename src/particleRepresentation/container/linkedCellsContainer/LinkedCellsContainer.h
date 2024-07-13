@@ -329,18 +329,6 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
 
-#ifdef _OPENMP
-    void applyToAllUniquePairsInDomainParallelReduction(const std::function<void(Particle &, Particle &, int)> &function);
-
-    void applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function);
-
-    void applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling);
-
-    void applyToAllUniquePairsInDomainParallelSophisticated(
-        const std::function<void(Particle &, Particle &)> &function);
-
-    void applyToAllUniquePairsInDomainParallelNaive(const std::function<void(Particle &, Particle &)> &function);
-#endif
     void applyToAllUniquePairsInDomainOptimized(
         const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
 
@@ -405,6 +393,48 @@ public:
      * @param side Side on which the force is exerted.
      */
     void applyForcesFromOppositeSide(Side side);
+
+//The following methods are only needed for parallelization
+
+#ifdef _OPENMP
+    /**
+     * @brief Parallel version of the method applyToAllUniquePairsInDomain that is based on a reduction of the force of each particle.
+     *
+     * @param function Function that is applied to all unique pairs of particles.
+     */
+    void applyToAllUniquePairsInDomainParallelReduction(const std::function<void(Particle &, Particle &, int)> &function);
+
+    /**
+     * @brief Applies the specified function to each particle in the domain in parallel.
+     *        Performs best, if costs of the function are independent of a specific particle.
+     *
+     * @param function Function to apply.
+     */
+    void applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function);
+
+    /**
+     * @brief Helper method used to implement the linear and skipping strategy for the method applyToAllUniquePairsInDomain.
+     *
+     * @param function Function that is applied to all unique pairs of particles.
+     * @param scheduling Order in which the cells are processed.
+     */
+    void applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling);
+
+    /**
+     * @brief Parallel version of method applyToAllUniquePairsInDomain that uses the skipping schedule for processing the cells.
+     *
+     * @param function Function to apply.
+     */
+    void applyToAllUniquePairsInDomainParallelSophisticated(
+        const std::function<void(Particle &, Particle &)> &function);
+
+    /**
+     * @brief Parallel version of method applyToAllUniquePairsInDomain that uses the linear schedule for processing the cells.
+     *
+     * @param function Function to apply.
+     */
+    void applyToAllUniquePairsInDomainParallelNaive(const std::function<void(Particle &, Particle &)> &function);
+#endif
 
 
     //Getter and setters. Especially the setters should only by used for testing purposes.

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "Thermostat.h"
+#include "../Thermostat.h"
 
 /**
  * @brief Class for controling the temperature of a flow.

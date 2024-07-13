@@ -42,36 +42,6 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
                   ArrayUtils::to_string(x), ArrayUtils::to_string(v), ArrayUtils::to_string(f), type, epsilon, sigma);
 }
 
-#ifdef _OPENMP
-
-void Particle::initializeForceAccumulator(int numberThreads) {
-    forceMarker.assign(numberThreads, false);
-    forceAccumulator.assign(numberThreads, {0, 0, 0});
-}
-
-void Particle::addForceToAccumulator(std::array<double, 3> &force, int threadId) {
-    forceMarker[threadId] = true;
-    forceAccumulator[threadId] = forceAccumulator[threadId] + force;
-}
-
-void Particle::subForceFromAccumulator(std::array<double, 3> &force, int threadId) {
-    forceMarker[threadId] = true;
-    forceAccumulator[threadId] = forceAccumulator[threadId] - force;
-}
-
-void Particle::reduceForce() {
-    size_t numThreads = forceMarker.size();
-    for (size_t i = 0; i < numThreads; i++) {
-        if (forceMarker[i]) {
-            f = f + forceAccumulator[i];
-            forceAccumulator[i] = {0, 0, 0};
-        }
-        forceMarker[i] = false;
-    }
-}
-
-#endif
-
 void Particle::resetForce() {
     old_f = f;
     f = {0, 0, 0};
@@ -110,6 +80,36 @@ bool Particle::isDiagonalNeighbor(Particle &neighbor) {
 
 
 Particle::~Particle() { spdlog::trace("Particle destructed"); }
+
+#ifdef _OPENMP
+
+void Particle::initializeForceAccumulator(int numberThreads) {
+    forceMarker.assign(numberThreads, false);
+    forceAccumulator.assign(numberThreads, {0, 0, 0});
+}
+
+void Particle::addForceToAccumulator(std::array<double, 3> &force, int threadId) {
+    forceMarker[threadId] = true;
+    forceAccumulator[threadId] = forceAccumulator[threadId] + force;
+}
+
+void Particle::subForceFromAccumulator(std::array<double, 3> &force, int threadId) {
+    forceMarker[threadId] = true;
+    forceAccumulator[threadId] = forceAccumulator[threadId] - force;
+}
+
+void Particle::reduceForce() {
+    size_t numThreads = forceMarker.size();
+    for (size_t i = 0; i < numThreads; i++) {
+        if (forceMarker[i]) {
+            f = f + forceAccumulator[i];
+            forceAccumulator[i] = {0, 0, 0};
+        }
+        forceMarker[i] = false;
+    }
+}
+
+#endif
 
 const std::array<double, 3> &Particle::getX() const { return x; }
 

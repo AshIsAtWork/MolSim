@@ -6,7 +6,7 @@
 
 #include "models/directSum/DirectSum.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
-#include "moleculeSimulator/thermostats/FlowThermostat.h"
+#include "moleculeSimulator/thermostats/flowThermostat/FlowThermostat.h"
 
 class FlowThermostatTest : public testing::Test {
 protected:

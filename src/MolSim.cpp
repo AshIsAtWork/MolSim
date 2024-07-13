@@ -146,7 +146,7 @@ int main(int argc, char *argsv[]) {
             if (simulationSettings.parallelizationStrategy == enumsStructs::ParallelizationStrategy::reduction) {
                 if (maxNumThreads <= 0) {
                     throw std::runtime_error(
-                        "Maximum number of threads must be specified, when reduction is used! Additionally, it should be at least 1");
+                        "Maximum number of threads must be specified, when reduction is used! Additionally, it should be at least 1.");
                 } else {
                     simulationSettings.maxNumThreads = maxNumThreads;
                 }

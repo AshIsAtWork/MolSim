@@ -89,7 +89,14 @@ private:
      */
     bool fixed;
 
+    /**
+     * Mark, which forces of the reduction vector are unequal to 0.
+     */
     std::vector<bool> forceMarker;
+
+    /**
+     * Each thread has its own value to accumulate the forces it has calculated.
+     */
     std::vector<std::array<double,3>> forceAccumulator;
 
 
@@ -103,13 +110,6 @@ public:
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
         std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type = 0, double epsilon_arg = 5, double sigma_arg = 1);
-
-#ifdef _OPENMP
-    void initializeForceAccumulator(int numberThreads);
-    void addForceToAccumulator(std::array<double, 3>& force, int threadId);
-    void subForceFromAccumulator(std::array<double, 3>& force, int threadId);
-    void reduceForce();
-#endif
 
     /**
      * @brief Set force to oldForce and set force to 0.
@@ -163,6 +163,39 @@ public:
     bool isDiagonalNeighbor(Particle& neighbor);
 
     virtual ~Particle();
+
+ //Only needed for parallelization strategy "Reduction"
+
+#ifdef _OPENMP
+    /**
+     * @brief Allocate space for each thread in which they can store their computed results independently.
+     * @param numberThreads
+     */
+    void initializeForceAccumulator(int numberThreads);
+
+    /**
+     * @brief With this method a thread can add a value to its accumulator.
+     *
+     * @param force Force value to add.
+     * @param threadId Id of the thread.
+     */
+    void addForceToAccumulator(std::array<double, 3>& force, int threadId);
+
+    /**
+     * @brief With this method a thread can subtract a value from its accumulator.
+     *
+     * @param force Force value to subtract.
+     * @param threadId Id of the thread.
+     */
+    void subForceFromAccumulator(std::array<double, 3>& force, int threadId);
+
+    /**
+     * Sum up all acculmulators that have been modified and store the final result in field f.
+     */
+    void reduceForce();
+#endif
+
+    //Getter and setter
 
     [[nodiscard]] const std::array<double, 3> &getX() const;
 

@@ -230,6 +230,44 @@ void LinkedCells::updateForcesOptimized() {
         });
 }
 
+void LinkedCells::initializeForces() {
+    if (membraneSetting) {
+        updateForcesMembrane();
+        if (pull) {
+            pullMarkedParticles();
+        }
+    } else {
+        switch (parallelizationStrategy) {
+        case ParallelizationStrategy::none: updateForces();
+            break;
+#ifdef _OPENMP
+        case ParallelizationStrategy::linear: updateForcesParallelLinear();
+            break;
+        case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
+            break;
+        case ParallelizationStrategy::reduction: updateForcesParallelReduction();
+            break;
+#endif
+        default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
+        }
+    }
+    if (gravityOn) {
+        applyGravity();
+    }
+#ifdef _OPENMP
+    if (parallelizationStrategy == ParallelizationStrategy::none) {
+        processBoundaryForces();
+    } else {
+        processBoundaryForcesParallel();
+    }
+#endif
+#ifndef _OPENMP
+    processBoundaryForces();
+#endif
+}
+
+//The following methods are only needed for parallelization
+
 #ifdef _OPENMP
 
 void LinkedCells::updateForcesParallelReduction() {
@@ -346,41 +384,5 @@ void LinkedCells::initializeReductionVectors(int maxNumThreads) {
         p.initializeForceAccumulator(maxNumThreads);
     });
 }
-
 #endif
 
-void LinkedCells::initializeForces() {
-    if (membraneSetting) {
-        updateForcesMembrane();
-        if (pull) {
-            pullMarkedParticles();
-        }
-    } else {
-        switch (parallelizationStrategy) {
-            case ParallelizationStrategy::none: updateForces();
-                break;
-#ifdef _OPENMP
-            case ParallelizationStrategy::linear: updateForcesParallelLinear();
-                break;
-            case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
-                break;
-            case ParallelizationStrategy::reduction: updateForcesParallelReduction();
-                break;
-#endif
-            default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
-        }
-    }
-    if (gravityOn) {
-        applyGravity();
-    }
-#ifdef _OPENMP
-    if (parallelizationStrategy == ParallelizationStrategy::none) {
-        processBoundaryForces();
-    } else {
-        processBoundaryForcesParallel();
-    }
-#endif
-#ifndef _OPENMP
-    processBoundaryForces();
-#endif
-}

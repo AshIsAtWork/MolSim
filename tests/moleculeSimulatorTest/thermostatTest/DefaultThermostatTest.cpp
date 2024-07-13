@@ -7,7 +7,7 @@
 
 #include "models/directSum/DirectSum.h"
 #include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
-#include "moleculeSimulator/thermostats/DefaultThermostat.h"
+#include "moleculeSimulator/thermostats/defaultThermostat/DefaultThermostat.h"
 
 class DefaultThermostatTest : public testing::Test {
 protected:

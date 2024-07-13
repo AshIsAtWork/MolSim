@@ -89,25 +89,50 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
     void updateForcesOptimized();
-#ifdef _OPENMP
-    void updateForcesParallelReduction();
-
-    void updateForcesParallelSkipping();
-
-    void updateForcesParallelLinear();
-
-    void updateVelocitiesParallel();
-
-    void updatePositionsParallel();
-
-    void processBoundaryForcesParallel();
-
-    void initializeReductionVectors(int maxNumThreads);
-#endif
-
 
     /**
      * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
      */
     void initializeForces() override;
+
+ //The following methods are only needed for parallelization.
+
+#ifdef _OPENMP
+    /**
+     * @brief Implements parallel force calculation by using reduction.
+     */
+    void updateForcesParallelReduction();
+
+    /**
+     * @brief Implements parallel force calculation by using the skipping schedule.
+     */
+    void updateForcesParallelSkipping();
+
+    /**
+     * @brief Implements parallel force calculation by using the linear schedule.
+     */
+    void updateForcesParallelLinear();
+
+    /**
+     * @brief Implements parallel calculation of velocity updates.
+     */
+    void updateVelocitiesParallel();
+
+    /**
+     * @brief Implements parallel calculation of position updates.
+     */
+    void updatePositionsParallel();
+
+    /**
+     * @brief Implements parallel calculation of force updates at boundaries.
+     */
+    void processBoundaryForcesParallel();
+
+    /**
+     * @brief Prepares reduction vectors for parallelization strategy "Reduction"
+     *
+     * @param maxNumThreads Maximum number of threads that is used during the reduction.
+     */
+    void initializeReductionVectors(int maxNumThreads);
+#endif
 };

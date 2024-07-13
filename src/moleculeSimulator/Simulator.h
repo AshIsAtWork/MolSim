@@ -10,7 +10,8 @@
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
 #include <memory>
-#include <moleculeSimulator/thermostats/DefaultThermostat.h>
+#include <moleculeSimulator/thermostats/defaultThermostat/DefaultThermostat.h>
+#include "thermostats/flowThermostat/FlowThermostat.h"
 #include "forceCalculation/gravity/Gravity.h"
 #include "forceCalculation/leonardJones/LeonardJonesForce.h"
 #include "models/directSum/DirectSum.h"

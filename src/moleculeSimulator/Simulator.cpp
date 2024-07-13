@@ -4,9 +4,6 @@
 
 #include "Simulator.h"
 
-#include <iostream>
-
-#include "thermostats/FlowThermostat.h"
 
 using namespace enumsStructs;
 

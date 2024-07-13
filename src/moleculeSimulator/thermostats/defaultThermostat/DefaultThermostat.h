@@ -3,8 +3,7 @@
 //
 
 #pragma once
-#include "Thermostat.h"
-#include "models/Model.h"
+#include "../Thermostat.h"
 
 /**
  * @brief Class for controling the temperature of the simulated system.

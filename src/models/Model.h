@@ -15,7 +15,7 @@
  * -Linked Cells
  */
 class Model {
-    //The thermostat needs direct access to the model to meassure and regulate the temperature of the particles.
+    //Thermostats need direct access to the model to meassure and regulate the temperature of the particles.
     friend class DefaultThermostat;
     friend class Thermostat;
     friend class FlowThermostat;
