@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/models/linkedCells/LinkedCells.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 using namespace enumsStructs;
 
@@ -19,6 +19,12 @@ bool noExplosion(Particle &p) {
     //The upper bound is set here arbitrarily to 1000. Is it not so clear what to choose here. For sure, the velocity of the particle should
     //not get to high which is an indicator for an explosion.
     return abs(p.getV()[0]) <= 10e3 && abs(p.getV()[1]) <= 10e3 && abs(p.getV()[2]) <= 10e3;
+}
+
+bool isParticleOnTrack(Particle &p) {
+    return p.getX()[1] == 4.5
+           and p.getX()[2] == 0
+           and 0 <= p.getX()[0] and p.getX()[0] < 9;
 }
 
 /**
@@ -38,24 +44,13 @@ bool noExplosion(Particle &p) {
  */
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
-    LeonardJonesForce lJF(5, 1);
-    std::pair<Side, enumsStructs::BoundaryCondition> front = {Side::front, enumsStructs::BoundaryCondition::reflective};
-    std::pair<Side, enumsStructs::BoundaryCondition> right = {Side::right, enumsStructs::BoundaryCondition::reflective};
-    std::pair<Side, enumsStructs::BoundaryCondition> back = {Side::back, enumsStructs::BoundaryCondition::reflective};
-    std::pair<Side, enumsStructs::BoundaryCondition> left = {Side::left, enumsStructs::BoundaryCondition::reflective};
-    std::pair<Side, enumsStructs::BoundaryCondition> top = {Side::top, enumsStructs::BoundaryCondition::reflective};
-    std::pair<Side, enumsStructs::BoundaryCondition> bottom = {
-        Side::bottom, enumsStructs::BoundaryCondition::reflective
+    LennardJonesForce lJF;
+    BoundarySet boundaries = {
+        BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective,
+        BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective
     };
 
-
-    std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> boundarySettings = {
-        front, right, back, left, top, bottom
-    };
-
-    LinkedCells linkedCellModel = {
-        lJF, 0.00005, {3, 3, 3}, 3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundarySettings
-    };
+    LinkedCells linkedCellModel = {lJF, 0.00005, {3, 3, 3}, 3, FileHandler::outputFormat::vtk, boundaries, false};
     double current_time = 0;
 
     int iteration = 0;
@@ -68,7 +63,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
     linkedCellModel.addParticle(p);
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.00005;
         //Check conditions
@@ -87,21 +82,14 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
  */
 
 TEST(LinkedCellsTest, Outflow) {
-    LeonardJonesForce lJF(5, 1);
-    std::pair<Side, enumsStructs::BoundaryCondition> front = {Side::front, enumsStructs::BoundaryCondition::outflow};
-    std::pair<Side, enumsStructs::BoundaryCondition> right = {Side::right, enumsStructs::BoundaryCondition::outflow};
-    std::pair<Side, enumsStructs::BoundaryCondition> back = {Side::back, enumsStructs::BoundaryCondition::outflow};
-    std::pair<Side, enumsStructs::BoundaryCondition> left = {Side::left, enumsStructs::BoundaryCondition::outflow};
-    std::pair<Side, enumsStructs::BoundaryCondition> top = {Side::top, enumsStructs::BoundaryCondition::outflow};
-    std::pair<Side, enumsStructs::BoundaryCondition> bottom = {Side::bottom, enumsStructs::BoundaryCondition::outflow};
-
-
-    std::array<std::pair<Side, enumsStructs::BoundaryCondition>, 6> boundarySettings = {
-        front, right, back, left, top, bottom
+    LennardJonesForce lJF;
+    BoundarySet boundaries = {
+        BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow,
+        BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow
     };
 
     LinkedCells linkedCellModel = {
-        lJF, 0.05, {3, 3, 3}, 3, 1, FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk, boundarySettings
+        lJF, 0.05, {3, 3, 3}, 3, FileHandler::outputFormat::vtk, boundaries, false
     };
     double current_time = 0;
 
@@ -128,11 +116,130 @@ TEST(LinkedCellsTest, Outflow) {
     linkedCellModel.updateForces();
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.05;
     }
 
     //All particles should be deleted after crossing one border
     EXPECT_EQ(linkedCellModel.getParticles().size(), 0);
+}
+
+/**
+ * Here we test, if the boundary condition periodic works correctly. The implementation of this boundary condition depends on a
+ * lot of different methods and helper methods. Testing each of them individually as it should be done in the best case
+ * would take a lot of time that we unfortunately do not have. Therefore, we try to test the boundary condition as a whole.
+ * To further simplify the testing, we are considering here the 2D case, because in every task, we are only using the 2D setting and
+ * the 3D setting is much more complex and therefore really hard to test.
+ */
+
+/**
+ *  Test 1: Here we check, if a particle which has left the domain one the right side appears again on the opposite side. We are checking it here
+ *          for one side only, because it is similar for each side.
+ */
+
+
+TEST(LinkedCellsTest, Periodic_PostionUpdates) {
+    LennardJonesForce lJF;
+    BoundarySet boundaries = {
+        BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
+        BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic
+    };
+
+    LinkedCells linkedCellModel = {
+        lJF, 0.05, {9, 9, 0}, 3, FileHandler::outputFormat::vtk, boundaries, false
+    };
+    double current_time = 0;
+
+    int iteration = 0;
+
+    //Send one particle in one direction and check, if it stays in the domain, is not deleted and always moving.
+
+    Particle p = {{4.5, 4.5, 0}, {10, 0, 0}, 1};
+
+    linkedCellModel.addParticle(p);
+
+    ASSERT_EQ(linkedCellModel.getParticles().size(), 1);
+
+    linkedCellModel.updateForces();
+
+    while (current_time < 5) {
+        double xCoordinateBefore;
+        linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateBefore](Particle &p) {
+            xCoordinateBefore = p.getX()[0];
+        });
+        linkedCellModel.step(1);
+        double xCoordinateAfter;
+        linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateAfter](Particle &p) {
+            xCoordinateAfter = p.getX()[0];
+        });
+        //Particle should move along the x-axis.
+        ASSERT_TRUE(xCoordinateBefore != xCoordinateAfter);
+        //Particle should always stay on track.
+        ASSERT_TRUE(isParticleOnTrack(p));
+        iteration++;
+        current_time += 0.05;
+    }
+}
+
+/**
+ * Test 2: The idea of this test is to send two particles starting from the middle of the domain into opposite directions
+ *         along the x-axis. What we expect to happen is that the right and left boundary appear to be reflecting because
+ *         both particles are pushing each other away from the boundary. What is happending here is in fact nothing else than
+ *         the ghost particle implemenation does as part of reflective boundaries.
+ *         --> We choose deltaT here small enough to guarantee that the simulation is stable.
+ *         A visualisation can be found in the directory assignment-4 of the submission directory. It is called
+ *         Test-Periodic-Boundaries-Visualisation.
+ */
+
+
+TEST(LinkedCellsTest, Periodic_Force_Calculation) {
+    FileHandler file_handler;
+    LennardJonesForce lJF;
+    BoundarySet boundaries = {
+        BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
+        BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic
+    };
+
+    LinkedCells linkedCellModel = {
+        lJF, 0.0005, {9, 9, 0}, 3, FileHandler::outputFormat::vtk, boundaries, false
+    };
+    double current_time = 0;
+
+    int iteration = 1;
+
+    //Send one particle in one direction and check, if it stays in the domain, is not deleted and always moving.
+
+    Particle pRight = {{5, 4.5, 0}, {10, 0, 0}, 1,1};
+    Particle pLeft = {{4, 4.5, 0}, {-10, 0, 0}, 1,2};
+
+    linkedCellModel.addParticle(pRight);
+    linkedCellModel.addParticle(pLeft);
+
+    ASSERT_EQ(linkedCellModel.getParticles().size(), 2);
+
+    linkedCellModel.updateForces();
+    std::string testName = "TestPeriodic";
+    while (current_time < 10){
+        linkedCellModel.getParticles().applyToEachParticle([](Particle& p) {
+            //Y and Z coordinates should not change for both particles:
+            ASSERT_TRUE(p.getX()[1] == 4.5);
+            ASSERT_TRUE(p.getX()[2] == 0);
+
+            if(p.getType() == 1) {
+                //X coordinate of particle pRight should always stay between 4.5 and 9.
+                ASSERT_TRUE(4.5 <= p.getX()[0] and p.getX()[0] <= 9);
+            }else {
+                //X coordinate of particle pLeft should always stay between 0 and 4.5.
+                ASSERT_TRUE(0 <= p.getX()[0] and p.getX()[0] <= 4.5);
+            }
+
+        });
+        linkedCellModel.step(1);
+        if(iteration % 100 == 0) {
+            file_handler.writeToFile(linkedCellModel.getParticles(),iteration,FileHandler::outputFormat::vtk,testName);
+        }
+        iteration++;
+        current_time += 0.0005;
+    }
 }

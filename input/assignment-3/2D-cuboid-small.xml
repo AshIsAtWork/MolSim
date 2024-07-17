@@ -2,15 +2,13 @@
 
 <Molecules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="../../src/fileHandling/reader/XMLHandling/ConfigurationFile.xsd">
-    <OutputFileName>Collision</OutputFileName>
+    <OutputFileName>CollisionTwo</OutputFileName>
     <OutputFrequency>50</OutputFrequency>
     <model>
         <Name>LinkedCells</Name>
         <t_end>5</t_end>
         <delta_t>0.0002</delta_t>
-        <force>LeonardJonesForce</force>
-        <Sigma>1</Sigma>
-        <Epsilon>5</Epsilon>
+        <force>LennardJonesForce</force>
         <DomainSize>
             <First>200</First>
             <Second>200</Second>

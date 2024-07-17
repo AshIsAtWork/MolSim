@@ -1,6 +1,6 @@
-////
-//// Created by daniel on 11.05.24.
-////
+//
+// Created by daniel on 11.05.24.
+//
 #include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
 #include "moleculeSimulator/Simulator.h"
@@ -16,10 +16,10 @@
 
 TEST(SimulatorTest, EmptyFile) {
     std::string filename = "name";
-    DirectSumSimulationParameters dS = {0.0001, 0.001, 5,1,TypeOfForce::gravity};
+    DirectSumSimulationParameters dS = {0.0001, 0.001, TypeOfForce::gravity};
 
     std::string filepath = "../tests/testData/Empty.txt";
-    EXPECT_DEATH(Simulator simulator(dS,filepath,FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk,10,filename), "");
+    EXPECT_THROW(Simulator simulator(dS,filepath, FileHandler::outputFormat::vtk,10,filename), std::exception);
 }
 
 /**
@@ -28,7 +28,7 @@ TEST(SimulatorTest, EmptyFile) {
 
 TEST(SimulatorTest, FileDoesNotExist) {
     std::string filename = "name";
-    DirectSumSimulationParameters dS = {0.0001, 0.001, 5,1,TypeOfForce::gravity};
+    DirectSumSimulationParameters dS = {0.0001, 0.001, TypeOfForce::gravity};
     std::string filepath = "IDoNotExist";
-    EXPECT_DEATH(Simulator simulator(dS,filepath,FileHandler::inputFormat::txt, FileHandler::outputFormat::vtk,10,filename), "");
+    EXPECT_THROW(Simulator simulator(dS,filepath, FileHandler::outputFormat::vtk,10,filename), std::exception);
 }

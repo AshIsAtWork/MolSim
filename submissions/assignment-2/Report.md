@@ -111,11 +111,11 @@ Both file formats can be processed by our program using the option `-f <path to 
 **2. Brownian Motion**  
 Another interesting feature is that each particle is assigned a randomised velocity at the start of the simulation in addition to its initial velocity being proportional to the temperature of the object of interest. This models the Brownian Motion that can be observed in reality. There are no particles that do not move at all. Each particle does some movement, however small it may be. We created a little video which shall highlight this effect. Click [here](Brownian-Motion.mp4) to watch.  
 
-**2. Leonard Jones Force**  
+**2. Lennard Jones Force**  
 As announced in last week's task sheet, we had to add this week a new type of force to our project.
 With the help of our strategy pattern this was quickly done.
-We just created a new class [LeonardJonesForce](../../src/moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h) as additional specialisation of our [Force](../../src/moleculeSimulator/forceCalculation/Force.h) interface.
-Therefore, we could easily substitute the gravitational force with the new Leonard-Jones force.
+We just created a new class [LennardJonesForce](../../src/moleculeSimulator/forceCalculation/LennardJones/LennardJonesForce.h) as additional specialisation of our [Force](../../src/moleculeSimulator/forceCalculation/Force.h) interface.
+Therefore, we could easily substitute the gravitational force with the new Lennard-Jones force.
 To increase the efficiency of our calculation,
 we simplified the formula
 which was given on the worksheet in such a way that no high exponents like 12 occur whose computation might be costly. 

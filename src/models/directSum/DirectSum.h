@@ -18,11 +18,26 @@ private:
     DefaultParticleContainer particles;
 
 public:
-    DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-              FileHandler::outputFormat outputFormat);
+    /**
+     * @brief Construct a new Direct Sum model.
+     *
+     * @param force Force to use.
+     * @param deltaT Discretisation step.
+     * @param outputFormat Output format.
+     * @param gravityOn Toggle gravity on or off.
+     * @param g Gravitational factor g.
+     */
+    DirectSum(Force &force, double deltaT, FileHandler::outputFormat outputFormat, bool gravityOn, std::array<double, 3> g = {});
 
     /**
      * @brief Perform one time step in the direct sum model.
+     *
+     * @param iteration Current iteration the simulator is in.
      */
-    void step() override;
+    void step(int iteration) override;
+
+    /**
+     * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
+     */
+    void initializeForces() override;
 };

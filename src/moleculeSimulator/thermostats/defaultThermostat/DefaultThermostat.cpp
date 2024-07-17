@@ -1,0 +1,54 @@
+//
+// Created by daniel on 08.06.24.
+//
+
+#include "DefaultThermostat.h"
+
+
+DefaultThermostat::DefaultThermostat(Model &model, double temperatureInit, double temperatureTarget,
+                                     double maxTemperatureChange, int dimensions): Thermostat{
+    model, temperatureInit, temperatureTarget, maxTemperatureChange, dimensions
+} {}
+
+double DefaultThermostat::calculateKineticEnergy() {
+    double eKin = 0;
+    model.particles.applyToEachParticleInDomain([&eKin](Particle &p) {
+        eKin += p.calculateEKin();
+    });
+    return eKin;
+}
+
+double DefaultThermostat::calculateTemperature() {
+    if (model.particles.size() == 0) {
+        throw std::invalid_argument("Temperature given when none expected.");
+    }
+    return 2 * calculateKineticEnergy() / (static_cast<double>(model.particles.size()) * dimensions);
+}
+
+void DefaultThermostat::setTemperatureOfTheSystemViaVelocityScaling() {
+    double currentTemperature = calculateTemperature();
+    if (currentTemperature == 0) {
+        throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");
+    }
+    double beta = std::sqrt(targetTemperature / currentTemperature);
+    model.particles.applyToEachParticleInDomain([beta](Particle &p) {
+        p.setV(beta * p.getV());
+    });
+}
+
+void DefaultThermostat::setTemperatureOfTheSystemViaGradualVelocityScaling() {
+    double currentTemperature = calculateTemperature();
+    if (currentTemperature == 0) {
+        throw std::invalid_argument("Temperature Scaling error. Current System temperature is 0.");
+    }
+    double intermediateTemperature = targetTemperature;
+    double temperatureChange = targetTemperature - currentTemperature;
+    double signTemperatureChange = temperatureChange > 0 ? 1 : temperatureChange < 0 ? -1 : 0;
+    if (std::abs(temperatureChange) > maxTemperatureChange) {
+        intermediateTemperature = currentTemperature + signTemperatureChange * maxTemperatureChange;
+    }
+    double beta = std::sqrt(intermediateTemperature / currentTemperature);
+    model.particles.applyToEachParticleInDomain([beta](Particle &p) {
+        p.setV(beta * p.getV());
+    });
+}

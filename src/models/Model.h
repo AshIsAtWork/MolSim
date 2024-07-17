@@ -15,15 +15,21 @@
  * -Linked Cells
  */
 class Model {
+    //Thermostats need direct access to the model to meassure and regulate the temperature of the particles.
+    friend class DefaultThermostat;
+    friend class Thermostat;
+    friend class FlowThermostat;
+
 private:
     FileHandler fileHandler;
-    FileHandler::inputFormat inputFormat;
     FileHandler::outputFormat outputFormat;
 
 protected:
     ParticleContainer &particles;
     Force &force;
     double deltaT;
+    bool gravityOn;
+    std::array<double, 3> g;
 
     /**
      * @brief Constructor for this model. Cannot be called from any other class but classes that extend this class,
@@ -32,11 +38,12 @@ protected:
      * @param particles Particle container of the model. This parameter is instantiated with the appropriated container by the derived models.
      * @param force Force to use in the simulation.
      * @param deltaT Duration of one time step. Small time step will result in a better simulation, but will demand more computational resources.
-     * @param inputFormat Format of the input file. Supported formats are txt and xml.
      * @param outputFormat Format of the output file. Supported formats are vtk and xyz.
+     * @param gravityOn Toggle gravtiy on or of
+     * @param g Gravity factor
      */
-    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-          FileHandler::outputFormat outputFormat);
+    Model(ParticleContainer &particles, Force &force, double deltaT, FileHandler::outputFormat outputFormat,
+          bool gravityOn, std::array<double, 3> g = {});
 
     /**
     * @brief Helper method to calculate the position of all particles.
@@ -54,6 +61,11 @@ protected:
 
     void updateVelocities() const;
 
+    /**
+     * @brief Add a gravitational force of g * m along the y-axis to each particle inside the simulation domain.
+     */
+    void applyGravity();
+
 public:
     /**
      *@brief Virtual default constructor to guarantee appropriate memory clean up
@@ -66,7 +78,7 @@ public:
      * @param iteration Current iteration.
      * @param baseName Base name of the output file.
      */
-    void plot(int iteration, std::string& baseName);
+    void plot(int iteration, std::string &baseName);
 
     /**
      * @brief Add a cuboid structure to this model.
@@ -80,9 +92,13 @@ public:
      * @param initVelocity Initial velocity of the of the particles.
      * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
      * @param brownianMotionAverageVelocity
+     * @param epsilon Leonard Jones parameter epsilon
+     * @param sigma Leonard Jones parameter sigma
+     * @param fixed Fix particles.
      */
     void addCuboid(const std::array<double, 3> &position, unsigned N1, unsigned N2, unsigned N3, double h, double mass,
-                   const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity);
+                   const std::array<double, 3> &initVelocity, int dimensions, double brownianMotionAverageVelocity,
+                   double epsilon = 5, double sigma = 1, bool fixed = false);
 
     /**
     * @brief Add a 2D disc structure to this model.
@@ -94,10 +110,31 @@ public:
     * @param mass Mass of one particle.
     * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
     * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+    * @param epsilon Leonard Jones parameter epsilon
+    * @param sigma Leonard Jones parameter sigma
+    * @param fixed Fix particles.
     */
     void addDisc(const std::array<double, 3> &center,
                  const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                 double brownianMotionAverageVelocity);
+                 double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1, bool fixed = false);
+
+    /**
+    * @brief Add a 3D sphere structure to this model.
+    *
+    * @param center The coordinates of the center of the disc.
+    * @param initVelocity Initial velocity of the of the particles.
+    * @param N Number of particles along the radius, including the particle in the center.
+    * @param h Distance of the particles (mesh width of the grid).
+    * @param mass Mass of one particle.
+    * @param dimensions Number of dimensions to which the Brownian Motion will be added. Valid values are 0, 1, 2 and 3.
+    * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+    * @param epsilon Leonard Jones parameter epsilon
+    * @param sigma Leonard Jones parameter sigma
+    * @param fixed Fix particles.
+    */
+    void addSphere(const std::array<double, 3> &center, const std::array<double, 3> &initVelocity, int N, double h,
+                   double mass, int dimensions, double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1,
+                   bool fixed = false);
 
     /**
      * @brief Add a single particle to this model.
@@ -111,8 +148,15 @@ public:
      * @brief Add new particles / particle structures to the model via a file
      *
      * @param filepath Path to the file. Example: ../input/eingabe-sonne.txt
+     * @param inputFormat Format of the input file (txt, xml)
      */
-    void addViaFile(std::string &filepath);
+    void addViaFile(std::string &filepath, FileHandler::inputFormat inputFormat);
+
+    /**
+     * @brief Export the current state of all molecules to a txt file for using them in a new simulation.
+     */
+
+    void saveState();
 
     /**
     * @brief Helper method to calculate the force between all particles.
@@ -127,11 +171,13 @@ public:
     /**
      * @brief Perform one single step in the simulation.
      *
+     * @parameter Current iteration the simulator is in.
+     *
      * Each step consists of force, velocity and position updates. For each concrete model the exact
      * implementation might differ.
      */
 
-    virtual void step() = 0;
+    virtual void step(int iteration) = 0;
 
     /**
      * @brief Get the Particles of this model.
@@ -142,5 +188,10 @@ public:
      */
     [[nodiscard]] ParticleContainer &getParticles() const {
         return particles;
-    };
+    }
+
+    /**
+     * @brief Calculate forces at the beginning of the simulation that the old force is not 0.
+     */
+    virtual void initializeForces() = 0;
 };

@@ -49,8 +49,13 @@ target_link_libraries(
         #For Mocking, similar to Mockito in Java
         GTest::gmock_main
         spdlog::spdlog
-        xerces-c
+        XercesC::XercesC
 )
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSimTests PUBLIC OpenMP::OpenMP_CXX)
+endif ()
+
 enable_testing()
 
 include(GoogleTest)

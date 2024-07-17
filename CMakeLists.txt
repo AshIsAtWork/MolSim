@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # define project name, version
-project(PSEMolDyn_GroupA VERSION 0.0.2)
+project(PSEMolDyn_GroupA VERSION 0.0.4)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")
@@ -11,6 +11,12 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
+
+if (OPTIMISATION)
+    message(STATUS "Further Optimisation flags enabled")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
+endif ()
 
 # collect all cpp files
 file(GLOB_RECURSE MY_SRC
@@ -46,15 +52,31 @@ target_compile_options(MolSim
         $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
 )
 
+find_package(XercesC REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(OpenMP)
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
+endif ()
+
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         PUBLIC
-        boost_program_options
-        xerces-c
+        Boost::program_options
+        XercesC::XercesC
         spdlog::spdlog
         gtest_main
         gmock_main
 )
+
+if (PROFILING)
+    message(STATUS "Profiling enabled")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+endif ()
+
 include(doxygen)
 
 include(spdlog)

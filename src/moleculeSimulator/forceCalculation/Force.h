@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "particleRepresentation/particle/Particle.h"
+#include <particleRepresentation/particle/Particle.h>
 
 /**
  * @brief Interface representing the force that the source exerts on the target.
@@ -25,4 +25,11 @@ public:
     virtual std::array<double, 3> compute(Particle &target, Particle &source) = 0;
 
     virtual ~Force() = default;
+
+    /**
+    * @brief We needed this to integrate our optimization in our code to prevent breaking the inheritance hierachy.
+    *        Will be removed, when we integrated the optimization properly.
+    */
+
+    virtual std::array<double, 3> computeOptimized(Particle &target, Particle &source, std::array<double, 3>& difference, double distance) = 0;
 };

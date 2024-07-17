@@ -58,7 +58,7 @@ public:
      *
      * Provides the number of particles currently stored in the data structure.
      */
-    size_t size() override;
+    [[nodiscard]] size_t size() const override;
 
     /**
      * @brief Retrieve the capacity of this container.

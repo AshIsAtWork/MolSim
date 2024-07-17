@@ -24,4 +24,6 @@ inline void performBenchmark(Simulator &simulator) {
     long duration_min_sec = static_cast<long>(std::ceil(duration_s)) - duration_min * 60;
     std::cout << "Execution time: " << duration_min << " min " << duration_min_sec << " sec | "
             << duration_s << " sec | " << duration_ns.count() << " ns.\n";
+    std::cout << "Molecule updates per second: " << static_cast<double>(simulator.getTotalMoleculeUpdates()) / duration_s << "\n";
+
 }

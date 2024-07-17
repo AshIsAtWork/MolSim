@@ -4,12 +4,22 @@
 
 #include "DirectSum.h"
 
-DirectSum::DirectSum(Force &force, double deltaT, FileHandler::inputFormat inputFormat,
-    FileHandler::outputFormat outputFormat) : Model(particles, force, deltaT, inputFormat, outputFormat) {
+DirectSum::DirectSum(Force &force, double deltaT, FileHandler::outputFormat outputFormat, bool gravityOn, std::array<double, 3> g) : Model(
+    particles, force, deltaT, outputFormat, gravityOn, g) {
 }
 
-void DirectSum::step() {
+void DirectSum::step(int iteration) {
     updateForces();
+    if(gravityOn) {
+        applyGravity();
+    }
     updateVelocities();
     updatePositions();
+}
+
+void DirectSum::initializeForces() {
+    updateForces();
+    if(gravityOn) {
+        applyGravity();
+    }
 }

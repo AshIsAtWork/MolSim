@@ -4,18 +4,19 @@
 
 #include "FileHandler.h"
 
+#include "outputWriter/TXTWriter/TxtWriter.h"
+
 void FileHandler::readFile(ParticleContainer &particles, std::string &filePath, inputFormat format) {
 
     switch (format) {
         case inputFormat::txt: {
             if (FileReader::readFile(particles, filePath) != 0) {
-                exit(-1);
+                throw std::invalid_argument("Exception during reading the txt occurred");
             }
         }break;
+        //TODO: Move XML from MolSim.cpp to here
         default: {
-            spdlog::error("Invalid input format selected. Please select a valid input format.");
-            spdlog::error("Code should not reach this point. Exiting program.");
-            exit(-1);
+            throw std::invalid_argument("Invalid Input Format Selected");
         }
     }
 }
@@ -25,7 +26,7 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
         case outputFormat::xyz: {
             xyzWriter.plotParticles(particles, baseName, iteration);
         }
-            break;
+        break;
         case outputFormat::vtk: {
             vtkWriter.initializeOutput(static_cast<int>(particles.size()));
             particles.applyToEachParticle([this](Particle &p) {
@@ -33,16 +34,12 @@ void FileHandler::writeToFile(ParticleContainer &particles, int iteration, outpu
             });
             vtkWriter.writeFile(baseName, iteration);
         }
+        break;
+        case outputFormat::txt: {
+            TxtWriter::writeToFile(particles,baseName);
             break;
-        case outputFormat::xml: {
-            // TODO: Will be implemented as part of the next worksheet.
-            spdlog::error("Not implemented yet. Terminating program!");
-            exit(-1);
-            }
-            break;
-        case outputFormat::invalid:
-            spdlog::error("Invalid output format selected. Please select a valid output format.");
-            spdlog::error("Code should not reach this point. Exiting program.");
-            exit(-1);
+        default:
+            throw std::invalid_argument("Invalid Output Format Selected");
+        }
     }
 }
