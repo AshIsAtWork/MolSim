@@ -23,6 +23,68 @@
                     </xs:simpleType>
                 </xs:element>
 
+                <xs:element minOccurs="0" maxOccurs="1" name="ThermostatConfig">
+
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+                            <xs:element minOccurs="1" maxOccurs="1" name="InitialTemperature">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minExclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="TargetTemperature">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minExclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="InitialBrownian" type="xs:boolean">
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="ScalingGradually" type="xs:boolean">
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="MaximumTemperatureChange">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="ApplyAfterHowManySteps">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Dimension">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element minOccurs="0" maxOccurs="1" name="GravityConfig">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+                            <xs:element minOccurs="1" maxOccurs="1" name="GravitationFactor" type="xs:decimal"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
                 <xs:element minOccurs="1" maxOccurs="1" name="model">
                     <xs:complexType mixed="true">
                         <xs:sequence>
@@ -56,23 +118,6 @@
                                     <xs:restriction base="xs:string">
                                         <xs:enumeration value="Gravity"/>
                                         <xs:enumeration value="LeonardJonesForce"/>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:element>
-
-                            <xs:element minOccurs="1" maxOccurs="1" name="Sigma">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:double">
-                                        <xs:minInclusive value="0"/>
-                                    </xs:restriction>
-                                </xs:simpleType>
-                            </xs:element>
-
-
-                            <xs:element minOccurs="1" maxOccurs="1" name="Epsilon">
-                                <xs:simpleType>
-                                    <xs:restriction base="xs:double">
-                                        <xs:minInclusive value="0"/>
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
@@ -128,6 +173,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -136,6 +182,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -144,6 +191,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -152,6 +200,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -160,6 +209,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -168,6 +218,7 @@
                                                             <xs:restriction base="xs:string">
                                                                 <xs:enumeration value="Reflective"/>
                                                                 <xs:enumeration value="Outflow"/>
+                                                                <xs:enumeration value="Periodic"/>
                                                             </xs:restriction>
                                                         </xs:simpleType>
                                                     </xs:element>
@@ -224,6 +275,23 @@
                                         </xs:element>
 
                                         <xs:element minOccurs="1" maxOccurs="1" name="Mass">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Sigma">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Epsilon">
                                             <xs:simpleType>
                                                 <xs:restriction base="xs:double">
                                                     <xs:minInclusive value="0"/>
@@ -337,6 +405,24 @@
                                                 </xs:restriction>
                                             </xs:simpleType>
                                         </xs:element>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Sigma">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Epsilon">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -407,6 +493,23 @@
                                         <xs:element minOccurs="1" maxOccurs="1" name="DimensionBrownian"
                                                     type="xs:unsignedByte"/>
 
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Sigma">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Epsilon">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -414,6 +517,93 @@
 
                     </xs:complexType>
                 </xs:element>
+
+                <xs:element minOccurs="0" maxOccurs="1" name="Spheres">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Size">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element maxOccurs="unbounded" name="Sphere">
+                                <xs:complexType mixed="true">
+                                    <xs:sequence>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="Center">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element minOccurs="1" maxOccurs="1" name="X"
+                                                                type="xs:decimal"/>
+                                                    <xs:element minOccurs="1" maxOccurs="1" name="Y"
+                                                                type="xs:decimal"/>
+                                                    <xs:element minOccurs="1" maxOccurs="1" name="Z"
+                                                                type="xs:decimal"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="Mass">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="InterParticleDistance">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="Velocity">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="X" type="xs:decimal"/>
+                                                    <xs:element name="Y" type="xs:decimal"/>
+                                                    <xs:element name="Z" type="xs:decimal"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="Radius" type="xs:decimal"/>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="Brownian" type="xs:decimal"/>
+
+                                        <xs:element minOccurs="1" maxOccurs="1" name="DimensionBrownian"
+                                                    type="xs:unsignedByte"/>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Sigma">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Epsilon">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:double">
+                                                    <xs:minInclusive value="0"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+
             </xs:sequence>
         </xs:complexType>
     </xs:element>

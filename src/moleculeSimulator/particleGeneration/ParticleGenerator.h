@@ -34,10 +34,12 @@ private:
      *                                                     [1]: support axis d2 (0 for x-axis, 1 for y-axis)
      *                                                     [2]: direction along main axis d1 (0 for positive, 1 for negative)
      *                                                     [3]: direction along support axis d2 (0 for positive, 1 for negative)
+     * @param epsilon Lennard Jones force parameter epsilon.
+     * @param sigma Lennard Jones force parameter sigma.
      */
     static void generateDiscQuadrant(ParticleContainer &particles, const std::array<double, 3> &corner,
                                      const std::array<double, 3> &initVelocity, double h, double mass, int N, double r, int dimensions,
-                                     double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix);
+                                     double brownianMotionAverageVelocity, std::array<int, 4> transformMatrix, double epsilon = 5, double sigma = 1);
 
 public:
     /**
@@ -53,11 +55,13 @@ public:
      * @param initVelocity Initial velocity of the of the particles.
      * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+     * @param epsilon Lennard Jones force parameter epsilon.
+     * @param sigma Lennard Jones force parameter sigma.
      */
     static void generateCuboid(ParticleContainer &particles, const std::array<double, 3> &position, unsigned N1,
                                unsigned N2, unsigned N3,
                                double h, double mass, const std::array<double, 3> &initVelocity, int dimensions,
-                               double brownianMotionAverageVelocity);
+                               double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
 
     /**
      * @brief Generate a 2D disc structure.
@@ -70,8 +74,28 @@ public:
      * @param mass Mass of one particle.
      * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
      * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+     * @param epsilon Lennard Jones force parameter epsilon.
+     * @param sigma Lennard Jones force parameter sigma.
      */
     static void generateDisc(ParticleContainer &particles, const std::array<double, 3> &center,
                              const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
-                             double brownianMotionAverageVelocity);
+                             double brownianMotionAverageVelocity, double epsilon = 5, double sigma = 1);
+
+    /**
+   * @brief Generate a 3D sphere structure.
+   *
+   * @param particles Particle container to which the particle structure is added.
+   * @param center The coordinates of the center of the sphere.
+   * @param initVelocity Initial velocity of the of the particles.
+   * @param N Number of particles along the radius, including the particle in the center.
+   * @param h Distance of the particles (mesh width of the grid).
+   * @param mass Mass of one particle.
+   * @param dimensions Specify in how many dimensions the Brownian Motion is applied. Valid values are 0, 1, 2, 3
+   * @param brownianMotionAverageVelocity Constant, specifying the average velocity of the Brownian Motion.
+   * @param epsilon Lennard Jones force parameter epsilon.
+   * @param sigma Lennard Jones force parameter sigma.
+   */
+    static void generateSphere(ParticleContainer &particles, const std::array<double, 3> &center,
+                               const std::array<double, 3> &initVelocity, int N, double h, double mass, int dimensions,
+                               double brownianMotionAverageVelocity, double epsilon, double sigma);
 };

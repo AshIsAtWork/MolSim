@@ -26,7 +26,7 @@ public:
      *
      * @return Number of particles stored in this container.
      */
-    virtual size_t size() = 0;
+    [[nodiscard]] virtual size_t size() const = 0;
 
     /**
      * @brief Iterate over all particles in this container and apply a lambda function to them.

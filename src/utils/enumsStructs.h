@@ -32,7 +32,16 @@ namespace enumsStructs {
      * Enum to distinguish between different boundary conditions for each side.
      */
     enum class BoundaryCondition {
-        outflow, reflective, invalid
+        outflow, reflective, periodic, invalid
+    };
+
+    struct BoundarySet {
+        BoundaryCondition front = BoundaryCondition::invalid;
+        BoundaryCondition right = BoundaryCondition::invalid;
+        BoundaryCondition back = BoundaryCondition::invalid;
+        BoundaryCondition left = BoundaryCondition::invalid;
+        BoundaryCondition top = BoundaryCondition::invalid;
+        BoundaryCondition bottom = BoundaryCondition::invalid;
     };
 
     /**
@@ -41,8 +50,6 @@ namespace enumsStructs {
     struct DirectSumSimulationParameters {
         double deltaT;
         double endT;
-        double epsilon;
-        double sigma;
         TypeOfForce force;
     };
 
@@ -52,12 +59,10 @@ namespace enumsStructs {
     struct LinkedCellsSimulationParameters {
         double deltaT;
         double endT;
-        double epsilon;
-        double sigma;
         TypeOfForce force;
         double rCutOff;
         std::array<double, 3> domainSize;
-        std::array<std::pair<Side, BoundaryCondition>, 6> boundarySettings;
+        BoundarySet boundaryConditions;
     };
 
     /**
@@ -71,6 +76,8 @@ namespace enumsStructs {
         std::array<double, 3> initVelocity;
         int dimensionsBrownianMotion;
         double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
     };
 
     /**
@@ -84,6 +91,20 @@ namespace enumsStructs {
         double mass;
         int dimensionsBrownianMotion;
         double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
+    };
+
+    struct Sphere {
+        std::array<double, 3> center;
+        std::array<double, 3> initVelocity;
+        int N;
+        double h;
+        double mass;
+        int dimensionsBrownianMotion;
+        double brownianMotionAverageVelocity;
+        double epsilon;
+        double sigma;
     };
 
     /**
@@ -93,6 +114,25 @@ namespace enumsStructs {
         std::array<double, 3> x;
         std::array<double, 3> v;
         double m;
+        double epsilon;
+        double sigma;
+    };
+
+    /**
+     * Struct containing the specifications of the thermostat.
+     */
+
+    struct ThermostatParameters {
+        //If set to false, all other parameters are ignored
+        bool useThermostat;
+        bool initialiseSystemWithBrownianMotion;
+        //If set to false, maxTemperatureChange will be ignored
+        bool applyScalingGradually;
+        double initialTemperature;
+        double targetTemperature;
+        double maxTemperatureChange;
+        int applyAfterHowManySteps;
+        int dimensions;
     };
 
     /**
@@ -102,6 +142,11 @@ namespace enumsStructs {
         //general
         std::string outputFileName;
         int outputFrequency;
+        bool gravityOn;
+        double gravityFactor;
+
+        //thermostat
+        ThermostatParameters thermostatParameters;
 
         //model to use in the simulation
         TypeOfModel model;
@@ -116,6 +161,7 @@ namespace enumsStructs {
         std::vector<Cuboid> cuboids;
         std::vector<Disc> discs;
         std::vector<ParticleType> particles;
+        std::vector<Sphere> spheres;
     };
 
     /**
@@ -127,8 +173,8 @@ namespace enumsStructs {
      */
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
-                {"Gravity",           TypeOfForce::gravity},
-                {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
+            {"Gravity", TypeOfForce::gravity},
+            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
@@ -144,8 +190,8 @@ namespace enumsStructs {
      */
     inline std::string getForce(TypeOfForce &force) {
         static const std::unordered_map<TypeOfForce, std::string> formatMap = {
-                {TypeOfForce::gravity,           "Gravity"},
-                {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
+            {TypeOfForce::gravity, "Gravity"},
+            {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
         };
         auto it = formatMap.find(force);
         return (it != formatMap.end()) ? it->second : "Invalid";
@@ -160,8 +206,8 @@ namespace enumsStructs {
      */
     inline TypeOfModel setModel(const std::string &selectedModel) {
         static const std::unordered_map<std::string, TypeOfModel> formatMap = {
-                {"DirectSum",   TypeOfModel::directSum},
-                {"LinkedCells", TypeOfModel::linkedCells}
+            {"DirectSum", TypeOfModel::directSum},
+            {"LinkedCells", TypeOfModel::linkedCells}
         };
 
         auto it = formatMap.find(selectedModel);
@@ -177,8 +223,8 @@ namespace enumsStructs {
      */
     inline std::string getModel(TypeOfModel &model) {
         static const std::unordered_map<TypeOfModel, std::string> formatMap = {
-                {TypeOfModel::directSum,   "DirectSum"},
-                {TypeOfModel::linkedCells, "LinkedCells"}
+            {TypeOfModel::directSum, "DirectSum"},
+            {TypeOfModel::linkedCells, "LinkedCells"}
         };
         auto it = formatMap.find(model);
         return (it != formatMap.end()) ? it->second : "Invalid";
@@ -193,8 +239,9 @@ namespace enumsStructs {
      */
     inline BoundaryCondition setBoundaryCondition(const std::string &selectedBoundaryCondition) {
         static const std::unordered_map<std::string, BoundaryCondition> formatMap = {
-                {"Reflective", BoundaryCondition::reflective},
-                {"Outflow",    BoundaryCondition::outflow}
+            {"Reflective", BoundaryCondition::reflective},
+            {"Outflow", BoundaryCondition::outflow},
+            {"Periodic", BoundaryCondition::periodic}
         };
         auto it = formatMap.find(selectedBoundaryCondition);
         return (it != formatMap.end()) ? it->second : BoundaryCondition::invalid;
@@ -209,12 +256,11 @@ namespace enumsStructs {
      */
     inline std::string getBoundaryCondition(BoundaryCondition &boundaryCondition) {
         static const std::unordered_map<BoundaryCondition, std::string> formatMap = {
-                {BoundaryCondition::reflective, "Reflective"},
-                {BoundaryCondition::outflow,    "Outflow"}
+            {BoundaryCondition::reflective, "Reflective"},
+            {BoundaryCondition::outflow, "Outflow"},
+            {BoundaryCondition::periodic, "Periodic"}
         };
         auto it = formatMap.find(boundaryCondition);
         return (it != formatMap.end()) ? it->second : "Invalid";
     }
-
-
 }
