@@ -44,7 +44,7 @@ This is the practical project repository for the course offered by the Scientifi
 
 ### Current Project Structure
 
-<div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/project-Structure.png" width="100%" alt=""></div>
+<div><img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/project-Structure.png" width="100%" alt=""></div>
 
 ---
 
@@ -144,7 +144,7 @@ The process of building the project is described here:
 
    - **Sprint 1 — Halley's Comet**
      
-     <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/halleys-Comet.png" width="1000px" alt="">
+     <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/halleys-Comet.png" width="1000px" alt="">
        
       ```bash
       ./MolSim -f ../input/assignment-1/eingabe-sonne.txt --force gravity -e 1000 -d 0.014 -i txt -o vtk
@@ -152,7 +152,7 @@ The process of building the project is described here:
 
    - **Sprint 2 — 2D collision of two bodies**
         
-      <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/collision-of-two-bodies.png" width="1000px" alt="">
+      <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/collision-of-two-bodies.png" width="1000px" alt="">
 
      ```bash
      ./MolSim -f ../input/assignment-2/2D-cuboid-collision.txt -e 5 -d 0.0002 --force ljf -i txt -o vtk
@@ -160,41 +160,41 @@ The process of building the project is described here:
      
    - **Sprint 3 — 2D collision of two bodies revisited** 
         
-       <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/collision-of-two-bodies-reflective-boundaries.png" width="1000px" alt="">
+       <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/collision-of-two-bodies-reflective-boundaries.png" width="1000px" alt="">
     
      ```bash
      ./MolSim -f ../input/assignment-4/2D-cuboid-collision.xml -i xml -o vtk
      ```
    - **Sprint 3 — Disc flying against a reflective boundary**
-     <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/disc-flying-against-reflective-boundary.png" width="1000px" alt="">
+     <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/disc-flying-against-reflective-boundary.png" width="1000px" alt="">
 
      ```bash
      ./MolSim -f ../input/assignment-4/disc-against-wall.xml -i xml -o vtk 
      ```
 
    - **Sprint 4 — Rayleigh-Taylor instability**
-        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/Rayleigh-Taylor-instability.png" width="1000px" alt="">
+        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/Rayleigh-Taylor-instability.png" width="1000px" alt="">
 
      ```bash
      ./MolSim -f ../input/assignment-4/task2-big-experiment.xml -i xml -o vtk
      ```
 
    - **Sprint 4 — Falling drop**
-        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/Falling-Drop.png" width="1000px" alt="">
+        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/Falling-Drop.png" width="1000px" alt="">
 
      ```bash
      ./MolSim -f ../input/assignment-4/task3-gravity-equilibration.xml -i xml -o vtk --saveState  && ./MolSim -f ../input/assignment-4/task3-falling-drop.xml -i xml -o vtk --loadState Checkpoint.txt  
      ```
 
    - **Sprint 5 — Simulation of a membrane**
-        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/Membrane.png" width="1000px" alt="">
+        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/Membrane.png" width="1000px" alt="">
         
      ```bash
      ./MolSim -f ../input/assignment-5/task1-membraneSimulation.xml -i xml  
      ```
 
    - **Sprint 5 — Rayleigh-Taylor instability in 3D**
-        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/assignment-5/images/Rayleigh-Taylor-3D.png" width="1000px" alt="">
+        <img src="https://raw.githubusercontent.com/AshIsAtWork/MolSim/Assignment-5/images/Rayleigh-Taylor-3D.png" width="1000px" alt="">
 
      ```bash
      ./MolSim -f ../input/assignment-5/task3-Rayleigh-Taylor-instability-3D.xml -i xml 
