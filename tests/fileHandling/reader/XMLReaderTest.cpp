@@ -35,7 +35,7 @@ TEST_F(XMLReaderTest, Basic_XMLTest) {
     EXPECT_EQ(simulationSettings.parametersLinkedCells.deltaT, 0.00005);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.endT, 10);
 
-    EXPECT_EQ(simulationSettings.parametersLinkedCells.force, enumsStructs::TypeOfForce::leonardJonesForce);
+    EXPECT_EQ(simulationSettings.parametersLinkedCells.force, enumsStructs::TypeOfForce::lennardJonesForce);
     EXPECT_EQ(simulationSettings.parametersLinkedCells.rCutOff, 3);
 
     EXPECT_EQ(simulationSettings.parametersLinkedCells.domainSize[0], 180);

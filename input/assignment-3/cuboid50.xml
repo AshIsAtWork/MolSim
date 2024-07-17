@@ -8,7 +8,7 @@
         <Name>LinkedCells</Name>
         <t_end>0.1</t_end>
         <delta_t>0.001</delta_t>
-        <force>LeonardJonesForce</force>
+        <force>LennardJonesForce</force>
         <DomainSize>
             <First>55</First>
             <Second>30</Second>

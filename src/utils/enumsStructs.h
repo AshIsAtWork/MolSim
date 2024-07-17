@@ -18,7 +18,7 @@ namespace enumsStructs {
      * Enum to specify the type of force used in the simulation.
      */
     enum class TypeOfForce {
-        gravity, leonardJonesForce, invalid
+        gravity, lennardJonesForce, invalid
     };
 
     /**
@@ -44,6 +44,13 @@ namespace enumsStructs {
         BoundaryCondition bottom = BoundaryCondition::invalid;
     };
 
+    enum class TypeOfThermostat {
+        defaultThermostat, flowThermostat
+    };
+
+    enum class ParallelizationStrategy {
+        none, linear, skipping, reduction
+    };
     /**
      * Struct for passing parameters of the direct sum model.
      */
@@ -78,6 +85,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     /**
@@ -93,6 +101,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     struct Sphere {
@@ -105,6 +114,7 @@ namespace enumsStructs {
         double brownianMotionAverageVelocity;
         double epsilon;
         double sigma;
+        bool fixed;
     };
 
     /**
@@ -121,10 +131,10 @@ namespace enumsStructs {
     /**
      * Struct containing the specifications of the thermostat.
      */
-
     struct ThermostatParameters {
         //If set to false, all other parameters are ignored
         bool useThermostat;
+        TypeOfThermostat typeOfThermostat;
         bool initialiseSystemWithBrownianMotion;
         //If set to false, maxTemperatureChange will be ignored
         bool applyScalingGradually;
@@ -136,6 +146,28 @@ namespace enumsStructs {
     };
 
     /**
+     * Struct containing the specifications of a membrane
+     */
+    struct MembraneParameters {
+        //Setting
+        bool membraneSetting;
+        bool pull;
+        int pullingActiveUntil;
+        std::array<double, 3> pullingForce;
+        double r0;
+        double k;
+        //Membrane itself
+        std::array<double, 3> initialVelocity;
+        std::array<double, 3> position;
+        unsigned N1;
+        unsigned N2;
+        double mass;
+        double h;
+        double epsilon;
+        double sigma;
+    };
+
+    /**
      * Struct for storing all simulation parameters.
      */
     struct SimulationSettings {
@@ -143,10 +175,17 @@ namespace enumsStructs {
         std::string outputFileName;
         int outputFrequency;
         bool gravityOn;
-        double gravityFactor;
+        std::array<double, 3> gravityVector;
+        int maxNumThreads;
+
+        //parallelization strategy
+        ParallelizationStrategy parallelizationStrategy;
 
         //thermostat
         ThermostatParameters thermostatParameters;
+
+        //membrane
+        MembraneParameters membraneParameters;
 
         //model to use in the simulation
         TypeOfModel model;
@@ -174,7 +213,7 @@ namespace enumsStructs {
     inline TypeOfForce setForce(const std::string &selectedForce) {
         static const std::unordered_map<std::string, TypeOfForce> formatMap = {
             {"Gravity", TypeOfForce::gravity},
-            {"LeonardJonesForce", TypeOfForce::leonardJonesForce}
+            {"LennardJonesForce", TypeOfForce::lennardJonesForce}
         };
 
         auto it = formatMap.find(selectedForce);
@@ -191,7 +230,7 @@ namespace enumsStructs {
     inline std::string getForce(TypeOfForce &force) {
         static const std::unordered_map<TypeOfForce, std::string> formatMap = {
             {TypeOfForce::gravity, "Gravity"},
-            {TypeOfForce::leonardJonesForce, "LeonardJonesForce"}
+            {TypeOfForce::lennardJonesForce, "LennardJonesForce"}
         };
         auto it = formatMap.find(force);
         return (it != formatMap.end()) ? it->second : "Invalid";
@@ -263,4 +302,42 @@ namespace enumsStructs {
         auto it = formatMap.find(boundaryCondition);
         return (it != formatMap.end()) ? it->second : "Invalid";
     }
+
+    /**
+     * @brief Convert string selection to corresponding enum value.
+     *
+     * @param typeOfThermostat String to convert.
+     *
+     * @return Corresponding enum value.
+     */
+
+    inline TypeOfThermostat setTypeOfThermostat(const std::string &typeOfThermostat) {
+        static const std::unordered_map<std::string, TypeOfThermostat> formatMap = {
+            {"Default", TypeOfThermostat::defaultThermostat},
+            {"Flow", TypeOfThermostat::flowThermostat}
+        };
+        auto it = formatMap.find(typeOfThermostat);
+        return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid thermostat selected!");
+    }
+
+    /**
+     * @brief Convert string selection to corresponding enum value.
+     *
+     * @param typeOfParallelizationStrategy String to convert.
+     *
+     * @return Corresponding enum value.
+     */
+
+    inline ParallelizationStrategy setTypeOfParallelizationStrategy(const std::string &typeOfParallelizationStrategy) {
+        static const std::unordered_map<std::string, ParallelizationStrategy> formatMap = {
+            {"None", ParallelizationStrategy::none},
+            {"Linear", ParallelizationStrategy::linear},
+            {"Skipping", ParallelizationStrategy::skipping},
+              {"Reduction", ParallelizationStrategy::reduction}
+        };
+        auto it = formatMap.find(typeOfParallelizationStrategy);
+        return (it != formatMap.end()) ? it->second : throw std::runtime_error("Invalid parallelizatin strategy selected!");
+    }
+
+
 }

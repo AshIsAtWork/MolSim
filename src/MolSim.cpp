@@ -27,6 +27,7 @@ int main(int argc, char *argsv[]) {
         bool saveState = false;
         bool loadState = false;
         int outputFrequency;
+        int maxNumThreads = 0;
 
         //Parsing of the command line arguments
 
@@ -40,9 +41,9 @@ int main(int argc, char *argsv[]) {
                  "Time to which simulation will run (starting at 0).")
                 ("deltaT,d", po::value<double>(&deltaT)->default_value(0.014), "Duration of one time step.")
                 ("inputFilePath,f", po::value<std::string>(&inputFilePath), "Path to the input file. Caution: This "
-                                                                            "is a required argument. In case it is not specified, the program will terminate immediately.")
+                 "is a required argument. In case it is not specified, the program will terminate immediately.")
                 ("logLevel,l", po::value<std::string>(&logLevel)->default_value("info"), "Log level:"
-                                                                                         " Possible options are (off, critical, error, warn, info, debug, trace)")
+                 " Possible options are (off, critical, error, warn, info, debug, trace)")
                 ("inputFileFormatString,i", po::value<std::string>(&inputFileFormatString),
                  "Format of the input file. Supported formats are txt and xml.")
                 ("outputFileFormatString,o", po::value<std::string>(&outputFileFormatString)->default_value("vtk"),
@@ -55,7 +56,9 @@ int main(int argc, char *argsv[]) {
                  "Base name of the output files.")
                 ("loadState", po::value<std::string>(&pathToMolecules),
                  "Load molecules from a checkpoint into your program")
-                ("saveState", "Save state of molecules to a txt file after the simulation is done");;
+                ("saveState", "Save state of molecules to a txt file after the simulation is done")
+                ("threads", po::value<int>(&maxNumThreads),
+                 "Maximum number of threads that are used. (Only needed for parallelization strategy reduction)");
 
         po::variables_map vm;
 
@@ -72,14 +75,14 @@ int main(int argc, char *argsv[]) {
             store(parsed, vm);
         } catch (boost::wrapexcept<po::unknown_option> &e) {
             std::cout << "Something went wrong while parsing your arguments: " << e.what()
-                      << "\nPlease have a look on the usage!\n" << std::endl;
+                    << "\nPlease have a look on the usage!\n" << std::endl;
 
             std::cout << desc << "\n";
             return -1;
         }
         catch (...) {
             std::cout << "Something went wrong while parsing your arguments. Please have a look on the usage!\n"
-                      << std::endl;
+                    << std::endl;
             std::cout << desc << "\n";
             return -1;
         }
@@ -137,16 +140,25 @@ int main(int argc, char *argsv[]) {
             SimulationSettings simulationSettings;
             const auto returnedErrorHandlingInt = XMLReader::readFile(inputFilePath, simulationSettings);
             if (returnedErrorHandlingInt != 0) {
-                throw std::invalid_argument("Error while reading the XML file. Please check the file and try again. Exiting...");
+                throw std::invalid_argument(
+                    "Error while reading the XML file. Please check the file and try again. Exiting...");
+            }
+            if (simulationSettings.parallelizationStrategy == enumsStructs::ParallelizationStrategy::reduction) {
+                if (maxNumThreads <= 0) {
+                    throw std::runtime_error(
+                        "Maximum number of threads must be specified, when reduction is used! Additionally, it should be at least 1.");
+                } else {
+                    simulationSettings.maxNumThreads = maxNumThreads;
+                }
             }
             simulator = std::make_unique<Simulator>(simulationSettings, outputFormat);
         }
-            //Legacy input over the command line
+        //Legacy input over the command line
         else {
             if (selectedForce == "gravity") {
                 force = TypeOfForce::gravity;
             } else if (selectedForce == "ljf") {
-                force = TypeOfForce::leonardJonesForce;
+                force = TypeOfForce::lennardJonesForce;
             } else {
                 std::cout << "Please specify a valid force option!\n";
                 std::cout << desc << "\n";
@@ -180,8 +192,7 @@ int main(int argc, char *argsv[]) {
             spdlog::info("Saving state of molecules...");
         }
         return 0;
-    }
-    catch (const std::exception &e) {
+    } catch (const std::exception &e) {
         spdlog::error(e.what());
         return EXIT_FAILURE;
     }

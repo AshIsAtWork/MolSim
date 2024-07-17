@@ -23,10 +23,30 @@
                     </xs:simpleType>
                 </xs:element>
 
+                <xs:element minOccurs="0" maxOccurs="1" name="ParallelizationStrategy">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Linear"/>
+                            <xs:enumeration value="Skipping"/>
+                            <xs:enumeration value="Reduction"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+
                 <xs:element minOccurs="0" maxOccurs="1" name="ThermostatConfig">
 
                     <xs:complexType mixed="true">
                         <xs:sequence>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Type">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="Default"/>
+                                        <xs:enumeration value="Flow"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
                             <xs:element minOccurs="1" maxOccurs="1" name="InitialTemperature">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:double">
@@ -49,7 +69,7 @@
                             <xs:element minOccurs="1" maxOccurs="1" name="ScalingGradually" type="xs:boolean">
                             </xs:element>
 
-                            <xs:element minOccurs="1" maxOccurs="1" name="MaximumTemperatureChange">
+                            <xs:element minOccurs="0" maxOccurs="1" name="MaximumTemperatureChange">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:double">
                                         <xs:minInclusive value="0"/>
@@ -80,7 +100,12 @@
                 <xs:element minOccurs="0" maxOccurs="1" name="GravityConfig">
                     <xs:complexType mixed="true">
                         <xs:sequence>
-                            <xs:element minOccurs="1" maxOccurs="1" name="GravitationFactor" type="xs:decimal"/>
+                            <xs:element minOccurs="1" maxOccurs="1" name="X"
+                                        type="xs:decimal"/>
+                            <xs:element minOccurs="1" maxOccurs="1" name="Y"
+                                        type="xs:decimal"/>
+                            <xs:element minOccurs="1" maxOccurs="1" name="Z"
+                                        type="xs:decimal"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -117,7 +142,7 @@
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
                                         <xs:enumeration value="Gravity"/>
-                                        <xs:enumeration value="LeonardJonesForce"/>
+                                        <xs:enumeration value="LennardJonesForce"/>
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
@@ -423,6 +448,9 @@
                                             </xs:simpleType>
                                         </xs:element>
 
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -508,6 +536,9 @@
                                                     <xs:minInclusive value="0"/>
                                                 </xs:restriction>
                                             </xs:simpleType>
+                                        </xs:element>
+
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
                                         </xs:element>
 
                                     </xs:sequence>
@@ -596,6 +627,9 @@
                                             </xs:simpleType>
                                         </xs:element>
 
+                                        <xs:element minOccurs="0" maxOccurs="1" name="Fixed" type="xs:boolean">
+                                        </xs:element>
+
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
@@ -603,6 +637,105 @@
                     </xs:complexType>
                 </xs:element>
 
+                <xs:element minOccurs="0" maxOccurs="1" name="Membrane">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Pull" type="xs:boolean"/>
+
+                            <xs:element minOccurs="0" maxOccurs="1" name="PullingActiveUntil">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:int">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="0" maxOccurs="1" name="PullingForce">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="X" type="xs:decimal"/>
+                                        <xs:element name="Y" type="xs:decimal"/>
+                                        <xs:element name="Z" type="xs:decimal"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="r0" type="xs:decimal"/>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="k" type="xs:decimal"/>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Velocity">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="X" type="xs:decimal"/>
+                                        <xs:element name="Y" type="xs:decimal"/>
+                                        <xs:element name="Z" type="xs:decimal"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Position">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="X" type="xs:decimal"/>
+                                        <xs:element name="Y" type="xs:decimal"/>
+                                        <xs:element name="Z" type="xs:decimal"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="N1">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:unsignedInt">
+                                        <xs:minInclusive value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="N2">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:unsignedInt">
+                                        <xs:minInclusive value="1"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Mass">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="InterParticleDistance">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Sigma">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                            <xs:element minOccurs="1" maxOccurs="1" name="Epsilon">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:double">
+                                        <xs:minInclusive value="0"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
 
             </xs:sequence>
         </xs:complexType>

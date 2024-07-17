@@ -4,28 +4,30 @@
 
 #pragma once
 #include <vector>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "../ParticleContainer.h"
 #include "fileHandling/outputWriter/VTKWriter/VTKWriter.h"
 #include "particleRepresentation/particle/Particle.h"
 #include "utils/enumsStructs.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 using namespace enumsStructs;
 
 /**
  * @brief Container to store the particles for simulation using the linked cells algorithm.
  */
-class LinkedCellsContainer : public ParticleContainer{
-
+class LinkedCellsContainer : public ParticleContainer {
 private:
-
     //Data structure
+
     /**
      * We use an 1D vector to store the flattened 3D cell structure
      * being an essential property of the linked cells algorithm. Each cell is represented itself by an 1D vector of particles.
      */
-    std::vector<std::vector<Particle>> cells;
+    std::vector<std::vector<Particle> > cells;
 
     /**
      * The current number of particles that is contained in this container is tracked by the attribute currentSize and kept up-to-date
@@ -34,9 +36,9 @@ private:
     size_t currentSize;
 
 
-     //Precomputed indices:
-     //Most of the indices are precomputed in the constructor and stored in memory to provide fast access in future iterations.
-     //We invest here additional memory space to avoid recomputing all indices in each iteration again.
+    //Precomputed indices:
+    //Most of the indices are precomputed in the constructor and stored in memory to provide fast access in future iterations.
+    //We invest here additional memory space to avoid recomputing all indices in each iteration again.
 
     /**
      * The indices of all halo cells belonging to one or more of the 6 sides,
@@ -49,7 +51,17 @@ private:
     /**
      * The indices of the order in which all cells within the domain are processed to process each pair of particles only ones
      */
-    std::vector<std::vector<int>> domainCellIterationScheme;
+    std::vector<std::vector<int> > domainCellIterationScheme;
+
+
+    //Scheduling for parallelization
+    std::vector<int> scheduleParallelNaive;
+    std::vector<int> scheduleParallelSophisticated;
+
+    //Locks for parallelization
+#ifdef _OPENMP
+    std::vector<omp_lock_t> locks;
+#endif
 
 
     //All parameters used in this model:
@@ -74,6 +86,16 @@ private:
      * Number of cells in one layer (nX * nY many).
      */
     int baseZ;
+    /**
+     * Number of cells in one layer halo cells excluded (nX - 2 many).
+     */
+    int baseYDomain;
+
+    /**
+    * Number of cells in one layer halo cells excluded ((nX - 2) * (nY - 2) many).
+    */
+    int baseZDomain;
+
     /**
      * Size of each cell in dimension x.
      */
@@ -102,7 +124,7 @@ private:
 
     outputWriter::VTKWriter vtk_writer;
 
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
 
     BoundarySet boundariesSet;
 
@@ -124,6 +146,12 @@ private:
      */
     void calculateDomainCellsIterationScheme();
 
+    void calculateScheduleParallelSophisticatedHelper(int xStart, int yStart, int zStart);
+
+    void calculateScheduleNaive();
+
+    void calculateScheduleParallelSophisticated();
+
     /**
      * @brief Calculate the distance that a particle has to a specific side of the domain.
      *        In 2D the distance to sides top and bottom is always 0.
@@ -133,7 +161,7 @@ private:
      *
      * @return Distance of particle p to the specified side.
      */
-    double calcDistanceFromBoundary(Particle& p, Side side);
+    double calcDistanceFromBoundary(Particle &p, Side side);
 
     /**
      * @brief Calculate the position of the ghost particle with respect to a specific side used for reflective boundaries.
@@ -143,7 +171,7 @@ private:
      *
      * @return Position of the ghost particle.
      */
-    std::array<double, 3> calcGhostParticle(Particle& p, Side side);
+    std::array<double, 3> calcGhostParticle(Particle &p, Side side);
 
     /**
      * @brief Moves particles along a certain dimension from the halo cells back into the simulation domain.
@@ -163,7 +191,7 @@ private:
      * @param side Side on which the force is exerted.
      * @param cellToProcess Specific cell of that side.
      */
-    void applyForceToOppositeCellsHelper(Side side, std::array<int,3> cellToProcess);
+    void applyForceToOppositeCellsHelper(Side side, std::array<int, 3> cellToProcess);
 
     /**
      * @brief Used for periodic boundaries to calculate the force that all particles
@@ -174,7 +202,8 @@ private:
      * @param offsetPosition Offset to move the particles of the opposite edge to the current edge for proper force calculation.
      * @param dim Dimension in which the edge is living.
      */
-    void applyForceToOppositeEdgeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell, std::array<double,3> offsetPosition , int dim);
+    void applyForceToOppositeEdgeHelper(std::array<int, 3> cellToProcess, std::array<int, 3> offsetCell,
+                                        std::array<double, 3> offsetPosition, int dim);
 
     /**
      * @brief Checks, if the specified cell is part of the domain.
@@ -182,7 +211,7 @@ private:
      * @param cell Cell to check.
      * @return True if cell is part of the domain, false otherwise.
      */
-    [[nodiscard]] bool isCellInDomain(std::array<int,3> cell) const;
+    [[nodiscard]] bool isCellInDomain(std::array<int, 3> cell) const;
 
     /**
      * @brief Checks, if the specified particle is inside the domain.
@@ -190,7 +219,7 @@ private:
      * @param position Position of the particle.
      * @return True if the particle is inside the domain, false otherwise.
      */
-    [[nodiscard]] bool isParticleInDomain(const std::array<double, 3>& position) const;
+    [[nodiscard]] bool isParticleInDomain(const std::array<double, 3> &position) const;
 
     /**
      * @brief Calculates the forces that particles in the cell source apply to the particles in cell target.
@@ -200,7 +229,6 @@ private:
      * @param offsetSource Offset to move the particles of the cell source in the right position for force calculations.
      */
     void applyForcesBetweenTwoCells(int cellTarget, int cellSource, std::array<double, 3> offsetSource);
-
 
 public:
     /**
@@ -223,7 +251,7 @@ public:
      *
      * @return Corresponding cell index.
      */
-    int calcCellIndex(const std::array<double, 3>& position);
+    int calcCellIndex(const std::array<double, 3> &position);
 
     /**
      * @brief Add a particle to this container.
@@ -233,7 +261,7 @@ public:
      * If the simulation environment is 2D, only particles living in 2D space are accepted. Try adding particles living in 3D space
      * to 2D simulation environment will lead to the termination of the program.
      */
-    void add(Particle& p) override;
+    void add(Particle &p) override;
 
     /**
      * @brief Convert 3 dimensional coordinates to one dimensional coordinates.
@@ -245,6 +273,8 @@ public:
      * @return Corresponding coordinate in one dimensional space.
      */
     [[nodiscard]] int threeDToOneD(int x, int y, int z) const;
+
+    int threeDToOneDDomain(int x, int y, int z) const;
 
     /**
      * @brief Convert a one dimensional coordinate to three dimensional coordinates.
@@ -299,7 +329,8 @@ public:
      *        with our current program structure and only integrated it once when doing the time measurements.
      */
 
-    void applyToAllUniquePairsInDomainOptimized(const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
+    void applyToAllUniquePairsInDomainOptimized(
+        const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function);
 
     /**
      * @brief Iterate over all particles in the boundary cells of a specific side
@@ -312,7 +343,8 @@ public:
      *        and passed in the lambda function as second input. This information makes the implementation
      *        of reflective boundaries a lot easier.
      */
-    void applyToAllBoundaryParticles(const std::function<void(Particle &, std::array<double, 3>&)> &function, Side boundary);
+    void applyToAllBoundaryParticles(const std::function<void(Particle &, std::array<double, 3> &)> &function,
+                                     Side boundary);
 
     /**
      * @brief Get the number of particles stored in this container.
@@ -330,7 +362,7 @@ public:
      *
      * @return New position.
      */
-    std::array<double,3> fromLowToHigh(const std::array<double,3>& position, int dimension);
+    std::array<double, 3> fromLowToHigh(const std::array<double, 3> &position, int dimension);
 
     /**
      * @brief Move a particle along a certain dimension that overflows the domain int that dimension
@@ -341,7 +373,7 @@ public:
      *
      * @return New position.
      */
-    std::array<double,3> fromHighToLow(const std::array<double,3>& position, int dimension);
+    std::array<double, 3> fromHighToLow(const std::array<double, 3> &position, int dimension);
 
     /**
      * @brief Moves particles along a certain dimension from the halo cells back into the simulation domain.
@@ -362,22 +394,64 @@ public:
      */
     void applyForcesFromOppositeSide(Side side);
 
+//The following methods are only needed for parallelization
+
+#ifdef _OPENMP
+    /**
+     * @brief Parallel version of the method applyToAllUniquePairsInDomain that is based on a reduction of the force of each particle.
+     *
+     * @param function Function that is applied to all unique pairs of particles.
+     */
+    void applyToAllUniquePairsInDomainParallelReduction(const std::function<void(Particle &, Particle &, int)> &function);
+
+    /**
+     * @brief Applies the specified function to each particle in the domain in parallel.
+     *        Performs best, if costs of the function are independent of a specific particle.
+     *
+     * @param function Function to apply.
+     */
+    void applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function);
+
+    /**
+     * @brief Helper method used to implement the linear and skipping strategy for the method applyToAllUniquePairsInDomain.
+     *
+     * @param function Function that is applied to all unique pairs of particles.
+     * @param scheduling Order in which the cells are processed.
+     */
+    void applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function, std::vector<int>& scheduling);
+
+    /**
+     * @brief Parallel version of method applyToAllUniquePairsInDomain that uses the skipping schedule for processing the cells.
+     *
+     * @param function Function to apply.
+     */
+    void applyToAllUniquePairsInDomainParallelSophisticated(
+        const std::function<void(Particle &, Particle &)> &function);
+
+    /**
+     * @brief Parallel version of method applyToAllUniquePairsInDomain that uses the linear schedule for processing the cells.
+     *
+     * @param function Function to apply.
+     */
+    void applyToAllUniquePairsInDomainParallelNaive(const std::function<void(Particle &, Particle &)> &function);
+#endif
+
 
     //Getter and setters. Especially the setters should only by used for testing purposes.
 
-    std::vector<std::vector<Particle>>& getCells(){
+    std::vector<std::vector<Particle> > &getCells() {
         return cells;
     }
 
-    std::array<std::vector<int>,6>& getHaloCells(){
+    std::array<std::vector<int>, 6> &getHaloCells() {
         return haloCells;
     }
 
-   std::array<std::vector<int>,6>& getBoundaries(){
+    std::array<std::vector<int>, 6> &getBoundaries() {
         return boundaries;
     }
 
-    std::vector<std::vector<int>>& getDomainCellIterationScheme(){
+    std::vector<std::vector<int> > &getDomainCellIterationScheme() {
         return domainCellIterationScheme;
     }
 
@@ -417,4 +491,3 @@ public:
         return domainSize;
     }
 };
-

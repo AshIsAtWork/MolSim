@@ -51,6 +51,11 @@ target_link_libraries(
         spdlog::spdlog
         XercesC::XercesC
 )
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSimTests PUBLIC OpenMP::OpenMP_CXX)
+endif ()
+
 enable_testing()
 
 include(GoogleTest)

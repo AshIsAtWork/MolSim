@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/models/linkedCells/LinkedCells.h"
-#include "moleculeSimulator/forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "moleculeSimulator/forceCalculation/lennardJones/LennardJonesForce.h"
 
 using namespace enumsStructs;
 
@@ -44,7 +44,7 @@ bool isParticleOnTrack(Particle &p) {
  */
 
 TEST(LinkedCellsTest, ReflectiveBoundries) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective,
         BoundaryCondition::reflective, BoundaryCondition::reflective, BoundaryCondition::reflective
@@ -63,7 +63,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
     linkedCellModel.addParticle(p);
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.00005;
         //Check conditions
@@ -82,7 +82,7 @@ TEST(LinkedCellsTest, ReflectiveBoundries) {
  */
 
 TEST(LinkedCellsTest, Outflow) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow,
         BoundaryCondition::outflow, BoundaryCondition::outflow, BoundaryCondition::outflow
@@ -116,7 +116,7 @@ TEST(LinkedCellsTest, Outflow) {
     linkedCellModel.updateForces();
 
     while (current_time < 5) {
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         iteration++;
         current_time += 0.05;
     }
@@ -140,7 +140,7 @@ TEST(LinkedCellsTest, Outflow) {
 
 
 TEST(LinkedCellsTest, Periodic_PostionUpdates) {
-    LeonardJonesForce lJF;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic
@@ -168,7 +168,7 @@ TEST(LinkedCellsTest, Periodic_PostionUpdates) {
         linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateBefore](Particle &p) {
             xCoordinateBefore = p.getX()[0];
         });
-        linkedCellModel.step();
+        linkedCellModel.step(1);
         double xCoordinateAfter;
         linkedCellModel.getParticles().applyToEachParticleInDomain([&xCoordinateAfter](Particle &p) {
             xCoordinateAfter = p.getX()[0];
@@ -194,7 +194,8 @@ TEST(LinkedCellsTest, Periodic_PostionUpdates) {
 
 
 TEST(LinkedCellsTest, Periodic_Force_Calculation) {
-    LeonardJonesForce lJF;
+    FileHandler file_handler;
+    LennardJonesForce lJF;
     BoundarySet boundaries = {
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic,
         BoundaryCondition::periodic, BoundaryCondition::periodic, BoundaryCondition::periodic
@@ -219,7 +220,7 @@ TEST(LinkedCellsTest, Periodic_Force_Calculation) {
 
     linkedCellModel.updateForces();
     std::string testName = "TestPeriodic";
-    while (current_time < 5) {
+    while (current_time < 10){
         linkedCellModel.getParticles().applyToEachParticle([](Particle& p) {
             //Y and Z coordinates should not change for both particles:
             ASSERT_TRUE(p.getX()[1] == 4.5);
@@ -234,7 +235,10 @@ TEST(LinkedCellsTest, Periodic_Force_Calculation) {
             }
 
         });
-        linkedCellModel.step();
+        linkedCellModel.step(1);
+        if(iteration % 100 == 0) {
+            file_handler.writeToFile(linkedCellModel.getParticles(),iteration,FileHandler::outputFormat::vtk,testName);
+        }
         iteration++;
         current_time += 0.0005;
     }

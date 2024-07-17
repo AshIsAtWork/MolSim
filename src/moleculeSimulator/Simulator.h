@@ -10,11 +10,13 @@
 #include "models/Model.h"
 #include "utils/enumsStructs.h"
 #include <memory>
-#include <moleculeSimulator/thermostat/Thermostat.h>
+#include <moleculeSimulator/thermostats/defaultThermostat/DefaultThermostat.h>
+#include "thermostats/flowThermostat/FlowThermostat.h"
 #include "forceCalculation/gravity/Gravity.h"
-#include "forceCalculation/leonardJones/LeonardJonesForce.h"
+#include "forceCalculation/lennardJones/LennardJonesForce.h"
 #include "models/directSum/DirectSum.h"
 #include "../models/linkedCells/LinkedCells.h"
+#include "statistics/Statistics.h"
 
 /**
  * @brief This class implements the simulation of the particle system.
@@ -25,6 +27,12 @@
 
 class Simulator {
 private:
+
+ //profiles
+ bool computeProfiles;
+ std::unique_ptr<Statistics> statistics;
+ std::array<double, 3> domainSize{};
+
  //thermostat
  std::unique_ptr<Thermostat> thermostat;
  int nThermostat;
@@ -106,6 +114,6 @@ public:
 
  ParticleContainer &getParticles();
 
- unsigned long long getTotalMoleculeUpdates();
+ unsigned long long getTotalMoleculeUpdates() const;
 
 };

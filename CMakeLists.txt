@@ -12,12 +12,6 @@ if (NOT CMAKE_BUILD_TYPE)
             "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-#TODO: Add to Report
-# set Optimisation flags for Release
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
-
-#TODO: Add to Report
 if (OPTIMISATION)
     message(STATUS "Further Optimisation flags enabled")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast -funroll-loops -finline-functions -fprefetch-loop-arrays -flto=auto")
@@ -60,6 +54,11 @@ target_compile_options(MolSim
 
 find_package(XercesC REQUIRED)
 find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(OpenMP)
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(MolSim PUBLIC OpenMP::OpenMP_CXX)
+endif ()
 
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
@@ -71,14 +70,12 @@ target_link_libraries(MolSim
         gmock_main
 )
 
-#TODO: ADD TO REPORT
 if (PROFILING)
     message(STATUS "Profiling enabled")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
     SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
 endif ()
-
 
 include(doxygen)
 

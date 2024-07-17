@@ -52,8 +52,21 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                     spdlog::debug("OutputFrequency: {}", static_cast<int>(molecules.OutputFrequency()));
                 }
 
+                if(molecules.ParallelizationStrategy().present()) {
+                    spdlog::debug("Parallelization strategy specified");
+                    simulationSettings.parallelizationStrategy = enumsStructs::setTypeOfParallelizationStrategy(molecules.ParallelizationStrategy().get());
+                    spdlog::debug("Type of parallelization strategy: {}", molecules.ParallelizationStrategy().get());
+                }else {
+                    simulationSettings.parallelizationStrategy = enumsStructs::ParallelizationStrategy::none;
+                    spdlog::debug("No parallelization strategy selected");
+                }
+
                 if (molecules.ThermostatConfig().present()) {
                     spdlog::debug("Thermostat is used");
+
+                    simulationSettings.thermostatParameters.typeOfThermostat = enumsStructs::setTypeOfThermostat(molecules.ThermostatConfig().get().Type());
+                    spdlog::debug("Type of thermostat: {}", molecules.ThermostatConfig().get().Type());
+
                     simulationSettings.thermostatParameters.useThermostat = true;
                     if (static_cast<double>(molecules.ThermostatConfig().get().InitialTemperature()) < 0) {
                         throw std::runtime_error("Initial Temperature is less than 0");
@@ -87,13 +100,15 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         simulationSettings.thermostatParameters.applyScalingGradually = true;
                         spdlog::debug("Scaling Gradually: {}", true);
                     }
-
-                    if (static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange()) < 0) {
-                        throw std::runtime_error("Maximum Temperature Change is less than 0");
-                    } else {
-                        simulationSettings.thermostatParameters.maxTemperatureChange = static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange());
-                        spdlog::debug("Maximum Temperature Change: {}",
-                                      static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange()));
+                    if(simulationSettings.thermostatParameters.applyScalingGradually) {
+                        if(!molecules.ThermostatConfig().get().MaximumTemperatureChange().present()) {
+                            throw std::runtime_error("Maximum temperature change must be specified, if scaling is applied gradually!");
+                        }else {
+                            simulationSettings.thermostatParameters.maxTemperatureChange =
+                                static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange().get());
+                            spdlog::debug("Maximum Temperature Change: {}",
+                                     static_cast<double>(molecules.ThermostatConfig().get().MaximumTemperatureChange().get()));
+                        }
                     }
 
                     if (static_cast<double>(molecules.ThermostatConfig().get().ApplyAfterHowManySteps()) < 0) {
@@ -117,8 +132,13 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                 if (molecules.GravityConfig().present()) {
                         simulationSettings.gravityOn = true;
-                        simulationSettings.gravityFactor = static_cast<double>(molecules.GravityConfig().get().GravitationFactor());
-                        spdlog::debug("Gravity: {}",static_cast<double>(molecules.GravityConfig().get().GravitationFactor()));
+                        simulationSettings.gravityVector =
+                            {
+                            static_cast<double>(molecules.GravityConfig().get().X()),
+                            static_cast<double>(molecules.GravityConfig().get().Y()),
+                            static_cast<double>(molecules.GravityConfig().get().Z())
+                            };
+                        spdlog::debug("Gravity: {}",ArrayUtils::to_string(simulationSettings.gravityVector));
                 } else {
                     simulationSettings.gravityOn = false;
                     spdlog::debug("Gravity was set to false");
@@ -321,6 +341,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Cuboids().get().Cuboid().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
                                     i).Epsilon().get());
@@ -328,6 +349,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Cuboids().get().Cuboid().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Cuboids().get().Cuboid().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Cuboids().get().Cuboid().at(i).Fixed().present()) {
+                            fixed = molecules.Cuboids().get().Cuboid().at(i).Fixed();
                         }
 
                         enumsStructs::Cuboid cuboid = {
@@ -357,7 +382,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Cuboids().get().Cuboid().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Cuboids().get().Cuboid().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.cuboids.push_back(cuboid);
                         spdlog::debug("Cuboid #{}: Position: {}, {}, {}",
@@ -394,6 +420,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                       epsilon);
                         spdlog::debug("Cuboid #{}: Sigma: {}", i + 1,
                                       sigma);
+                        spdlog::debug("Cuboid #{}: Fixed: {}", i + 1, fixed);
                     }
                 }
 
@@ -423,6 +450,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Discs().get().Disc().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Epsilon().get());
@@ -430,6 +458,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Discs().get().Disc().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Discs().get().Disc().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Discs().get().Disc().at(i).Fixed().present()) {
+                            fixed = molecules.Discs().get().Disc().at(i).Fixed();
                         }
 
                         enumsStructs::Disc disc = {
@@ -455,7 +487,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Discs().get().Disc().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Discs().get().Disc().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.discs.push_back(disc);
                         spdlog::debug("Disc #{}: Center: {}, {}, {}",
@@ -487,6 +520,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                       static_cast<double>(molecules.Discs().get().Disc().at(i).DimensionBrownian()));
                         spdlog::debug("Disc #{}: Epsilon: {}", i + 1, epsilon);
                         spdlog::debug("Disc #{}: Sigma: {}", i + 1, sigma);
+                        spdlog::debug("Disc #{}: Fixed: {}", i + 1, fixed);
                     }
                 }
 
@@ -517,6 +551,7 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
 
                         double epsilon = 5;
                         double sigma = 1;
+                        bool fixed = false;
                         if (molecules.Spheres().get().Sphere().at(i).Epsilon().present()) {
                             epsilon = static_cast<double >(molecules.Spheres().get().Sphere().at(
                                     i).Epsilon().get());
@@ -524,6 +559,10 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                         if (molecules.Spheres().get().Sphere().at(i).Sigma().present()) {
                             sigma = static_cast<double >(molecules.Spheres().get().Sphere().at(
                                     i).Sigma().get());
+                        }
+
+                        if (molecules.Spheres().get().Sphere().at(i).Fixed().present()) {
+                            fixed = molecules.Spheres().get().Sphere().at(i).Fixed();
                         }
 
                         enumsStructs::Sphere sphere = {
@@ -549,7 +588,8 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                 static_cast<int>(molecules.Spheres().get().Sphere().at(i).DimensionBrownian()),
                                 static_cast<double>(molecules.Spheres().get().Sphere().at(i).Brownian()),
                                 epsilon,
-                                sigma
+                                sigma,
+                                fixed
                         };
                         simulationSettings.spheres.push_back(sphere);
                         spdlog::debug("Sphere #{}: Center: {}, {}, {}",
@@ -582,7 +622,74 @@ int XMLReader::readFile(std::string &filename, enumsStructs::SimulationSettings 
                                               i).DimensionBrownian()));
                         spdlog::debug("Sphere #{}: Epsilon: {}", i + 1, epsilon);
                         spdlog::debug("Sphere #{}: Sigma: {}", i + 1, sigma);
+                        spdlog::debug("Sphere #{}: Fixed: {}", i + 1, fixed);
                     }
+                }
+
+                if (molecules.Membrane().present()) {
+                    spdlog::debug("Membrane is present");
+                    simulationSettings.membraneParameters.membraneSetting = true;
+
+                    simulationSettings.membraneParameters.pull = molecules.Membrane().get().Pull();
+                    spdlog::debug("Pull: {}",simulationSettings.membraneParameters.pull);
+                    if (molecules.Membrane().get().PullingActiveUntil().present()) {
+                        if(simulationSettings.membraneParameters.pull) {
+                            simulationSettings.membraneParameters.pullingActiveUntil = static_cast<int>(molecules.Membrane().get().PullingActiveUntil().get());
+                            spdlog::debug("Pulling active until: {}",simulationSettings.membraneParameters.pullingActiveUntil);
+                        }else {
+                            throw std::runtime_error("Pull is not active and pullingActiveUntil was specified!");
+                        }
+                    }
+                    else if(simulationSettings.membraneParameters.pull) {
+                        throw std::runtime_error("PullingActiveUntil is required, when pull is activated");
+                    }
+
+                    if (molecules.Membrane().get().PullingForce().present()) {
+                        if(simulationSettings.membraneParameters.pull) {
+                            simulationSettings.membraneParameters.pullingForce[0] = static_cast<double>(molecules.Membrane().get().PullingForce().get().X());
+                            simulationSettings.membraneParameters.pullingForce[1] = static_cast<double>(molecules.Membrane().get().PullingForce().get().Y());
+                            simulationSettings.membraneParameters.pullingForce[2] = static_cast<double>(molecules.Membrane().get().PullingForce().get().Z());
+                            spdlog::debug("Pulling force: {}",ArrayUtils::to_string(simulationSettings.membraneParameters.pullingForce));
+                        }else {
+                            throw std::runtime_error("Pull is not active and pullingForce was specified!");
+                        }
+                    }
+                    else if(simulationSettings.membraneParameters.pull) {
+                        throw std::runtime_error("PullingForce is required, when pull is activated");
+                    }
+
+                    simulationSettings.membraneParameters.r0 = static_cast<double>(molecules.Membrane().get().r0());
+                    spdlog::debug("r0: {}", simulationSettings.membraneParameters.r0);
+                    simulationSettings.membraneParameters.k = static_cast<double>(molecules.Membrane().get().k());
+                    spdlog::debug("k: {}", simulationSettings.membraneParameters.k);
+
+                    simulationSettings.membraneParameters.initialVelocity[0] = static_cast<double>(molecules.Membrane().get().Velocity().X());
+                    simulationSettings.membraneParameters.initialVelocity[1] = static_cast<double>(molecules.Membrane().get().Velocity().Y());
+                    simulationSettings.membraneParameters.initialVelocity[2] = static_cast<double>(molecules.Membrane().get().Velocity().Z());
+                    spdlog::debug("Inital Velocity: {}",ArrayUtils::to_string(simulationSettings.membraneParameters.initialVelocity));
+
+                    simulationSettings.membraneParameters.position[0] = static_cast<double>(molecules.Membrane().get().Position().X());
+                    simulationSettings.membraneParameters.position[1] = static_cast<double>(molecules.Membrane().get().Position().Y());
+                    simulationSettings.membraneParameters.position[2] = static_cast<double>(molecules.Membrane().get().Position().Z());
+                    spdlog::debug("Position: {}",ArrayUtils::to_string(simulationSettings.membraneParameters.position));
+
+                    simulationSettings.membraneParameters.N1 = static_cast<unsigned>(molecules.Membrane().get().N1());
+                    spdlog::debug("N1: {}", simulationSettings.membraneParameters.N1);
+                    simulationSettings.membraneParameters.N2 = static_cast<unsigned>(molecules.Membrane().get().N2());
+                    spdlog::debug("N2: {}", simulationSettings.membraneParameters.N2);
+                    simulationSettings.membraneParameters.mass = static_cast<double>(molecules.Membrane().get().Mass());
+                    spdlog::debug("Mass: {}", simulationSettings.membraneParameters.mass);
+                    simulationSettings.membraneParameters.h = static_cast<double>(molecules.Membrane().get().InterParticleDistance());
+                    spdlog::debug("h: {}", simulationSettings.membraneParameters.h);
+                    simulationSettings.membraneParameters.epsilon = static_cast<double>(molecules.Membrane().get().Epsilon());
+                    spdlog::debug("epsilon: {}", simulationSettings.membraneParameters.epsilon);
+                    simulationSettings.membraneParameters.sigma = static_cast<double>(molecules.Membrane().get().Sigma());
+                    spdlog::debug("sigma: {}", simulationSettings.membraneParameters.sigma);
+
+                }
+                else {
+                simulationSettings.membraneParameters.membraneSetting = false;
+                spdlog::debug("Membrane is not present");
                 }
 
             } catch (const xercesc::XMLException &toCatch) {

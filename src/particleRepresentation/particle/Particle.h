@@ -9,6 +9,7 @@
 
 #include <array>
 #include <string>
+#include <algorithm>
 #include "spdlog/spdlog.h"
 #include "utils/ArrayUtils.h"
 
@@ -16,48 +17,91 @@ class Particle {
 
 private:
     /**
-     * Position of the particle
+     * Id of the particle that is created next.
+     */
+ static int nextId;
+
+    /**
+     * Position of the particle.
      */
     std::array<double, 3> x{};
 
     /**
-     * Velocity of the particle
+     * Velocity of the particle.
      */
     std::array<double, 3> v{};
 
     /**
-     * Force effective on this particle
+     * Force effective on this particle.
      */
     std::array<double, 3> f{};
 
     /**
-     * Force which was effective on this particle
+     * Force which was effective on this particle.
      */
     std::array<double, 3> old_f{};
 
     /**
-     * Mass of this particle
+     * Mass of this particle.
      */
     double m{};
 
     /**
      * Type of the particle. Use it for whatever you want (e.g. to separate
-     * molecules belonging to different bodies, matters, and so on)
+     * molecules belonging to different bodies, matters, and so on).
      */
     int type;
 
     /**
-     * Lennard-Jones-Parameter epsilon
+     * Lennard-Jones-Parameter epsilon.
      */
     double epsilon;
 
     /**
-     * Lennard-Jones-Parameter sigma
+     * Lennard-Jones-Parameter sigma.
      */
 
     double sigma;
 
+    /**
+     * Mark particles to which a special force should be applied.
+     */
+
+    bool marked;
+
+    /**
+     * Id to set neighbor relationships between particles.
+     */
+    int id;
+
+    /**
+     * Direct neighbors within a membrane.
+     */
+    std::vector<int> directNeighbors;
+
+    /**
+     * Diagonal neighbors within a membrane.
+     */
+    std::vector<int> diagonalNeighbors;
+
+    /**
+     * Fixed particles belong to a wall. Needed for study nanofluidics.
+     */
+    bool fixed;
+
+    /**
+     * Mark, which forces of the reduction vector are unequal to 0.
+     */
+    std::vector<bool> forceMarker;
+
+    /**
+     * Each thread has its own value to accumulate the forces it has calculated.
+     */
+    std::vector<std::array<double,3>> forceAccumulator;
+
+
 public:
+
     explicit Particle(int type = 0);
 
     Particle(const Particle &other);
@@ -79,7 +123,79 @@ public:
      */
     double calculateEKin() const;
 
+    /**
+     * @brief Calculate the current kinetic energy of the particle within a flow simulation.
+     *
+     * @param avgVelocity Average velocity of the particles within the system.
+     *
+     * @return kinetic energy of the particle.
+     */
+    double calculateEKinFlow(std::array<double, 3>& avgVelocity) const;
+
+    /**
+     * Make particle p a direct neighbor of this particle.
+     *
+     * @param idToAdd New direct neighbor of this particle.
+     */
+    void addDirectNeighbor(int idToAdd);
+
+    /**
+     * Make particle p a diagonal neighbor of this particle.
+     *
+     * @param idToAdd New diagonal neighbor of this particle.
+     */
+    void addDiagonalNeighbor(int idToAdd);
+
+    /**
+     * @brief Check, if particle neighbor is a direct neighbor of this particle.
+     *
+     * @param neighbor Particle to check.
+     * @return True, if the specified particle is a direct neighbor. False otherwise.
+     */
+    bool isDirectNeighbor(Particle& neighbor);
+
+    /**
+     * @brief Check, if particle neighbor is a diagonal neighbor of this particle.
+     *
+     * @param neighbor Particle to check.
+     * @return True, if the specified particle is a diagonal neighbor. False otherwise.
+     */
+    bool isDiagonalNeighbor(Particle& neighbor);
+
     virtual ~Particle();
+
+ //Only needed for parallelization strategy "Reduction"
+
+#ifdef _OPENMP
+    /**
+     * @brief Allocate space for each thread in which they can store their computed results independently.
+     * @param numberThreads
+     */
+    void initializeForceAccumulator(int numberThreads);
+
+    /**
+     * @brief With this method a thread can add a value to its accumulator.
+     *
+     * @param force Force value to add.
+     * @param threadId Id of the thread.
+     */
+    void addForceToAccumulator(std::array<double, 3>& force, int threadId);
+
+    /**
+     * @brief With this method a thread can subtract a value from its accumulator.
+     *
+     * @param force Force value to subtract.
+     * @param threadId Id of the thread.
+     */
+    void subForceFromAccumulator(std::array<double, 3>& force, int threadId);
+
+    /**
+     * Sum up all acculmulators that have been modified and store the final result in field f.
+     */
+    void reduceForce();
+#endif
+
+    //Getter and setter
 
     [[nodiscard]] const std::array<double, 3> &getX() const;
 
@@ -97,6 +213,16 @@ public:
 
     [[nodiscard]] double getSigma() const;
 
+    [[nodiscard]] int getId() const;
+
+    [[nodiscard]] bool isMarked()const;
+
+    [[nodiscard]] std::vector<int> & getDirectNeighbors();
+
+    [[nodiscard]] std::vector<int> & getDiagonalNeighbors();
+
+    [[nodiscard]] bool isFixed() const;
+
     void setOldF(const std::array<double, 3> &oldF);
 
     void setF(const std::array<double, 3> &f);
@@ -105,11 +231,20 @@ public:
 
     void setV(const std::array<double, 3> &v);
 
-    void setType(const int type);
+    void setType(int type);
+
+    void setMarked(bool status);
+
+    void setFixed(bool status);
 
     bool operator==(Particle &other) const;
 
     [[nodiscard]] std::string toString() const;
+
+    /**
+     * @brief Reset Id for testing purposes.
+     */
+    static void resetID();
 };
 
 std::ostream &operator<<(std::ostream &stream, Particle &p);

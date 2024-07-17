@@ -4,10 +4,17 @@
 
 #include "LinkedCells.h"
 
+#include <iostream>
+
 LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> domainSize,
                          double rCutOff, FileHandler::outputFormat outputFormat,
-                         BoundarySet boundaryConditions, bool gravityOn, double g) : Model(particles, force, deltaT,
-        outputFormat, gravityOn, g),
+                         BoundarySet boundaryConditions, bool gravityOn, std::array<double, 3> g,
+                         MembraneParameters membraneParameters,
+                         enumsStructs::ParallelizationStrategy parallelizationStrategy) : Model(
+        particles, force,
+        deltaT, outputFormat, gravityOn, g), parallelizationStrategy{
+        parallelizationStrategy
+    },
     particles(domainSize, rCutOff, boundaryConditions) {
     std::pair<Side, BoundaryCondition> cFront{Side::front, boundaryConditions.front};
     boundarySettings.push_back(cFront);
@@ -23,6 +30,50 @@ LinkedCells::LinkedCells(Force &force, double deltaT, std::array<double, 3> doma
         std::pair<Side, BoundaryCondition> cBottom{Side::bottom, boundaryConditions.bottom};
         boundarySettings.push_back(cBottom);
     }
+
+    //Configure membrane
+
+    if (membraneParameters.membraneSetting) {
+        //Configure membrane setting
+        membraneSetting = true;
+        pull = membraneParameters.pull;
+        pullingActiveUntil = membraneParameters.pullingActiveUntil;
+        pullingForce = membraneParameters.pullingForce;
+        forceBetweenDirectNeighborsInMembrane = std::make_unique<HarmonicForce>(
+            membraneParameters.k, membraneParameters.r0);
+        forceBetweenDiagonalNeighborsInMembrane = std::make_unique<HarmonicForce>(
+            membraneParameters.k, membraneParameters.r0 * std::sqrt(2));
+        //Generate membrane
+        auto marking = [](unsigned x, unsigned y) {
+            //Particle (17,24)
+            if (x == 16 and y == 23) {
+                return true;
+            }
+            //Particle (17,25)
+            if (x == 16 and y == 24) {
+                return true;
+            }
+            //Particle (18,24)
+            if (x == 17 and y == 23) {
+                return true;
+            }
+            //Particle (18,25)
+            if (x == 17 and y == 24) {
+                return true;
+            }
+            return false;
+        };
+        ParticleGenerator::generateMembrane(particles, membraneParameters.position,
+                                            membraneParameters.N1, membraneParameters.N2,
+                                            membraneParameters.h, membraneParameters.mass,
+                                            membraneParameters.initialVelocity, marking,
+                                            membraneParameters.epsilon, membraneParameters.sigma);
+    } else {
+        membraneSetting = false;
+        pull = false;
+        pullingActiveUntil = 0;
+        pullingForce = {0, 0, 0};
+    }
 }
 
 void LinkedCells::processBoundaryForces() {
@@ -34,13 +85,15 @@ void LinkedCells::processBoundaryForces() {
             case BoundaryCondition::reflective: {
                 particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
                     //Add force from an imaginary ghost particle to particle p
-                    Particle ghostParticle = p;
-                    ghostParticle.setX(ghostPosition);
-                    std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
-                    p.setF(p.getF() + ghostForce);
+                    if (!p.isFixed()) {
+                        Particle ghostParticle = p;
+                        ghostParticle.setX(ghostPosition);
+                        std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
+                        p.setF(p.getF() + ghostForce);
+                    }
                 }, setting.first);
-            }
-            break;
+            };
+                break;
             case BoundaryCondition::periodic: {
                 //Add forces from particles of adjacent boundary cells from the opposite side.
                 particles.applyForcesFromOppositeSide(setting.first);
@@ -48,7 +101,7 @@ void LinkedCells::processBoundaryForces() {
             break;
             case BoundaryCondition::invalid: {
                 throw std::invalid_argument("Invalid Boundary Condition was selected.");
-            };
+            }
         }
     }
 }
@@ -60,6 +113,7 @@ void LinkedCells::processHaloCells() {
                 //Delete particles from outflow halo cells.
                 particles.clearHaloCells(setting.first);
             }
+            break;
 
             case BoundaryCondition::reflective:
             case BoundaryCondition::periodic: {
@@ -75,14 +129,89 @@ void LinkedCells::processHaloCells() {
     }
 }
 
-void LinkedCells::step() {
-    updateForces();
+void LinkedCells::pullMarkedParticles() {
+    particles.applyToEachParticleInDomain([this](Particle &p) {
+        if (p.isMarked()) {
+            p.setF(p.getF() + pullingForce);
+        }
+    });
+}
+
+void LinkedCells::updateForcesMembrane() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        p.resetForce();
+    });
+    //Calculate new forces using Newtons third law of motion
+    particles.applyToAllUniquePairsInDomain([this](Particle &p_i, Particle &p_j) {
+        //Apply harmonic forces
+        //1. Check, if they are direct neighbors
+        if (p_i.isDirectNeighbor(p_j)) {
+            auto f = forceBetweenDirectNeighborsInMembrane->compute(p_i, p_j);
+            p_i.setF(p_i.getF() + f);
+            p_j.setF(p_j.getF() - f);
+        }
+        //2. Check, if they are diagonal neighbors
+        else if (p_i.isDiagonalNeighbor(p_j)) {
+            auto f = forceBetweenDiagonalNeighborsInMembrane->compute(p_i, p_j);
+            p_i.setF(p_i.getF() + f);
+            p_j.setF(p_j.getF() - f);
+        }
+
+        //If they are no direct or diagonal neighbors than truncated Lennard-Jones force is applied
+
+        else if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= std::pow(2.0, 1.0 / 6.0) * p_i.getSigma()) {
+            auto f_ij{force.compute(p_i, p_j)};
+            p_i.setF(p_i.getF() + f_ij);
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::step(int iteration) {
+    if (membraneSetting) {
+        updateForcesMembrane();
+        if (pull && iteration <= pullingActiveUntil) {
+            pullMarkedParticles();
+        }
+    } else {
+        switch (parallelizationStrategy) {
+            case ParallelizationStrategy::none: updateForces();
+                break;
+#ifdef _OPENMP
+            case ParallelizationStrategy::linear: updateForcesParallelLinear();
+                break;
+            case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
+                break;
+            case ParallelizationStrategy::reduction: updateForcesParallelReduction();
+                break;
+#endif
+            default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
+        }
+    }
     if (gravityOn) {
         applyGravity();
     }
+#ifdef _OPENMP
+    if (parallelizationStrategy == ParallelizationStrategy::none) {
+        processBoundaryForces();
+    } else {
+        processBoundaryForcesParallel();
+    }
+    if (parallelizationStrategy != ParallelizationStrategy::none) {
+        updateVelocitiesParallel();
+        updatePositionsParallel();
+    } else {
+        updateVelocities();
+        updatePositions();
+    }
+#endif
+#ifndef _OPENMP
     processBoundaryForces();
     updateVelocities();
     updatePositions();
+#endif
+
     particles.updateCells();
     processHaloCells();
 }
@@ -93,9 +222,167 @@ void LinkedCells::updateForcesOptimized() {
         p.resetForce();
     });
     //Calculate new forces using Newtons third law of motion
-    particles.applyToAllUniquePairsInDomainOptimized([this](Particle &p_i, Particle &p_j, std::array<double, 3> difference, double distance) {
-        auto f_ij{force.computeOptimized(p_i, p_j, difference, distance)};
-        p_i.setF(p_i.getF() + f_ij);
-        p_j.setF( p_j.getF() - f_ij);
+    particles.applyToAllUniquePairsInDomainOptimized(
+        [this](Particle &p_i, Particle &p_j, std::array<double, 3> difference, double distance) {
+            auto f_ij{force.computeOptimized(p_i, p_j, difference, distance)};
+            p_i.setF(p_i.getF() + f_ij);
+            p_j.setF(p_j.getF() - f_ij);
+        });
+}
+
+void LinkedCells::initializeForces() {
+    if (membraneSetting) {
+        updateForcesMembrane();
+        if (pull) {
+            pullMarkedParticles();
+        }
+    } else {
+        switch (parallelizationStrategy) {
+        case ParallelizationStrategy::none: updateForces();
+            break;
+#ifdef _OPENMP
+        case ParallelizationStrategy::linear: updateForcesParallelLinear();
+            break;
+        case ParallelizationStrategy::skipping: updateForcesParallelSkipping();
+            break;
+        case ParallelizationStrategy::reduction: updateForcesParallelReduction();
+            break;
+#endif
+        default: throw std::runtime_error("Without OpenMp installed, parallelization is not possible!");
+        }
+    }
+    if (gravityOn) {
+        applyGravity();
+    }
+#ifdef _OPENMP
+    if (parallelizationStrategy == ParallelizationStrategy::none) {
+        processBoundaryForces();
+    } else {
+        processBoundaryForcesParallel();
+    }
+#endif
+#ifndef _OPENMP
+    processBoundaryForces();
+#endif
+}
+
+//The following methods are only needed for parallelization
+
+#ifdef _OPENMP
+
+void LinkedCells::updateForcesParallelReduction() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelReduction([this](Particle &p_i, Particle &p_j, int threadId) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.addForceToAccumulator(f_ij, threadId);
+        }
+        if (!p_j.isFixed()) {
+            p_j.subForceFromAccumulator(f_ij, threadId);
+        }
+    });
+    //Sum up force values
+    particles.applyToEachParticleInDomainParallel([](Particle &p) {
+        p.reduceForce();
     });
 }
+
+
+void LinkedCells::updateForcesParallelSkipping() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelSophisticated([this](Particle &p_i, Particle &p_j) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.setF(p_i.getF() + f_ij);
+        }
+        if (!p_j.isFixed()) {
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::updateForcesParallelLinear() {
+    //Before calculating the new forces, the current forces have to be reset.
+    particles.applyToEachParticleInDomain([](Particle &p) {
+        if (!p.isFixed()) {
+            p.resetForce();
+        }
+    });
+    //Calculate new forces using Newtons third law of motion and parallel applyToAllUniquePairsInDomain routine
+    particles.applyToAllUniquePairsInDomainParallelNaive([this](Particle &p_i, Particle &p_j) {
+        auto f_ij{force.compute(p_i, p_j)};
+        if (!p_i.isFixed()) {
+            p_i.setF(p_i.getF() + f_ij);
+        }
+        if (!p_j.isFixed()) {
+            p_j.setF(p_j.getF() - f_ij);
+        }
+    });
+}
+
+void LinkedCells::updateVelocitiesParallel() {
+    particles.applyToEachParticleInDomainParallel([this](Particle &p) {
+        if (!p.isFixed()) {
+            p.setV(p.getV() + (deltaT / (2.0 * p.getM())) * (p.getOldF() + p.getF()));
+        }
+    });
+}
+
+void LinkedCells::updatePositionsParallel() {
+    particles.applyToEachParticleInDomainParallel([this](Particle &p) {
+        if (!p.isFixed()) {
+            p.setX(p.getX() + deltaT * p.getV() + ((deltaT * deltaT) / (2.0 * p.getM())) * p.getOldF());
+        }
+    });
+}
+
+void LinkedCells::processBoundaryForcesParallel() {
+    //Periodic and reflective boundaries apply forces on the particles
+#pragma omp parallel for schedule(dynamic)
+    for (auto setting: boundarySettings) {
+        switch (setting.second) {
+            case BoundaryCondition::outflow: //Outflow boundaries do not apply forces
+                break;
+            case BoundaryCondition::reflective: {
+                particles.applyToAllBoundaryParticles([this](Particle &p, std::array<double, 3> &ghostPosition) {
+                    //Add force from an imaginary ghost particle to particle p
+                    if (!p.isFixed()) {
+                        Particle ghostParticle = p;
+                        ghostParticle.setX(ghostPosition);
+                        std::array<double, 3> ghostForce = force.compute(p, ghostParticle);
+                        p.setF(p.getF() + ghostForce);
+                    }
+                }, setting.first);
+            };
+                break;
+            case BoundaryCondition::periodic: {
+                //Add forces from particles of adjacent boundary cells from the opposite side.
+                particles.applyForcesFromOppositeSide(setting.first);
+            }
+            break;
+            case BoundaryCondition::invalid: {
+                throw std::invalid_argument("Invalid Boundary Condition was selected.");
+            }
+        }
+    }
+}
+
+void LinkedCells::initializeReductionVectors(int maxNumThreads) {
+    particles.applyToEachParticleInDomain([maxNumThreads](Particle &p) {
+        p.initializeForceAccumulator(maxNumThreads);
+    });
+}
+#endif
+

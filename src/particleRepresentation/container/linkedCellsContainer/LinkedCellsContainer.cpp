@@ -4,6 +4,8 @@
 
 #include "LinkedCellsContainer.h"
 
+#include <iostream>
+
 using namespace enumsStructs;
 
 void LinkedCellsContainer::calculateHaloCellIndices() {
@@ -165,6 +167,36 @@ void LinkedCellsContainer::calculateDomainCellsIterationScheme() {
     }
 }
 
+void LinkedCellsContainer::calculateScheduleParallelSophisticatedHelper(int xStart, int yStart, int zStart) {
+    int xEnd = nX - 2;
+    int yEnd = nY - 2;
+    int zEnd = twoD ? 1 : nZ - 2;
+    for (int z = zStart; z < zEnd; z += 2) {
+        for (int y = yStart; y < yEnd; y += 2) {
+            for (int x = xStart; x < xEnd; x += 2) {
+                scheduleParallelSophisticated.push_back(threeDToOneDDomain(x, y, z));
+            }
+        }
+    }
+}
+
+void LinkedCellsContainer::calculateScheduleNaive() {
+    for (int i = 0; i < static_cast<int>(domainCellIterationScheme.size()); i++) {
+        scheduleParallelNaive.push_back(i);
+    }
+}
+
+void LinkedCellsContainer::calculateScheduleParallelSophisticated() {
+    calculateScheduleParallelSophisticatedHelper(0, 0, 0);
+    calculateScheduleParallelSophisticatedHelper(1, 0, 0);
+    calculateScheduleParallelSophisticatedHelper(0, 1, 0);
+    calculateScheduleParallelSophisticatedHelper(1, 1, 0);
+    calculateScheduleParallelSophisticatedHelper(0, 0, 1);
+    calculateScheduleParallelSophisticatedHelper(1, 0, 1);
+    calculateScheduleParallelSophisticatedHelper(0, 1, 1);
+    calculateScheduleParallelSophisticatedHelper(1, 1, 1);
+}
+
 double LinkedCellsContainer::calcDistanceFromBoundary(Particle &p, Side side) {
     switch (side) {
         case Side::front: {
@@ -224,7 +256,6 @@ void LinkedCellsContainer::teleportParticlesToOppositeSideHelper(Side sideStart,
         for (auto p = cells[cell].begin(); p != cells[cell].end();) {
             //Update position
             if (modus == 0) {
-
                 p->setX(fromLowToHigh(p->getX(), dimension));
             } else {
                 p->setX(fromHighToLow(p->getX(), dimension));
@@ -370,11 +401,11 @@ void LinkedCellsContainer::applyForceToOppositeEdgeHelper(std::array<int, 3> cel
                                                           std::array<int, 3> offsetCell,
                                                           std::array<double, 3> offsetPosition, int dim) {
     auto origin = cellToProcess + offsetCell;
-    origin[dim] -=1;
-    for(int d = 0; d < 3; d++) {
-        if(isCellInDomain(origin)) {
+    origin[dim] -= 1;
+    for (int d = 0; d < 3; d++) {
+        if (isCellInDomain(origin)) {
             applyForcesBetweenTwoCells(threeDToOneD(cellToProcess[0], cellToProcess[1], cellToProcess[2]),
-                                   threeDToOneD(origin[0], origin[1], origin[2]), offsetPosition);
+                                       threeDToOneD(origin[0], origin[1], origin[2]), offsetPosition);
         }
         origin[dim]++;
     }
@@ -395,29 +426,45 @@ bool LinkedCellsContainer::isCellInDomain(std::array<int, 3> cell) const {
     return false;
 }
 
-bool LinkedCellsContainer::isParticleInDomain(const std::array<double, 3>& position) const {
+bool LinkedCellsContainer::isParticleInDomain(const std::array<double, 3> &position) const {
     return 0 <= position[0] and position[0] < domainSize[0]
-    and    0 <= position[1] and position[1] < domainSize[1]
-    and    (twoD or (0 <= position[2] and  position[2] < domainSize[2]));
+           and 0 <= position[1] and position[1] < domainSize[1]
+           and (twoD or (0 <= position[2] and position[2] < domainSize[2]));
 }
 
 void LinkedCellsContainer::applyForcesBetweenTwoCells(int cellTarget, int cellSource,
                                                       std::array<double, 3> offsetSource) {
+#ifdef _OPENMP
+#pragma omp critical
+    {
+        //Lock target and source cell
+        omp_set_lock(&locks[cellTarget]);
+        omp_set_lock(&locks[cellSource]);
+    }
+#endif
     for (auto &target: cells[cellTarget]) {
-        for (auto &source: cells[cellSource]) {
-            //Offset particle
-            source.setX(source.getX() + offsetSource);
-            if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
-                target.setF(target.getF() + lJF.compute(target, source));
+        if (!target.isFixed()) {
+            for (auto &source: cells[cellSource]) {
+                //Offset particle
+                source.setX(source.getX() + offsetSource);
+                if (ArrayUtils::L2Norm(target.getX() - source.getX()) <= rCutOff) {
+                    target.setF(target.getF() + lJF.compute(target, source));
+                }
+                //Reset offset
+                source.setX(source.getX() - offsetSource);
             }
-            //Reset offset
-            source.setX(source.getX() - offsetSource);
         }
     }
+#ifdef _OPENMP
+    omp_unset_lock(&locks[cellTarget]);
+    omp_unset_lock(&locks[cellSource]);
+#endif
 }
 
-LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff, BoundarySet boundarySet) : currentSize{0},
-                                                                                                                        rCutOff{rCutOff}, domainSize{domainSize}, boundariesSet{boundarySet} {
+LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, double rCutOff,
+                                           BoundarySet boundarySet) : currentSize{0},
+                                                                      rCutOff{rCutOff}, domainSize{domainSize},
+                                                                      boundariesSet{boundarySet} {
     if (domainSize[0] <= 0 || domainSize[1] <= 0 || domainSize[2] < 0) {
         throw std::invalid_argument("Domain Size is invalid");
     }
@@ -446,6 +493,9 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
     //Calculate y and z basis for faster index calculation and better code understanding
     baseY = nX;
     baseZ = nX * nY;
+    //Calculte y and z basis halo cells excluded.
+    baseYDomain = nX - 2;
+    baseZDomain = (nX - 2) * (nY - 2);
 
     //Initialize data structure
     int numberCells = nX * nY * nZ;
@@ -458,6 +508,17 @@ LinkedCellsContainer::LinkedCellsContainer(std::array<double, 3> domainSize, dou
     calculateHaloCellIndices();
     calculateBoundaryCellIndices();
     calculateDomainCellsIterationScheme();
+    calculateScheduleParallelSophisticated();
+    calculateScheduleNaive();
+
+    //Initialize locks
+#ifdef _OPENMP
+    size_t numberOfLocks = cells.size();
+    for (size_t n = 0; n < numberOfLocks; n++) {
+        locks.emplace_back();
+        omp_init_lock(&locks.back());
+    }
+#endif
 }
 
 int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
@@ -495,7 +556,7 @@ int LinkedCellsContainer::calcCellIndex(const std::array<double, 3> &position) {
     if (position[2] < 0) {
         z = 0;
     } else if (position[2] >= domainSize[2]) {
-        z = nY - 1;
+        z = nZ - 1;
     } else {
         z = static_cast<int>(floor(position[2] / cellSizeZ)) + 1;
     }
@@ -507,7 +568,7 @@ void LinkedCellsContainer::add(Particle &p) {
     //If the Linked Cell container is set to 2D it is not possible to add particles living in 3D space.
     if (twoD && (__fpclassify(p.getX()[2]) != FP_ZERO || __fpclassify(p.getV()[2]) != FP_ZERO ||
                  __fpclassify(p.getF()[2]) != FP_ZERO || __fpclassify(p.getOldF()[2]) != FP_ZERO)) {
-        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is Impossible");
+        throw std::invalid_argument("Adding Particle in 3D space to a 2D Linked Cell. This Operation is impossible");
     }
     int index = calcCellIndex(p.getX());
     cells[index].push_back(std::move(p));
@@ -516,6 +577,10 @@ void LinkedCellsContainer::add(Particle &p) {
 
 int LinkedCellsContainer::threeDToOneD(int x, int y, int z) const {
     return x + baseY * y + baseZ * z;
+}
+
+int LinkedCellsContainer::threeDToOneDDomain(int x, int y, int z) const {
+    return x + baseYDomain * y + baseZDomain * z;
 }
 
 std::array<int, 3> LinkedCellsContainer::oneDToThreeD(int index) const {
@@ -569,23 +634,27 @@ void LinkedCellsContainer::teleportParticlesToOppositeSide(Side sideStart) {
         case Side::front: {
             teleportParticlesToOppositeSideHelper(sideStart, 2, 0);
         }
+        break;
         case Side::right: {
             teleportParticlesToOppositeSideHelper(sideStart, 1, 1);
         }
+        break;
         case Side::back: {
             teleportParticlesToOppositeSideHelper(sideStart, 2, 1);
         }
+        break;
         case Side::left: {
             teleportParticlesToOppositeSideHelper(sideStart, 1, 0);
         }
+        break;
         case Side::top: {
-            if(!twoD) {
+            if (!twoD) {
                 teleportParticlesToOppositeSideHelper(sideStart, 3, 1);
             }
-
+            break;
         }
         case Side::bottom: {
-            if(!twoD) {
+            if (!twoD) {
                 teleportParticlesToOppositeSideHelper(sideStart, 3, 0);
             }
         }
@@ -607,7 +676,7 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
 
 
             //Calculate forces of edges (only relevant for 3D)
-            if(!twoD) {
+            if (!twoD) {
                 if (boundariesSet.bottom == BoundaryCondition::periodic) {
                     for (int x = 1; x < nX - 1; x++) {
                         applyForceToOppositeEdgeHelper({x, 1, 1}, {0, nY - 3, nZ - 3},
@@ -637,19 +706,27 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
                 }
             }
             //Calculate forces of corners
-            if(boundariesSet.left == BoundaryCondition::periodic and boundariesSet.bottom == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(1,1,Z1), threeDToOneD(nX - 2, nY - 2, NZ - 2), {-domainSize[0], -domainSize[1], -domainSize[2]});
+            if (boundariesSet.left == BoundaryCondition::periodic and boundariesSet.bottom ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1, 1, Z1), threeDToOneD(nX - 2, nY - 2, NZ - 2),
+                                           {-domainSize[0], -domainSize[1], -domainSize[2]});
             }
 
-            if(boundariesSet.right == BoundaryCondition::periodic and boundariesSet.bottom == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(nX - 1,1,Z1), threeDToOneD(1, nY - 2, NZ - 2), {domainSize[0], -domainSize[1], -domainSize[2]});
+            if (boundariesSet.right == BoundaryCondition::periodic and boundariesSet.bottom ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 1, 1, Z1), threeDToOneD(1, nY - 2, NZ - 2),
+                                           {domainSize[0], -domainSize[1], -domainSize[2]});
             }
-            if(!twoD) {
-                if(boundariesSet.left == BoundaryCondition::periodic and boundariesSet.top == BoundaryCondition::periodic) {
-                    applyForcesBetweenTwoCells(threeDToOneD(1,1,nZ - 2), threeDToOneD(nX - 2, nY - 2, 1), {-domainSize[0], -domainSize[1], domainSize[2]});
+            if (!twoD) {
+                if (boundariesSet.left == BoundaryCondition::periodic and boundariesSet.top ==
+                    BoundaryCondition::periodic) {
+                    applyForcesBetweenTwoCells(threeDToOneD(1, 1, nZ - 2), threeDToOneD(nX - 2, nY - 2, 1),
+                                               {-domainSize[0], -domainSize[1], domainSize[2]});
                 }
-                if(boundariesSet.right == BoundaryCondition::periodic and boundariesSet.top == BoundaryCondition::periodic) {
-                    applyForcesBetweenTwoCells(threeDToOneD(nX - 1,1,nZ - 2), threeDToOneD(1, nY - 2, 1), {domainSize[0], -domainSize[1], domainSize[2]});
+                if (boundariesSet.right == BoundaryCondition::periodic and boundariesSet.top ==
+                    BoundaryCondition::periodic) {
+                    applyForcesBetweenTwoCells(threeDToOneD(nX - 1, 1, nZ - 2), threeDToOneD(1, nY - 2, 1),
+                                               {domainSize[0], -domainSize[1], domainSize[2]});
                 }
             }
         }
@@ -663,20 +740,20 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
             }
 
             //Calculate forces of edges
-            if(!twoD) {
-                if(boundariesSet.top == BoundaryCondition::periodic) {
+            if (!twoD) {
+                if (boundariesSet.top == BoundaryCondition::periodic) {
                     for (int y = 1; y < nY - 1; y++) {
                         applyForceToOppositeEdgeHelper({nX - 2, y, nZ - 2}, {-(nX - 3), 0, -(nZ - 3)},
                                                        {domainSize[0], 0, domainSize[2]}, 1);
                     }
                 }
-                if(boundariesSet.bottom == BoundaryCondition::periodic) {
+                if (boundariesSet.bottom == BoundaryCondition::periodic) {
                     for (int y = 1; y < nY - 1; y++) {
                         applyForceToOppositeEdgeHelper({nX - 2, y, 1}, {-(nX - 3), 0, nZ - 3},
                                                        {domainSize[0], 0, -domainSize[2]}, 1);
                     }
                 }
-                if(boundariesSet.back == BoundaryCondition::periodic) {
+                if (boundariesSet.back == BoundaryCondition::periodic) {
                     for (int z = 1; z < nZ - 1; z++) {
                         applyForceToOppositeEdgeHelper({nX - 2, nY - 2, 1}, {-(nX - 3), -(nY - 3), 0},
                                                        {domainSize[0], domainSize[1], 0}, 2);
@@ -685,11 +762,15 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
             }
 
             //Calculate forces of corner
-            if(boundariesSet.bottom == BoundaryCondition::periodic and boundariesSet.back == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(nX - 2,nY - 2,Z1), threeDToOneD(1, 1, NZ - 2), {domainSize[0], domainSize[1], -domainSize[2]});
+            if (boundariesSet.bottom == BoundaryCondition::periodic and boundariesSet.back ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 2, nY - 2, Z1), threeDToOneD(1, 1, NZ - 2),
+                                           {domainSize[0], domainSize[1], -domainSize[2]});
             }
-            if(!twoD and boundariesSet.top == BoundaryCondition::periodic and boundariesSet.back == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(nX - 2,nY - 2,nZ - 2), threeDToOneD(1, 1, 1), {domainSize[0], domainSize[1], domainSize[2]});
+            if (!twoD and boundariesSet.top == BoundaryCondition::periodic and boundariesSet.back ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(nX - 2, nY - 2, nZ - 2), threeDToOneD(1, 1, 1),
+                                           {domainSize[0], domainSize[1], domainSize[2]});
             }
         }
         break;
@@ -702,20 +783,20 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
 
             //Calculate forces of edges
 
-            if(!twoD) {
-                if(boundariesSet.top == BoundaryCondition::periodic) {
+            if (!twoD) {
+                if (boundariesSet.top == BoundaryCondition::periodic) {
                     for (int x = 1; x < nX - 1; x++) {
                         applyForceToOppositeEdgeHelper({x, nY - 2, nZ - 2}, {0, -(nY - 3), -(nZ - 3)},
                                                        {0, domainSize[1], domainSize[2]}, 0);
                     }
                 }
-                if(boundariesSet.bottom == BoundaryCondition::periodic) {
+                if (boundariesSet.bottom == BoundaryCondition::periodic) {
                     for (int x = 1; x < nX - 1; x++) {
                         applyForceToOppositeEdgeHelper({x, nY - 2, 1}, {0, -(nY - 3), nZ - 3},
                                                        {0, domainSize[1], -domainSize[2]}, 0);
                     }
                 }
-                if(boundariesSet.left == BoundaryCondition::periodic) {
+                if (boundariesSet.left == BoundaryCondition::periodic) {
                     for (int z = 1; z < nZ - 1; z++) {
                         applyForceToOppositeEdgeHelper({1, nY - 2, z}, {nX - 3, -(nY - 3), 0},
                                                        {-domainSize[0], domainSize[1], 0}, 2);
@@ -724,11 +805,15 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
             }
 
             //Calculate forces of corner
-            if(boundariesSet.bottom == BoundaryCondition::periodic && boundariesSet.left == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(1,nY - 2, Z1), threeDToOneD(nX - 2, 1, NZ - 2), {-domainSize[0], domainSize[1], -domainSize[2]});
+            if (boundariesSet.bottom == BoundaryCondition::periodic && boundariesSet.left ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1, nY - 2, Z1), threeDToOneD(nX - 2, 1, NZ - 2),
+                                           {-domainSize[0], domainSize[1], -domainSize[2]});
             }
-            if(!twoD and boundariesSet.top == BoundaryCondition::periodic && boundariesSet.left == BoundaryCondition::periodic) {
-                applyForcesBetweenTwoCells(threeDToOneD(1,nY - 2, nZ - 2), threeDToOneD(nX - 2, 1, 1), {-domainSize[0], domainSize[1], domainSize[2]});
+            if (!twoD and boundariesSet.top == BoundaryCondition::periodic && boundariesSet.left ==
+                BoundaryCondition::periodic) {
+                applyForcesBetweenTwoCells(threeDToOneD(1, nY - 2, nZ - 2), threeDToOneD(nX - 2, 1, 1),
+                                           {-domainSize[0], domainSize[1], domainSize[2]});
             }
         }
         break;
@@ -741,14 +826,14 @@ void LinkedCellsContainer::applyForcesFromOppositeSide(Side side) {
 
             //Calculate forces of edges
 
-            if(!twoD) {
-                if(boundariesSet.top == BoundaryCondition::periodic) {
+            if (!twoD) {
+                if (boundariesSet.top == BoundaryCondition::periodic) {
                     for (int y = 1; y < nY - 1; y++) {
                         applyForceToOppositeEdgeHelper({1, y, nZ - 2}, {nX - 3, 0, -(nZ - 3)},
                                                        {-domainSize[0], 0, domainSize[2]}, 1);
                     }
                 }
-                if(boundariesSet.bottom == BoundaryCondition::periodic) {
+                if (boundariesSet.bottom == BoundaryCondition::periodic) {
                     for (int y = 1; y < nY - 1; y++) {
                         applyForceToOppositeEdgeHelper({1, y, 1}, {nX - 3, 0, nZ - 3},
                                                        {-domainSize[0], 0, -domainSize[2]}, 1);
@@ -796,7 +881,9 @@ void LinkedCellsContainer::clearHaloCells(Side side) {
 
 void LinkedCellsContainer::applyToEachParticle(const std::function<void(Particle &)> &function) {
     for (auto &cell: cells) {
-        std::for_each(cell.begin(), cell.end(), function);
+        for (auto &p: cell) {
+            function(p);
+        }
     }
 }
 
@@ -833,17 +920,20 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomain(const std::function<voi
     }
 }
 
-void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
-    const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function) {
+#ifdef _OPENMP
+
+void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelReduction(
+    const std::function<void(Particle &, Particle &, int)> &function) {
+#pragma omp parallel for schedule(static)
     for (auto &cellGroup: domainCellIterationScheme) {
         //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
-
+        int threadId = omp_get_thread_num();
         for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
             for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
                 auto difference = p_j->getX() - p_i->getX();
                 auto distance = ArrayUtils::L2Norm(difference);
                 if (distance <= rCutOff) {
-                    function(*p_i, *p_j, difference, distance);
+                    function(*p_i, *p_j, threadId);
                 }
             }
         }
@@ -855,7 +945,7 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
                     auto difference = p_j.getX() - p_i.getX();
                     auto distance = ArrayUtils::L2Norm(difference);
                     if (distance <= rCutOff) {
-                        function(p_i, p_j, difference, distance);
+                        function(p_i, p_j, threadId);
                     }
                 }
             }
@@ -863,16 +953,133 @@ void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
     }
 }
 
-void LinkedCellsContainer::applyToAllBoundaryParticles(
-    const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
-    for (auto cell: boundaries[static_cast<int>(boundary)]) {
-        for (Particle &p: cells[cell]) {
-            double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
-            double threshold = pow(2.0, 1.0 / 6.0) * p.getSigma();
-            if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
-                auto ghostPosition = calcGhostParticle(p, boundary);
-                function(p, ghostPosition);
+    void LinkedCellsContainer::applyToEachParticleInDomainParallel(const std::function<void(Particle &)> &function) {
+#pragma omp parallel for schedule(static)
+        for (auto &cellGroup: domainCellIterationScheme) {
+            for (auto &p: cells[cellGroup[0]]) {
+                function(p);
             }
         }
     }
-}
+
+    void LinkedCellsContainer::
+
+
+            applyToAllUniquePairsInDomainParallelHelper(const std::function<void(Particle &, Particle &)> &function,
+                                                        std::vector<int> &scheduling) {
+        size_t nextCellToSchedule = 0;
+        bool goOn = true;
+#pragma omp parallel
+        {
+            size_t currentPosition;
+            while (goOn) {
+#pragma omp critical
+                {
+                    if (nextCellToSchedule >= scheduling.size()) {
+                        goOn = false;
+                    }
+                    currentPosition = nextCellToSchedule++;
+                }
+                if (goOn) {
+                    int cellIndex = scheduling[currentPosition];
+
+                    //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
+                    //Lock current cell
+                    omp_set_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
+
+                    for (auto p_i = cells[domainCellIterationScheme[cellIndex][0]].begin();
+                         p_i != cells[domainCellIterationScheme[cellIndex][0]].end(); std::advance(p_i, 1)) {
+                        for (auto p_j = std::next(p_i); p_j != cells[domainCellIterationScheme[cellIndex][0]].
+                                                        end(); std::advance(p_j, 1)) {
+                            if (ArrayUtils::L2Norm(p_i->getX() - p_j->getX()) <= rCutOff) {
+                                function(*p_i, *p_j);
+                            }
+                        }
+                    }
+                    //Then, consider all relevant neighbour cells
+
+                    for (auto neighbour = domainCellIterationScheme[cellIndex].begin() + 1;
+                         neighbour != domainCellIterationScheme[cellIndex].end(); std::advance(neighbour, 1)) {
+                        //Lock neighbor cell
+                        omp_set_lock(&locks[*neighbour]);
+                        for (auto &p_i: cells[domainCellIterationScheme[cellIndex][0]]) {
+                            for (auto &p_j: cells[*neighbour]) {
+                                if (ArrayUtils::L2Norm(p_i.getX() - p_j.getX()) <= rCutOff) {
+                                    function(p_i, p_j);
+                                }
+                            }
+                        }
+                        //Unlock neighbor cell
+                        omp_unset_lock(&locks[*neighbour]);
+                    }
+
+                    //Unlock current cell
+                    omp_unset_lock(&locks[domainCellIterationScheme[cellIndex][0]]);
+                }
+            }
+        }
+    }
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelSophisticated(
+        const std::function<void(Particle &, Particle &)> &function) {
+        applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelSophisticated);
+    }
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainParallelNaive(
+        const std::function<void(Particle &, Particle &)> &function) {
+        applyToAllUniquePairsInDomainParallelHelper(function, scheduleParallelNaive);
+    }
+#endif
+
+    void LinkedCellsContainer::applyToAllUniquePairsInDomainOptimized(
+        const std::function<void(Particle &, Particle &, std::array<double, 3>, double)> &function) {
+        for (auto &cellGroup: domainCellIterationScheme) {
+            //First, consider all pairs within the cell that distance is smaller or equal then the cutoff radius
+
+            for (auto p_i = cells[cellGroup[0]].begin(); p_i != cells[cellGroup[0]].end(); std::advance(p_i, 1)) {
+                for (auto p_j = std::next(p_i); p_j != cells[cellGroup[0]].end(); std::advance(p_j, 1)) {
+                    auto difference = p_j->getX() - p_i->getX();
+                    auto distance = ArrayUtils::L2Norm(difference);
+                    if (distance <= rCutOff) {
+                        function(*p_i, *p_j, difference, distance);
+                    }
+                }
+            }
+            //Then, consider all relevant neighbour cells
+
+            for (auto neighbour = cellGroup.begin() + 1; neighbour != cellGroup.end(); std::advance(neighbour, 1)) {
+                for (auto &p_i: cells[cellGroup[0]]) {
+                    for (auto &p_j: cells[*neighbour]) {
+                        auto difference = p_j.getX() - p_i.getX();
+                        auto distance = ArrayUtils::L2Norm(difference);
+                        if (distance <= rCutOff) {
+                            function(p_i, p_j, difference, distance);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void LinkedCellsContainer::applyToAllBoundaryParticles(
+        const std::function<void(Particle &, std::array<double, 3> &)> &function, Side boundary) {
+        for (auto cell: boundaries[static_cast<int>(boundary)]) {
+#ifdef _OPENMP
+            //Lock cell
+            omp_set_lock(&locks[cell]);
+#endif
+            for (auto &p: cells[cell]) {
+                double distanceFromBoundary = calcDistanceFromBoundary(p, boundary);
+                double threshold = 0.5 * pow(2.0, 1.0 / 6.0) * p.getSigma();
+                if (0 < distanceFromBoundary && distanceFromBoundary <= threshold) {
+                    auto ghostPosition = calcGhostParticle(p, boundary);
+                    function(p, ghostPosition);
+                }
+            }
+#ifdef _OPENMP
+            //Unlock cell
+            omp_unset_lock(&locks[cell]);
+#endif
+        }
+    }
